@@ -1,0 +1,40 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Flashbang : MonoBehaviour
+{
+    [SerializeField] private GameObject flashbang;
+    [SerializeField] public Transform ShootPosition;
+    [SerializeField] private float flashbangForce;
+    [SerializeField] private float flashbangChargeRate = 0.001f;
+    private bool chargingFlashbang;
+
+    void Update()
+    {
+        ShootPosition.transform.rotation = PlayerControllerScript.Instance.Orientation.transform.rotation;
+
+        if (Input.GetKey(KeyCode.T))
+        {
+            chargingFlashbang = true;
+            flashbangForce += flashbangChargeRate;
+        }
+
+        if (Input.GetKeyUp(KeyCode.T) && chargingFlashbang)
+        {
+            ThrowFlashbang();
+            AudioManager.Instance.PlaySound(AudioManager.Instance.FlashbangSounds[Random.Range(0, AudioManager.Instance.FlashbangSounds.Length)], 1.0f);
+        }
+    }
+
+    public void ThrowFlashbang()
+    {
+        GameObject FlashBangGO = Instantiate(flashbang, ShootPosition.position + new Vector3(0, 3, 0), ShootPosition.rotation);
+
+        FlashBangGO.GetComponent<ProjectileScript>().force = flashbangForce;
+
+        chargingFlashbang = false;
+        flashbangForce = 0;
+
+    }
+}

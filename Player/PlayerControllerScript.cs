@@ -1,0 +1,748 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using Cinemachine;
+using UnityEngine;
+using System;
+
+public class PlayerControllerScript : MonoBehaviour
+{
+    public static PlayerControllerScript Instance;
+
+    public enum PlayerMovementState
+    {
+        Walking,
+        Running,
+        Crouching,
+        Exhausted,
+        Blocking,
+        Idle,
+        Carrying
+    }
+
+    public PlayerMovementState CurrentMovementState;
+
+    [Header("Player Variables")]
+
+    [SerializeField] private ParticleSystem DashLines;
+
+    [SerializeField] public Camera CinemachineCamera;
+
+    [SerializeField] private int playerHealth = 100;
+    [SerializeField] private int playerMaxHealth = 100;
+
+    [SerializeField] public int playerStamina = 1000;
+    [SerializeField] public int playerMaxStamina = 1000;
+    [SerializeField] public float staminaDrainMultiplier = 1f;
+
+    [SerializeField] private float playerSpeed = 35f;
+    [SerializeField] private float normalPlayerSpeed = 35f;
+    [SerializeField] private float playerMaxSpeed = 15f;
+    [SerializeField] private float playerHeight = 2f;
+
+    float TargetFoV = 90;
+    float NormalFoV = 80;
+    float FoVIncreaseSpeed = 15;
+    float FoVDecreaseSpeed = 3;
+
+    private float normalPlayerDrag = 1.0f;
+    private float crouchPlayerDrag = 0.5f;
+
+    private float jumpingPenalty = 12;
+    private float TimeBetweenDashes = 0.33f;
+    private int DashCost = 20;
+    private int JumpCost = 20;
+    private float walkSpeed = 7f;
+    private float runSpeed = 13f;
+    private float crouchSpeed = 3f;
+    private float exhaustedSpeed = 4f;
+
+    [SerializeField] private float playerMovementMultiplier = 15f;
+    [SerializeField] private float playerAirMultiplier = 1f;
+
+    [SerializeField] private float playerGroundDrag = 8f;
+    [SerializeField] private float playerAirDrag = 2f;
+
+    [SerializeField] private float playerJumpHeight = 4f;
+    [SerializeField] private float horizontalMovement;
+    [SerializeField] private float verticalMovement;
+
+    [SerializeField] private bool soundPlaying = false;
+    [SerializeField] public bool casting = false;
+
+    [SerializeField] private float fallHeight;
+    [SerializeField] private float landHeight;
+
+    [SerializeField] private float crouchHeight = 0.5f;
+    [SerializeField] private float normalHeight = 3f;
+
+    private Block PlayerBlock;
+
+    KeyCode ButtonPressed;
+    KeyCode previousInput = KeyCode.None;
+
+    [Header("Conditions")]
+
+    private float doubleTapTimeThreshold = 0.3f;
+    private float lastTapTime = 0f;
+
+    public float DashCooldown = 0.25f;
+    private float fallDamageThreshhold = -0.7f;
+    public bool QuickDashAvailable;
+    public bool crouching = false;
+    public bool canJump = true;
+    public bool forceCrouch = false;
+    public bool Dead = false;
+    public bool dashingBackwards = false;
+
+    public bool paralyzed = false;
+    public bool Incapacitated;
+    public bool sprinting;
+    public bool OnGround = false;
+    private bool playerFalling = false;
+    private bool canDoubleJump = false;
+    private bool playerWalking = false;
+    private bool hasDoubleJumped = false;
+    private bool normalHit = false;
+    private bool fallDeath = false;
+
+    [SerializeField] private Rigidbody playerRigidbody;
+    [SerializeField] private CapsuleCollider playerCollider;
+
+    public GameObject _cameraFollowObject;
+    public GameObject _crouchFollowObject;
+
+    public GameObject playerHealthObject;
+    public HealthBar playerHealthBar;
+
+    [Header("Animator")]
+
+    public Animator playerAnimator;
+    public Animator CameraAnimator;
+
+    [Header("Audio")]
+
+    public AudioSource PlayerAudioSource;
+
+    public AudioClip[] QuickDashSounds;
+    public AudioClip[] JumpSounds;
+    public AudioClip[] FootstepSounds;
+    public AudioClip[] HitSounds;
+
+    public AudioClip readyKnives;
+    public AudioClip fallDamageSound;
+    public AudioClip Panting;
+
+    [Header("Movement Logic")]
+
+    [SerializeField] private LayerMask layerMask;
+    public Transform Orientation;
+    public Vector3 direction;
+    public Transform playerDirection;
+    private Vector3 jumpDirection = new Vector3(0, 5, 0);
+    private Vector3 fallDirection = new Vector3(0, -1, 0);
+    private float slopeRaycastDistance = 1;
+
+    [Header("Slope Handling")]
+    public float MaxSlopeAngle;
+    private RaycastHit slopeHit;
+
+    private bool OnSlope()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < MaxSlopeAngle && angle != 0;
+        }
+        return false;
+    }
+    private Vector3 GetSlopeMoveDirection()
+    {
+        return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
+    }
+    void Start()
+    {
+        normalPlayerSpeed = playerSpeed;
+
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        PlayerAudioSource = gameObject.GetComponent<AudioSource>();
+        playerRigidbody = GetComponentInChildren<Rigidbody>();
+        playerCollider = gameObject.GetComponent<CapsuleCollider>();
+        PlayerBlock = GetComponent<Block>();
+        playerRigidbody.freezeRotation = true;
+        playerRigidbody.drag = playerGroundDrag;
+
+        playerHealthBar.SetMaxHealth(playerMaxHealth);
+        playerHealthBar.SetMaxStamina(playerMaxStamina);
+
+    }
+
+    void Update()
+    {
+        if (paralyzed || Dead)
+        {
+            StopAnimation();
+            return;
+        }
+        Crouch();
+        Interact();
+        Animation();
+        Controls();
+        QuickDashing();
+        UIElements();
+        Sprinting();
+        Jump();
+        Conditions();
+    }
+
+    private void FixedUpdate()
+    {
+        if (paralyzed)
+        {
+            StopAnimation();
+            return;
+        }
+        PhysicsElements();
+        Movement();
+    }
+
+    private void Interact()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (Natia.Instance.CurrentEnemyState != Natia.EnemyState.PickedUp && Natia.Instance != null && Natia.Instance.InConversation)
+            {
+                Ray ray = new Ray(Orientation.position, Orientation.forward);
+                float raycastDistance = 15;
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, raycastDistance))
+                {
+                    if (hit.collider.CompareTag("Natia") && !DialogueManagerScript.Instance.InProgress)
+                    {
+                        DialogueManagerScript.Instance.AdaptabilityDialogue();
+                    }
+                    else if (hit.collider.CompareTag("Natia") && DialogueManagerScript.Instance.InProgress)
+                    {
+                        DialogueManagerScript.Instance.EndOfDialogue();
+                        DialogueManagerScript.Instance.CloseDialogue();
+                        Natia.Instance.CurrentEnemyState = Natia.EnemyState.PickedUp;
+                        DialogueManagerScript.Instance.NatiaPickedUp();
+                    }
+
+                    if (hit.collider.CompareTag("Door"))
+                    {
+                        hit.collider.GetComponent<Door>().ChangeScene();
+                    }
+
+                    if (hit.collider.CompareTag("Chest"))
+                    {
+                        hit.collider.GetComponent<Chest>().OpenChest();
+                    }
+                }
+            }
+            else if (Natia.Instance.CurrentEnemyState == Natia.EnemyState.PickedUp && Natia.Instance != null)
+            {
+                Natia.Instance.CurrentEnemyState = Natia.EnemyState.Following;
+                Natia.Instance.NatiaCollider.enabled = true;
+                Natia.Instance.gameObject.transform.position = gameObject.transform.position + new Vector3(-5, 0, 0);
+                DialogueManagerScript.Instance.NatiaDropped();
+            }
+        }
+    }
+
+    private void Conditions()
+    {
+        OnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight / 2.1f, layerMask);
+
+        switch (CurrentMovementState)
+        {
+            case PlayerMovementState.Walking:
+                playerCollider.height = normalHeight;
+                playerAirDrag = normalPlayerDrag;
+                playerSpeed = walkSpeed;
+                break;
+            case PlayerMovementState.Running:
+                playerCollider.height = normalHeight;
+                playerAirDrag = normalPlayerDrag;
+                playerSpeed = runSpeed;
+                break;
+            case PlayerMovementState.Crouching:
+                playerCollider.height = crouchHeight;
+                playerAirDrag = crouchPlayerDrag;
+                playerSpeed = crouchSpeed;
+                break;
+            case PlayerMovementState.Exhausted:
+                playerCollider.height = normalHeight;
+                playerAirDrag = normalPlayerDrag;
+                playerSpeed = exhaustedSpeed;
+                break;
+            case PlayerMovementState.Blocking:
+                playerCollider.height = normalHeight;
+                playerAirDrag = normalPlayerDrag;
+                playerSpeed = walkSpeed;
+                break;
+            case PlayerMovementState.Idle:
+                break;
+            case PlayerMovementState.Carrying:
+                playerCollider.height = normalHeight;
+                playerAirDrag = normalPlayerDrag;
+                playerSpeed = exhaustedSpeed;
+                break;
+
+        }
+
+        if (Natia.Instance != null)
+        {
+            if (Natia.Instance.CurrentEnemyState == Natia.EnemyState.PickedUp)
+            {
+                Incapacitated = true;
+            }
+            else
+            {
+                Incapacitated = false;
+            }
+        }
+
+
+        if (horizontalMovement != 0 && OnGround || verticalMovement != 0 && OnGround)
+        {
+            if (!Input.GetButton("Sprint"))
+            {
+                CameraAnimator.SetBool("Walking", true);
+                sprinting = false;
+            }
+            else
+            {
+                if (CurrentMovementState == PlayerMovementState.Running)
+                {
+                    CameraAnimator.SetBool("Walking", false);
+                }
+
+                sprinting = true;
+            }
+
+            playerWalking = true;
+            gameObject.GetComponent<CameraShakeController>().active = true;
+
+            if (!Input.GetButton("Crouch"))
+            {
+                gameObject.GetComponent<CameraShakeController>().running = true;
+            }
+            else
+            {
+                gameObject.GetComponent<CameraShakeController>().running = false;
+            }
+        }
+        else
+        {
+            CameraAnimator.SetBool("Walking", false);
+        }
+
+    }
+
+
+    public void UIElements()
+    {
+        playerHealthBar.SetStamina(playerStamina);
+        playerHealthBar.SetHealth(playerHealth);
+    }
+
+    public void PhysicsElements()
+    {
+        if (OnGround == true)
+        {
+            playerRigidbody.drag = playerGroundDrag;
+        }
+        else
+        {
+            playerRigidbody.drag = playerAirDrag;
+        }
+
+        if (playerRigidbody.velocity.y < 0 && !OnGround)
+        {
+            playerFalling = true;
+            fallHeight = transform.position.y;
+        }
+
+        if (OnGround == true && playerFalling && !Dead)
+        {
+            landHeight = transform.position.y - fallHeight;
+
+            StartCoroutine(FallDamage());
+
+            if (landHeight < fallDamageThreshhold)
+            {
+                PlayerAudioSource.PlayOneShot(fallDamageSound);
+                TakeDamage((int)(landHeight * -10));
+                playerFalling = false;
+            }
+            else
+            {
+                playerFalling = false;
+            }
+        }
+    }
+
+    private void Controls()
+    {
+        // GET PLAYER DIRECTION
+
+        horizontalMovement = Input.GetAxisRaw("Horizontal");
+        verticalMovement = Input.GetAxisRaw("Vertical");
+
+        // IF THE PLAYER ISN'T RUNNING, WE WILL ALLOW MOVEMENT ON THE VERTICAL PLANE. IN A SPRINT, PLAYERS CAN ONLY MOVE FORWARD.
+
+        if (CurrentMovementState != PlayerMovementState.Running)
+        {
+            direction = Orientation.forward * verticalMovement + Orientation.right * horizontalMovement;
+        }
+        else
+        {
+            // IF THE PLAYER TRIES MOVING BACKWARDS, STOP THEM
+
+            if (verticalMovement <= 0)
+            {
+                verticalMovement = 0;
+            }
+
+            direction = Orientation.forward * verticalMovement + Orientation.right * 0;
+        }
+    }
+
+    private void Crouch()
+    {
+        if (Input.GetButton("Crouch"))
+        {
+            crouching = true;
+
+            CurrentMovementState = PlayerMovementState.Crouching;
+
+            if (OnGround)
+            {
+                playerRigidbody.AddForce(fallDirection * playerJumpHeight / 4f, ForceMode.Impulse);
+            }
+        }
+        else
+        {
+            crouching = false;
+        }
+    }
+
+    public void QuickDashing()
+    {
+        if (!dashingBackwards)
+        {
+            if (DashCooldown > 0 || CurrentMovementState == PlayerMovementState.Running)
+            {
+                DashCooldown -= Time.deltaTime;
+                CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, NormalFoV, FoVIncreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
+            }
+            else
+            {
+                CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, TargetFoV, FoVDecreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
+            }
+        }
+        else
+        {
+            if (DashCooldown > 0)
+            {
+                DashCooldown -= Time.deltaTime;
+                CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, TargetFoV, FoVIncreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
+            }
+            else
+            {
+                CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, NormalFoV, FoVDecreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
+            }
+        }
+
+        if (!Input.GetKeyDown(KeyCode.W) && !Input.GetKeyDown(KeyCode.A) && !Input.GetKeyDown(KeyCode.S) && !Input.GetKeyDown(KeyCode.D))
+        {
+            if (CurrentMovementState != PlayerMovementState.Crouching)
+            {
+                CurrentMovementState = PlayerMovementState.Idle;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            if (previousInput == KeyCode.W)
+            {
+                float timeSinceLastTap = Time.time - lastTapTime;
+
+                if (timeSinceLastTap <= doubleTapTimeThreshold && DashCooldown <= 0)
+                {
+                    PerformDash();
+                    dashingBackwards = false;
+                }
+            }
+
+            lastTapTime = Time.time;
+            previousInput = KeyCode.W;
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            if (previousInput == KeyCode.S)
+            {
+                float timeSinceLastTap = Time.time - lastTapTime;
+
+                if (timeSinceLastTap <= doubleTapTimeThreshold && DashCooldown <= 0)
+                {
+                    PerformDash();
+                    dashingBackwards = true;
+                }
+            }
+
+            lastTapTime = Time.time;
+            previousInput = KeyCode.S;
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            if (previousInput == KeyCode.A)
+            {
+                float timeSinceLastTap = Time.time - lastTapTime;
+
+                if (timeSinceLastTap <= doubleTapTimeThreshold && DashCooldown <= 0)
+                {
+                    PerformDash();
+                    dashingBackwards = false;
+                }
+            }
+
+            lastTapTime = Time.time;
+            previousInput = KeyCode.A;
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            if (previousInput == KeyCode.D)
+            {
+                float timeSinceLastTap = Time.time - lastTapTime;
+
+                if (timeSinceLastTap <= doubleTapTimeThreshold && DashCooldown <= 0)
+                {
+                    PerformDash();
+                    dashingBackwards = false;
+                }
+            }
+
+            lastTapTime = Time.time;
+            previousInput = KeyCode.D;
+        }
+    }
+
+    public void Sprinting()
+    {
+        // IF THE PLAYER IS IN A NORMAL STATE AND HAS THE REQUIRED AMOUNT OF STAMINA, BURST INTO A SPRINT
+
+        if (Input.GetButton("Sprint") && CurrentMovementState != PlayerMovementState.Crouching && Input.GetKey(KeyCode.W) && playerStamina > 0 && CurrentMovementState != PlayerMovementState.Exhausted && !casting)
+        {
+            CurrentMovementState = PlayerMovementState.Running;
+            sprinting = true;
+
+            if (OnGround)
+            {
+                CameraAnimator.SetBool("CameraRunning", true);
+            }
+            else
+            {
+                CameraAnimator.SetBool("CameraRunning", false);
+            }
+        }
+        else
+        {
+            // AUTO EXIT SPRINTING IF THE CONDITIONS ARE NOT MET
+
+            sprinting = false;
+
+            if (playerStamina > 0 && !casting)
+            {
+                if (!crouching)
+                {
+                    CurrentMovementState = PlayerMovementState.Walking;
+                }
+            }
+            else
+            {
+                CurrentMovementState = PlayerMovementState.Exhausted;
+            }
+
+            CameraAnimator.SetBool("CameraRunning", false);
+            CameraAnimator.SetBool("Walking", true);
+        }
+    }
+
+
+    private void Movement()
+    {
+        // CALLED WHEN THE PLAYER MOVES - CHECKS IF THE PLAYER IS ON GROUND OR NOT AND APPLIES THE CORRECT FORCE.
+        if (OnGround == true)
+        {
+            hasDoubleJumped = false;
+            canDoubleJump = false;
+
+            if (OnSlope() == true)
+            {
+                playerRigidbody.useGravity = false;
+                playerRigidbody.AddForce(GetSlopeMoveDirection() * playerSpeed * playerMovementMultiplier, ForceMode.Acceleration);
+            }
+            else
+            {
+                playerRigidbody.useGravity = true;
+                playerRigidbody.AddForce(direction.normalized * playerSpeed * playerMovementMultiplier, ForceMode.Acceleration);
+            }
+        }
+        else
+        {
+            // MAKE THE PLAYER FALL TOWARDS THE GROUND, THE PLAYERAIRMULTIPLIER IS USED TO LIMIT MOMENTUM IN MIDAIR.
+            canDoubleJump = true;
+
+            playerRigidbody.AddForce(direction.normalized * (playerSpeed * 0.7f) * playerMovementMultiplier * playerAirMultiplier, ForceMode.Acceleration);
+            playerRigidbody.AddForce(fallDirection * playerJumpHeight / 6f, ForceMode.Impulse);
+        }
+
+        // IF THE PLAYER IS NOT RUNNING, STAMINA RECOVERS.
+        if (CurrentMovementState != PlayerMovementState.Running)
+        {
+            if (playerStamina < playerMaxStamina && CurrentMovementState != PlayerMovementState.Exhausted)
+            {
+                playerStamina++;
+            }
+        }
+        else
+        {
+            if (playerStamina > 0)
+            {
+                playerStamina -= 1;
+            }
+            else
+            {
+                CurrentMovementState = PlayerMovementState.Exhausted;
+            }
+        }
+    }
+
+    private void Jump()
+    {
+        if (Input.GetButtonDown("Jump") && OnGround && !paralyzed && canJump && playerStamina > JumpCost)
+        {
+            StartCoroutine(AnimatorCoroutine());
+
+            PlayerAudioSource.PlayOneShot(JumpSounds[UnityEngine.Random.Range(0, JumpSounds.Length)]);
+            playerStamina -= JumpCost;
+
+            playerRigidbody.velocity = Vector3.zero;
+            playerRigidbody.AddForce(jumpDirection * playerJumpHeight, ForceMode.Impulse);
+            playerRigidbody.AddForce(direction.normalized * (playerSpeed / jumpingPenalty) * playerMovementMultiplier, ForceMode.Impulse);
+        }
+    }
+
+    private void PerformDash()
+    {
+        if (OnGround)
+        {
+            DashLines.Play();
+            PlayerAudioSource.PlayOneShot(QuickDashSounds[UnityEngine.Random.Range(0, 2)]);
+
+            previousInput = KeyCode.None;
+            playerStamina -= DashCost;
+            DashCooldown = TimeBetweenDashes;
+            direction = Orientation.forward * verticalMovement + Orientation.right * horizontalMovement;
+            playerRigidbody.AddForce(direction.normalized * (playerSpeed * 2f) * playerMovementMultiplier * playerAirMultiplier, ForceMode.Impulse);
+
+            QuickDashAvailable = false;
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (!Dead)
+        {
+            PlayerAudioSource.PlayOneShot(HitSounds[UnityEngine.Random.Range(0, HitSounds.Length)], 0.7f);
+            playerHealth -= damage;
+            playerHealthBar.SetHealth(playerHealth);
+            normalHit = false;
+        }
+        if (playerHealth <= 0)
+        {
+            StartCoroutine(DeathCoroutine());
+        }
+    }
+
+    public void Animation()
+    {
+        if (!PlayerBlock.blocking)
+        {
+            switch (CurrentMovementState)
+            {
+                case PlayerMovementState.Walking:
+                    if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+                    {
+                        playerAnimator.SetBool("Running", false);
+                        playerAnimator.SetBool("Walking", true);
+                    }
+                    else
+                    {
+                        playerAnimator.SetBool("Running", false);
+                        playerAnimator.SetBool("Walking", false);
+                    }
+                    break;
+                case PlayerMovementState.Running:
+                    playerAnimator.SetBool("Walking", false);
+                    playerAnimator.SetBool("Running", true);
+                    break;
+            }
+        }
+    }
+
+    public void StopAnimation()
+    {
+        CameraAnimator.SetBool("CameraRunning", false);
+        CameraAnimator.SetBool("Walking", false);
+        CameraAnimator.SetBool("HitGround", false);
+    }
+
+    private IEnumerator AnimatorCoroutine()
+    {
+        CameraAnimator.SetBool("CameraJump", true);
+        yield return new WaitForSeconds(0.1f);
+        CameraAnimator.SetBool("CameraJump", false);
+    }
+
+    private IEnumerator QuickDash()
+    {
+        QuickDashAvailable = true;
+        yield return new WaitForSeconds(0.25f);
+        QuickDashAvailable = false;
+    }
+
+    private IEnumerator FallDamage()
+    {
+        CameraAnimator.SetBool("HitGround", true);
+        yield return new WaitForSeconds(0.1f);
+        CameraAnimator.SetBool("HitGround", false);
+    }
+
+    private IEnumerator DeathCoroutine()
+    {
+        if (!Dead)
+        {
+            CameraAnimator.SetBool("Death", true);
+            playerRigidbody.velocity = Vector3.zero;
+            playerRigidbody.isKinematic = true;
+            Dead = true;
+            UIManager.Instance.FadeInScreen();
+            AudioManager.Instance.BGMAudioSource.Stop();
+            yield return new WaitForSeconds(2f);
+            UIManager.Instance.ForceCall = true;
+        }
+    }
+}
