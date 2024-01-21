@@ -21,13 +21,23 @@ public class PlayerControllerScript : MonoBehaviour
         Carrying
     }
 
+    public enum WeaponState
+    {
+        Melee,
+        Ranged
+    }
+
     public PlayerMovementState CurrentMovementState;
+    public WeaponState CurrentWeaponState;
 
     [Header("Player Variables")]
 
     [SerializeField] private ParticleSystem DashLines;
 
     [SerializeField] public Camera CinemachineCamera;
+
+    [SerializeField] private GameObject RangedWeapon;
+    [SerializeField] private GameObject MeleeWeapon;
 
     [SerializeField] private int playerHealth = 100;
     [SerializeField] private int playerMaxHealth = 100;
@@ -191,6 +201,7 @@ public class PlayerControllerScript : MonoBehaviour
             return;
         }
         Crouch();
+        SwitchWeapons();
         Interact();
         Animation();
         Controls();
@@ -210,6 +221,30 @@ public class PlayerControllerScript : MonoBehaviour
         }
         PhysicsElements();
         Movement();
+    }
+
+    private void SwitchWeapons()
+    {
+        if (!DialogueManagerScript.Instance.InProgress)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                CurrentWeaponState = WeaponState.Melee;
+                MeleeWeapon.SetActive(true);
+                RangedWeapon.SetActive(false);
+                GetComponent<MainAttackScript>().enabled = false;
+                GetComponent<MeleeAttack>().enabled = true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                CurrentWeaponState = WeaponState.Ranged;
+                MeleeWeapon.SetActive(false);
+                RangedWeapon.SetActive(true);
+                GetComponent<MainAttackScript>().enabled = true;
+                GetComponent<MeleeAttack>().enabled = false;
+            }
+        }
     }
 
     private void Interact()

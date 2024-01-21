@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour
     public LayerMask hitMask;
     public LayerMask blockedMask;
 
-    
+    public bool dead;
     public bool InRange = false;
     public bool InLineOfSight;
     public bool CanMove = false;
@@ -182,21 +182,21 @@ public class Enemy : MonoBehaviour
         Health -= (int)Damage;
         BloodParticles.Play();
 
-        if (Health <= 0)
+        if (Health <= 0 && !dead)
         {
+
+            StartCoroutine(DeathCoroutine());
+
             if (ShouldExplode)
             {
                 Explode();
-            }
-            else
-            {
-                StartCoroutine(DeathCoroutine());
             }
         }
     }
 
     private IEnumerator DeathCoroutine()
     {
+        dead = true;
         yield return new WaitForSeconds(1);
         Destroy(gameObject);
     }

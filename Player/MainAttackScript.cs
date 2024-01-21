@@ -43,178 +43,131 @@ public class MainAttackScript : MonoBehaviour
     public float chargeAmount = 0.5f;
     public int amountOfProjectilesPerShot = 10;
 
-    private int amountOfKnivesThrown = 1;
+    private int numberOfBulletsPerShot = 1;
 
     [SerializeField] private float rateOfFire = 0.6f;
     [SerializeField] private int playerAmmo = 12;
     [SerializeField] private float reloadSpeed = 2f;
     [SerializeField] private int playerMaxAmmo = 12;
+    [SerializeField] private int projectileForce = 25;
+
+    public List<GameObject> projectilePool { get; private set; }
 
     void Start()
     {
+        InitializeProjectilePool();
         ammoDisplay.text = playerAmmo.ToString();
         KnifeAudioSource = gameObject.GetComponent<AudioSource>();
         PlayerInstance = PlayerControllerScript.Instance;
-        UnstableMode = true;
-
-        //for (int i = 0; i < ProjectilePoolAmount; i++)
-        //{
-        //    GameObject currentDamageProjectile = Instantiate(UnstableProjectilePrefab, Orientation.position + new Vector3(0, 1.5f, 0), ShootPosition.rotation);
-        //    currentDamageProjectile.GetComponent<MainAttackProjectile>().power = chargeAmount;
-        //    Physics.IgnoreCollision(currentDamageProjectile.GetComponent<Collider>(), GetComponent<Collider>());
-        //    Projectiles.Add(currentDamageProjectile);
-        //    currentDamageProjectile.SetActive(false);
-        //    DontDestroyOnLoad(currentDamageProjectile);
-        //}
     }
 
     void Update()
     {
-        //if (Input.GetMouseButtonDown(1) && !UnstableMode)
-        //{
-        //    UnstableMode = true;
-        //}
-        //else if (Input.GetMouseButtonDown(1) && UnstableMode)
-        //{
-        //    UnstableMode = false;
-        //}
+        if (Input.GetMouseButton(0))
+        {
+            firing = true;
+        }
+        else
+        {
+            firing = false;
+        }
 
         ShootPosition.transform.rotation = Orientation.transform.rotation;
 
         PrimaryFire();
 
-        //CheckReload();
+        CheckReload();
+    }
+
+    private void InitializeProjectilePool()
+    {
+        projectilePool = new List<GameObject>();
+
+        for (int i = 0; i < numberOfBulletsPerShot * 4; i++)
+        {
+            GameObject projectile = Instantiate(UnstableProjectilePrefab, gameObject.transform.position, gameObject.transform.rotation);
+            DontDestroyOnLoad(projectile);
+            projectile.SetActive(false);
+            projectilePool.Add(projectile);
+        }
     }
 
     private void PrimaryFire()
     {
-        if (Input.GetKeyDown(KeyCode.F) && !firing)
+        if (Input.GetMouseButtonDown(0) && canFire)
         {
-            firing = true;
             PlayerControllerScript.Instance.casting = true;
-            StartCoroutine(ChannelMagic());
-            //cameraAnimator.SetBool("ExpelMagic", true);
+            StartCoroutine(FireShotgun());
         }
-
-        //if (Input.GetButtonUp("Fire2"))
-        //{
-        //    firing = false;
-        //    StopCoroutine(ChannelMagic());
-        //    //cameraAnimator.SetBool("ExpelMagic", false);
-        //}
     }
 
-    //private void SecondaryFire()
-    //{
-    //    if (Input.GetButton("Fire1") && canFire && playerAmmo > 0 && !reloading)
-    //    {
-    //        if (!secondaryFire)
-    //        {
-    //            fullyCharged = false;
-    //            PlayerControllerScript.Instance.casting = true;
-    //            playerAnimator.SetBool("ChargingKnives", true);
-    //            //KnifeAudioSource.PlayOneShot(ChargeMagic, 0.3f);
-    //            chargeAmount = 0.5f;
-    //            secondaryFire = true;
-    //        }
-
-    //        if (chargeAmount < 2)
-    //        {
-    //            //PlayerControllerScript.Instance.playerStamina--;
-    //            chargeAmount += 0.005f;
-    //        }
-    //        else
-    //        {
-    //            if (fullyCharged == false)
-    //            {
-    //                KnifeAudioSource.PlayOneShot(FullyCharged);
-    //                fullyCharged = true;
-    //            }
-    //        }
-    //    }
-
-    //    if (Input.GetButtonUp("Fire1") && secondaryFire)
-    //    {
-    //        playerAnimator.SetBool("ChargingKnives", false);
-    //        KnifeAudioSource.Stop();
-    //        secondaryFire = false;
-    //        if (playerAmmo >= 0)
-    //        {
-    //            ammoDisplay.text = playerAmmo.ToString();
-    //        }
-    //        playerAnimator.SetBool("ChargingKnives", false);
-    //        playerAnimator.SetBool("ReleasingKnives", true);
-
-    //        StartCoroutine(DelayedLoopCoroutine());
-    //        PlayerControllerScript.Instance.casting = false;
-
-    //        if (!cooldownRoutineStarted)
-    //        {
-    //            StartCoroutine(GrenadeCoolDown());
-    //            cooldownRoutineStarted = true;
-    //        }
-    //    }
-    //}
-
-    private IEnumerator DelayedLoopCoroutine()
+    private IEnumerator FireShotgun()
     {
-        yield return new WaitForSeconds(1.0f);
-
-        for (int i = 0; i < amountOfKnivesThrown; i++)
+        while (firing)
         {
+            canFire = false;
             AudioManager.Instance.PlaySound(AudioManager.Instance.ReleaseEnergy, 1.0f);
-            GameObject currentDamageProjectile = Instantiate(UnstableProjectilePrefab, Orientation.position + new Vector3(0, 1.5f, 0), ShootPosition.rotation);
-            currentDamageProjectile.GetComponent<MainAttackProjectile>().power = 1;
-            currentDamageProjectile.GetComponent<MainAttackProjectile>().SetRayCast();
-            Physics.IgnoreCollision(currentDamageProjectile.GetComponent<Collider>(), GetComponent<Collider>());
-            PlayerControllerScript.Instance.casting = false;
-            yield return new WaitForSeconds(0.1f);
+
+            playerAmmo--;
+
+            for (int i = 0; i < amountOfProjectilesPerShot; i++)
+            {
+                GameObject currentProjectile = GetPooledProjectile();
+
+                currentProjectile.GetComponent<MainAttackProjectile>().Activate();
+                currentProjectile.transform.position = ShootPosition.transform.position + new Vector3(0, 2f, 0);
+                currentProjectile.transform.rotation = ShootPosition.transform.rotation;
+
+                currentProjectile.GetComponent<MainAttackProjectile>().power = projectileForce;
+                currentProjectile.GetComponent<MainAttackProjectile>().SetRayCast();
+                Physics.IgnoreCollision(currentProjectile.GetComponent<Collider>(), GetComponent<Collider>());
+                PlayerControllerScript.Instance.casting = false;
+            }
+
+            yield return new WaitForSeconds(rateOfFire * 3);
+            canFire = true;
         }
-
-        yield return new WaitForSeconds(0.5f);
-        firing = false;
-        playerAnimator.SetBool("ReleasingKnives", false);
     }
 
-    private IEnumerator ChannelMagic()
+    private GameObject GetPooledProjectile()
     {
-        AudioManager.Instance.PlaySound(AudioManager.Instance.ChargeEnergy, 1.0f);
-        chargeAmount = 1.0f;
-        StartCoroutine(DelayedLoopCoroutine());
+        // WHY IS THIS CAUSING PROBLEMS
 
-        yield return new WaitForSeconds(0.5f);
+        //for (int i = 0; i < projectilePool.Count; i++)
+        //{
+        //    if (!projectilePool[i].activeInHierarchy)
+        //    {
+        //        return projectilePool[i];
+        //    }
+        //}
+
+        GameObject newProjectile = Instantiate(UnstableProjectilePrefab);
+        newProjectile.SetActive(false);
+        projectilePool.Add(newProjectile);
+
+        return newProjectile;
     }
 
-    //private void CheckReload()
-    //{
-    //    if (playerAmmo <= 0 && reloading == false && !secondaryFire || Input.GetKeyDown(KeyCode.R) && reloading == false && playerAmmo < playerMaxAmmo && !secondaryFire)
-    //    {
-    //        reloading = true;
-    //        canFire = false;
-    //        StartCoroutine(ReloadWeapon());
-    //        return;
-    //    }
-    //}
+    private void CheckReload()
+    {
+        if (playerAmmo <= 0 && reloading == false && !secondaryFire || Input.GetKeyDown(KeyCode.R) && reloading == false && playerAmmo < playerMaxAmmo && !secondaryFire)
+        {
+            reloading = true;
+            canFire = false;
+            StartCoroutine(ReloadWeapon());
+            return;
+        }
+    }
 
-    //private IEnumerator ReloadWeapon()
-    //{
-    //    playerAnimator.SetBool("ThrowingKnives", false);
-    //    canFire = false;
-    //    yield return new WaitForSeconds(0.4f);
-    //    KnifeAudioSource.PlayOneShot(CrossbowReload, 0.6f);
-    //    yield return new WaitForSeconds(reloadSpeed - 0.1f);
-    //    playerAmmo = playerMaxAmmo;
-    //    ammoDisplay.text = playerAmmo.ToString();
-    //    canFire = true;
-    //    reloading = false;
-    //}
-
-    //private IEnumerator GrenadeCoolDown()
-    //{
-    //    canFire = false;
-    //    chargeAmount = 0.1f;
-    //    yield return new WaitForSeconds(rateOfFire);
-    //    cooldownRoutineStarted = false;
-    //    canFire = true;
-    //}
+    private IEnumerator ReloadWeapon()
+    {
+        canFire = false;
+        yield return new WaitForSeconds(0.4f);
+        KnifeAudioSource.PlayOneShot(CrossbowReload, 0.6f);
+        yield return new WaitForSeconds(reloadSpeed - 0.1f);
+        playerAmmo = playerMaxAmmo;
+        ammoDisplay.text = playerAmmo.ToString();
+        canFire = true;
+        reloading = false;
+    }
 }

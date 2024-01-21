@@ -29,7 +29,7 @@ public class Chest : MonoBehaviour
 
             if (Natia.Instance != null)
             {
-                if (!Natia.Instance.Dead && !DialogueManagerScript.Instance.InProgress)
+                if (!Natia.Instance.Dead && !DialogueManagerScript.Instance.InProgress && Natia.Instance.CurrentEnemyState != Natia.EnemyState.Waiting)
                 {
                     DialogueManagerScript.Instance.NatiaLockpicking();
                     Natia.Instance.CanMove = true;

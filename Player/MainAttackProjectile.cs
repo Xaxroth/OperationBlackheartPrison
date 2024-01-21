@@ -50,7 +50,7 @@ public class MainAttackProjectile : MonoBehaviour
         originalIntensity = ProjectilePointLight.intensity;
         player = GameObject.FindGameObjectWithTag("Player");
         ProjectileRigidbody = gameObject.GetComponent<Rigidbody>();
-        Destroy(gameObject, 5.0f);
+        DontDestroyOnLoad(this);
     }
 
     public void Activate()
@@ -61,7 +61,7 @@ public class MainAttackProjectile : MonoBehaviour
         fuseStarted = false;
         ProjectileRigidbody.isKinematic = false;
         gameObject.SetActive(true);
-        //Invoke("Deactivate", 5.0f);
+        Invoke("Deactivate", 1.0f);
     }
 
     public void Deactivate()
@@ -71,7 +71,9 @@ public class MainAttackProjectile : MonoBehaviour
 
     public void SetRayCast()
     {
-        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Vector3 screenCenter = new Vector3(0.5f * Screen.width, 0.5f * Screen.height, 0);
+
+        Ray ray = Camera.main.ScreenPointToRay(screenCenter);
         RaycastHit hit;
         Vector3 targetPoint;
 
@@ -86,16 +88,15 @@ public class MainAttackProjectile : MonoBehaviour
 
         direction = targetPoint - transform.position;
 
-        // Simulate shotgun spread in both x and y axes
-        //float spreadAngleX = Random.Range(-spreadAngleRange, spreadAngleRange);
-        //float spreadAngleY = Random.Range(-spreadAngleRange, spreadAngleRange);
+        Debug.DrawRay(ray.origin, direction.normalized * (hit.distance > 10f ? hit.distance : 40), Color.red, 2f);
 
-        //Quaternion spreadRotation = Quaternion.Euler(0, 0, 0f);
-        //Vector3 spreadDirection = spreadRotation * direction;
+        float spreadAngleX = Random.Range(-spreadAngleRange, spreadAngleRange);
+        float spreadAngleY = Random.Range(-spreadAngleRange, spreadAngleRange);
 
-        //transform.forward = spreadDirection;
+        Quaternion spreadRotation = Quaternion.Euler(spreadAngleX, spreadAngleY, 0f);
+        Vector3 spreadDirection = spreadRotation * direction.normalized;
 
-        ProjectileRigidbody.AddForce(direction * projectileSpeed * power, ForceMode.Impulse);
+        ProjectileRigidbody.AddForce(spreadDirection * projectileSpeed * power, ForceMode.Impulse);
     }
 
     void Update()
@@ -105,12 +106,6 @@ public class MainAttackProjectile : MonoBehaviour
             onGround = Physics.Raycast(transform.position, Vector3.down, grenadeHeight / 10f);
             ProjectileRigidbody.AddForce(fallDirection * fallSpeed * 0.3f, ForceMode.Impulse);
         }
-
-        //if (onGround == true && fuseStarted == false)
-        //{
-        //    Destroy(arrowHead);
-        //    bouncer = true;
-        //}
     }
 
     private void OnTriggerEnter(Collider other)
@@ -191,26 +186,6 @@ public class MainAttackProjectile : MonoBehaviour
 
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.tag == "Player")
-        {
-            inPlayerRange = true;
-        }
-        else
-        {
-            inPlayerRange = false;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.tag == "Player")
-        {
-            inPlayerRange = false;
-        }
-    }
-
     IEnumerator FadeOut()
     {
         float elapsedTime = 0f;
@@ -267,7 +242,7 @@ public class MainAttackProjectile : MonoBehaviour
             }
 
             GameObject explosion = Instantiate(ExplosionPrefab, transform.position, transform.rotation);
-            //Deactivate();
+            Deactivate();
         }
 
     }
