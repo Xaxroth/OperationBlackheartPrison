@@ -14,11 +14,12 @@ public class MainAttackProjectile : MonoBehaviour
     [SerializeField] private GameObject arrowExplosionPrefab;
     [SerializeField] public GameObject arrowHead;
     [SerializeField] public GameObject player;
-    [SerializeField] public Vector3 fallDirection = new Vector3(0, -2, 0);
     [SerializeField] public GameObject BloodSplat;
+    [SerializeField] public Vector3 fallDirection = new Vector3(0, -2, 0);
     [SerializeField] public Light ProjectilePointLight;
-    [SerializeField] private float fadeDuration = 1.0f;
     [SerializeField] public Vector3 direction;
+    [SerializeField] private float fadeDuration = 1.0f;
+    [SerializeField] private LayerMask layerMask;
     public static int IgnoreRaycastLayer;
 
     [Header("Conditions")]
@@ -33,16 +34,17 @@ public class MainAttackProjectile : MonoBehaviour
     public bool shouldFall = false;
 
     [Header("Stats")]
+    [SerializeField] private int Damage = 10;
     [SerializeField] private int grenadeDamage = 10;
+    [SerializeField] private float projectileSpeed = 50f;
     public float LifeTime = 5f;
     public float power = 0.5f;
     private float grenadeHeight = 2;
     private float fallSpeed = 0.1f;
     private float fuseTimer = 0.3f;
-    [SerializeField] private float projectileSpeed = 50f;
     private float explosionRadius = 8;
     private float explosionForce = 0;
-    public float spreadAngleRange = 3f; // Adjust this value to control the spread angle
+    public float spreadAngleRange = 3f;
     public float originalIntensity = 1f;
 
     void Start()
@@ -88,13 +90,37 @@ public class MainAttackProjectile : MonoBehaviour
 
         direction = targetPoint - transform.position;
 
-        Debug.DrawRay(ray.origin, direction.normalized * (hit.distance > 10f ? hit.distance : 40), Color.red, 2f);
+        Debug.DrawRay(ray.origin, direction.normalized * (hit.distance > 10f ? hit.distance : 80), Color.red, 2f);
 
         float spreadAngleX = Random.Range(-spreadAngleRange, spreadAngleRange);
         float spreadAngleY = Random.Range(-spreadAngleRange, spreadAngleRange);
 
         Quaternion spreadRotation = Quaternion.Euler(spreadAngleX, spreadAngleY, 0f);
         Vector3 spreadDirection = spreadRotation * direction.normalized;
+
+        Ray spreadRay = new Ray(transform.position, spreadDirection);
+        RaycastHit spreadHit;
+
+        if (Physics.Raycast(spreadRay, out spreadHit, layerMask))
+        {
+            if (spreadHit.collider.gameObject.CompareTag("Enemy"))
+            {
+                //ProjectileRigidbody.isKinematic = true;
+                //ProjectileParticleSystem.Stop();
+                //StartCoroutine(FadeOut());
+                GameObject explosion = Instantiate(ExplosionPrefab, spreadHit.collider.gameObject.transform.position, transform.rotation);
+                //Explosion();
+
+                Enemy spreadDamageable = spreadHit.collider.gameObject.GetComponent<Enemy>();
+
+                if (spreadDamageable != null)
+                {
+                    spreadDamageable.TakeDamage(Damage, true);
+                }
+            }
+        }
+
+        Debug.DrawRay(ray.origin, spreadDirection.normalized * (hit.distance > 10f ? hit.distance : 80), Color.red, 2f);
 
         ProjectileRigidbody.AddForce(spreadDirection * projectileSpeed * power, ForceMode.Impulse);
     }
@@ -108,83 +134,14 @@ public class MainAttackProjectile : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    void Explosion()
     {
-        if (other.CompareTag("Enemy") && detonationOccured == false || other.CompareTag("Natia") && detonationOccured == false)
-        {
-            ProjectileRigidbody.isKinematic = true;
-            ProjectileParticleSystem.Stop();
-            StartCoroutine(FadeOut());
-            GameObject explosion = Instantiate(ExplosionPrefab, transform.position, transform.rotation);
-            Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
-
-            foreach (Collider near in colliders)
-            {
-
-                Rigidbody targetRigidbodies = near.GetComponent<Rigidbody>();
-
-                if (targetRigidbodies != null && targetRigidbodies.gameObject.tag != "Projectile")
-                {
-                    targetRigidbodies.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1f, ForceMode.Impulse);
-                }
-            }
-
-            var hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
-            foreach (var hitCollider in hitColliders)
-            {
-                var enemy = hitCollider.GetComponent<Enemy>();
-                var friendly = hitCollider.GetComponent<Natia>();
-                if (enemy)
-                {
-                    var closestPoint = hitCollider.ClosestPoint(transform.position);
-                    var distance = Vector3.Distance(closestPoint, transform.position);
-
-                    var damage = Mathf.InverseLerp(explosionRadius, 0, distance);
-
-                    if (enemy)
-                    {
-                        enemy.TakeDamage(grenadeDamage, true);
-                    }
-                }
-
-                if (friendly)
-                {
-                    var closestPoint = hitCollider.ClosestPoint(transform.position);
-                    var distance = Vector3.Distance(closestPoint, transform.position);
-
-                    var damage = Mathf.InverseLerp(explosionRadius, 0, distance);
-
-                    friendly.TakeDamage(grenadeDamage);
-                }
-            }
-        }
-
-        if (other.tag == "Environment" && fuseStarted == false)
-        {
-            ProjectileRigidbody.isKinematic = true;
-            ProjectileParticleSystem.Stop();
-            StartCoroutine(FadeOut());
-            GameObject explosion = Instantiate(ExplosionPrefab, transform.position, transform.rotation);
-            Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
-
-            foreach (Collider near in colliders)
-            {
-                Rigidbody targetRigidbodies = near.GetComponent<Rigidbody>();
-
-                if (targetRigidbodies != null && targetRigidbodies.gameObject.tag != "Projectile")
-                {
-                    targetRigidbodies.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1f, ForceMode.Impulse);
-                }
-            }
-            fuseStarted = true;
-        }
-
-        if (other.tag == "Player")
-        {
-            inPlayerRange = true;
-        }
-
+        ProjectileRigidbody.isKinematic = true;
+        ProjectileParticleSystem.Stop();
+        StartCoroutine(FadeOut());
+        GameObject explosion = Instantiate(ExplosionPrefab, transform.position, transform.rotation);
     }
+
 
     IEnumerator FadeOut()
     {
@@ -205,45 +162,126 @@ public class MainAttackProjectile : MonoBehaviour
         ProjectilePointLight.intensity = 0f;
     }
 
-    public IEnumerator DetonationSequence()
-    {
-        if (fuseStarted == false)
-        {
-            fuseStarted = true;
+    #region DEPRECATED
 
-            yield return new WaitForSeconds(fuseTimer);
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.CompareTag("Enemy") && detonationOccured == false || other.CompareTag("Natia") && detonationOccured == false)
+    //    {
+    //        ProjectileRigidbody.isKinematic = true;
+    //        ProjectileParticleSystem.Stop();
+    //        StartCoroutine(FadeOut());
+    //        GameObject explosion = Instantiate(ExplosionPrefab, transform.position, transform.rotation);
+    //        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
 
-            Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
+    //        foreach (Collider near in colliders)
+    //        {
 
-            foreach (Collider near in colliders)
-            {
-                Rigidbody targetRigidbodies = near.GetComponent<Rigidbody>();
+    //            Rigidbody targetRigidbodies = near.GetComponent<Rigidbody>();
 
-                if (targetRigidbodies != null && targetRigidbodies.gameObject.tag != "Projectile")
-                {
-                    targetRigidbodies.AddExplosionForce(explosionForce / 2, transform.position, explosionRadius, 1f, ForceMode.Impulse);
-                }
-            }
+    //            if (targetRigidbodies != null && targetRigidbodies.gameObject.tag != "Projectile")
+    //            {
+    //                targetRigidbodies.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1f, ForceMode.Impulse);
+    //            }
+    //        }
 
-            var hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
-            foreach (var hitCollider in hitColliders)
-            {
-                var enemy = hitCollider.GetComponent<EnemyClass>();
-                if (enemy)
-                {
-                    var closestPoint = hitCollider.ClosestPoint(transform.position);
-                    var distance = Vector3.Distance(closestPoint, transform.position);
+    //        var hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
+    //        foreach (var hitCollider in hitColliders)
+    //        {
+    //            var enemy = hitCollider.GetComponent<Enemy>();
+    //            var friendly = hitCollider.GetComponent<Natia>();
+    //            if (enemy)
+    //            {
+    //                var closestPoint = hitCollider.ClosestPoint(transform.position);
+    //                var distance = Vector3.Distance(closestPoint, transform.position);
 
-                    var damage = Mathf.InverseLerp(explosionRadius, 0, distance);
+    //                var damage = Mathf.InverseLerp(explosionRadius, 0, distance);
 
-                    enemy.TakeDamage(grenadeDamage / 3);
+    //                if (enemy)
+    //                {
+    //                    enemy.TakeDamage(grenadeDamage, true);
+    //                }
+    //            }
 
-                }
-            }
+    //            if (friendly)
+    //            {
+    //                var closestPoint = hitCollider.ClosestPoint(transform.position);
+    //                var distance = Vector3.Distance(closestPoint, transform.position);
 
-            GameObject explosion = Instantiate(ExplosionPrefab, transform.position, transform.rotation);
-            Deactivate();
-        }
+    //                var damage = Mathf.InverseLerp(explosionRadius, 0, distance);
 
-    }
+    //                friendly.TakeDamage(grenadeDamage);
+    //            }
+    //        }
+    //    }
+
+    //    if (other.tag == "Environment" && fuseStarted == false)
+    //    {
+    //        ProjectileRigidbody.isKinematic = true;
+    //        ProjectileParticleSystem.Stop();
+    //        StartCoroutine(FadeOut());
+    //        GameObject explosion = Instantiate(ExplosionPrefab, transform.position, transform.rotation);
+    //        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
+
+    //        foreach (Collider near in colliders)
+    //        {
+    //            Rigidbody targetRigidbodies = near.GetComponent<Rigidbody>();
+
+    //            if (targetRigidbodies != null && targetRigidbodies.gameObject.tag != "Projectile")
+    //            {
+    //                targetRigidbodies.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1f, ForceMode.Impulse);
+    //            }
+    //        }
+    //        fuseStarted = true;
+    //    }
+
+    //    if (other.tag == "Player")
+    //    {
+    //        inPlayerRange = true;
+    //    }
+
+    //}
+    //public IEnumerator DetonationSequence()
+    //{
+    //    if (fuseStarted == false)
+    //    {
+    //        fuseStarted = true;
+
+    //        yield return new WaitForSeconds(fuseTimer);
+
+    //        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
+
+    //        foreach (Collider near in colliders)
+    //        {
+    //            Rigidbody targetRigidbodies = near.GetComponent<Rigidbody>();
+
+    //            if (targetRigidbodies != null && targetRigidbodies.gameObject.tag != "Projectile")
+    //            {
+    //                targetRigidbodies.AddExplosionForce(explosionForce / 2, transform.position, explosionRadius, 1f, ForceMode.Impulse);
+    //            }
+    //        }
+
+    //        var hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
+    //        foreach (var hitCollider in hitColliders)
+    //        {
+    //            var enemy = hitCollider.GetComponent<EnemyClass>();
+    //            if (enemy)
+    //            {
+    //                var closestPoint = hitCollider.ClosestPoint(transform.position);
+    //                var distance = Vector3.Distance(closestPoint, transform.position);
+
+    //                var damage = Mathf.InverseLerp(explosionRadius, 0, distance);
+
+    //                enemy.TakeDamage(grenadeDamage / 3);
+
+    //            }
+    //        }
+
+    //        GameObject explosion = Instantiate(ExplosionPrefab, transform.position, transform.rotation);
+    //        Deactivate();
+    //    }
+
+    //}
+
+    #endregion
 }

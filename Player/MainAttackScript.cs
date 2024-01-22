@@ -17,6 +17,9 @@ public class MainAttackScript : MonoBehaviour
     [SerializeField] private GameObject DamageProjectilePrefab;
     [SerializeField] private GameObject UnstableProjectilePrefab;
 
+    [SerializeField]
+    private GameObject ShootEffect;
+
     [SerializeField] private GameObject DamageProjectileCosmetics;
 
     [SerializeField] public Transform ShootPosition;
@@ -94,7 +97,7 @@ public class MainAttackScript : MonoBehaviour
 
     private void PrimaryFire()
     {
-        if (Input.GetMouseButtonDown(0) && canFire)
+        if (Input.GetMouseButtonDown(0) && canFire )
         {
             PlayerControllerScript.Instance.casting = true;
             StartCoroutine(FireShotgun());
@@ -103,9 +106,10 @@ public class MainAttackScript : MonoBehaviour
 
     private IEnumerator FireShotgun()
     {
-        while (firing)
+        while (firing && playerAmmo > 0)
         {
             canFire = false;
+            StartCoroutine(ShotgunVFX());
             AudioManager.Instance.PlaySound(AudioManager.Instance.ReleaseEnergy, 1.0f);
 
             playerAmmo--;
@@ -115,7 +119,7 @@ public class MainAttackScript : MonoBehaviour
                 GameObject currentProjectile = GetPooledProjectile();
 
                 currentProjectile.GetComponent<MainAttackProjectile>().Activate();
-                currentProjectile.transform.position = ShootPosition.transform.position + new Vector3(0, 2f, 0);
+                currentProjectile.transform.position = ShootPosition.transform.position + new Vector3(0, 3f, 0);
                 currentProjectile.transform.rotation = ShootPosition.transform.rotation;
 
                 currentProjectile.GetComponent<MainAttackProjectile>().power = projectileForce;
@@ -124,9 +128,16 @@ public class MainAttackScript : MonoBehaviour
                 PlayerControllerScript.Instance.casting = false;
             }
 
-            yield return new WaitForSeconds(rateOfFire * 3);
+            yield return new WaitForSeconds(rateOfFire);
             canFire = true;
         }
+    }
+
+    private IEnumerator ShotgunVFX()
+    {
+        ShootEffect.SetActive(true);
+        yield return new WaitForSeconds(0.3f);
+        ShootEffect.SetActive(false);
     }
 
     private GameObject GetPooledProjectile()
@@ -152,8 +163,6 @@ public class MainAttackScript : MonoBehaviour
     {
         if (playerAmmo <= 0 && reloading == false && !secondaryFire || Input.GetKeyDown(KeyCode.R) && reloading == false && playerAmmo < playerMaxAmmo && !secondaryFire)
         {
-            reloading = true;
-            canFire = false;
             StartCoroutine(ReloadWeapon());
             return;
         }
@@ -161,10 +170,11 @@ public class MainAttackScript : MonoBehaviour
 
     private IEnumerator ReloadWeapon()
     {
-        canFire = false;
-        yield return new WaitForSeconds(0.4f);
         KnifeAudioSource.PlayOneShot(CrossbowReload, 0.6f);
-        yield return new WaitForSeconds(reloadSpeed - 0.1f);
+        canFire = false;
+        reloading = true;
+        firing = false;
+        yield return new WaitForSeconds(reloadSpeed);
         playerAmmo = playerMaxAmmo;
         ammoDisplay.text = playerAmmo.ToString();
         canFire = true;

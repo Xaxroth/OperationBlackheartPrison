@@ -87,7 +87,7 @@ public class PlayerControllerScript : MonoBehaviour
     [SerializeField] private float crouchHeight = 0.5f;
     [SerializeField] private float normalHeight = 3f;
 
-    private Block PlayerBlock;
+    //private Block PlayerBlock;
 
     KeyCode ButtonPressed;
     KeyCode previousInput = KeyCode.None;
@@ -158,23 +158,8 @@ public class PlayerControllerScript : MonoBehaviour
     public float MaxSlopeAngle;
     private RaycastHit slopeHit;
 
-    private bool OnSlope()
-    {
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f))
-        {
-            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            return angle < MaxSlopeAngle && angle != 0;
-        }
-        return false;
-    }
-    private Vector3 GetSlopeMoveDirection()
-    {
-        return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
-    }
     void Start()
     {
-        normalPlayerSpeed = playerSpeed;
-
         if (Instance == null)
         {
             Instance = this;
@@ -184,13 +169,14 @@ public class PlayerControllerScript : MonoBehaviour
         PlayerAudioSource = gameObject.GetComponent<AudioSource>();
         playerRigidbody = GetComponentInChildren<Rigidbody>();
         playerCollider = gameObject.GetComponent<CapsuleCollider>();
-        PlayerBlock = GetComponent<Block>();
+
         playerRigidbody.freezeRotation = true;
         playerRigidbody.drag = playerGroundDrag;
 
         playerHealthBar.SetMaxHealth(playerMaxHealth);
         playerHealthBar.SetMaxStamina(playerMaxStamina);
 
+        normalPlayerSpeed = playerSpeed;
     }
 
     void Update()
@@ -381,7 +367,19 @@ public class PlayerControllerScript : MonoBehaviour
         }
 
     }
-
+    private bool OnSlope()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < MaxSlopeAngle && angle != 0;
+        }
+        return false;
+    }
+    private Vector3 GetSlopeMoveDirection()
+    {
+        return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
+    }
 
     public void UIElements()
     {
@@ -714,27 +712,24 @@ public class PlayerControllerScript : MonoBehaviour
 
     public void Animation()
     {
-        if (!PlayerBlock.blocking)
+        switch (CurrentMovementState)
         {
-            switch (CurrentMovementState)
-            {
-                case PlayerMovementState.Walking:
-                    if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
-                    {
-                        playerAnimator.SetBool("Running", false);
-                        playerAnimator.SetBool("Walking", true);
-                    }
-                    else
-                    {
-                        playerAnimator.SetBool("Running", false);
-                        playerAnimator.SetBool("Walking", false);
-                    }
-                    break;
-                case PlayerMovementState.Running:
+            case PlayerMovementState.Walking:
+                if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+                {
+                    playerAnimator.SetBool("Running", false);
+                    playerAnimator.SetBool("Walking", true);
+                }
+                else
+                {
+                    playerAnimator.SetBool("Running", false);
                     playerAnimator.SetBool("Walking", false);
-                    playerAnimator.SetBool("Running", true);
-                    break;
-            }
+                }
+                break;
+            case PlayerMovementState.Running:
+                playerAnimator.SetBool("Walking", false);
+                playerAnimator.SetBool("Running", true);
+                break;
         }
     }
 
