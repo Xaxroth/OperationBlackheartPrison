@@ -5,62 +5,36 @@ using UnityEngine.UI;
 
 public class MainAttackScript : MonoBehaviour
 {
-    [SerializeField] private AudioSource KnifeAudioSource;
-    [SerializeField] private AudioClip CrossbowReload;
-    [SerializeField] private AudioClip ChargeMagic;
-    [SerializeField] private AudioClip FullyCharged;
-    [SerializeField] private AudioClip ReleaseMagic;
-    [SerializeField] private AudioClip ChannelMagicSound;
-    [SerializeField] private Animator playerAnimator;
-    [SerializeField] private Animator cameraAnimator;
+    private PlayerControllerScript PlayerInstance;
+    public List<GameObject> projectilePool { get; private set; }
+    private List<GameObject> Projectiles = new List<GameObject>();
+    [SerializeField] private int ProjectilePoolAmount = 30;
 
-    [SerializeField] private GameObject DamageProjectilePrefab;
-    [SerializeField] private GameObject UnstableProjectilePrefab;
-
-    [SerializeField]
-    private GameObject ShootEffect;
-
-    [SerializeField] private GameObject DamageProjectileCosmetics;
-
-    [SerializeField] public Transform ShootPosition;
-    [SerializeField] private Transform PlayerRotation;
-
+    [SerializeField] private AudioSource AudioSource;
+    [SerializeField] private AudioClip Reload;
+    [SerializeField] private GameObject ProjectilePrefab;
+    [SerializeField] private GameObject ShootEffect;
+    [SerializeField] private Transform ShootPosition;
     [SerializeField] private Text ammoDisplay;
     [SerializeField] private Transform Orientation;
 
-    private PlayerControllerScript PlayerInstance;
-
-    private List<GameObject> Projectiles = new List<GameObject>();
-
-    [SerializeField] private int ProjectilePoolAmount = 30;
-    private bool UnstableMode = false;
     private bool reloading = false;
     private bool canFire = true;
-    private bool toggleJumpMode = false;
-    private bool cooldownRoutineStarted = false;
-    private bool secondaryFire = false;
 
-    private bool firing = false;
-
-    private bool fullyCharged = false;
-    public float chargeAmount = 0.5f;
-    public int amountOfProjectilesPerShot = 10;
-
-    private int numberOfBulletsPerShot = 1;
-
+    [SerializeField] private bool firing = false;
+    [SerializeField] private int amountOfProjectilesPerShot = 10;
+    [SerializeField] private int numberOfBulletsPerShot = 1;
     [SerializeField] private float rateOfFire = 0.6f;
     [SerializeField] private int playerAmmo = 12;
     [SerializeField] private float reloadSpeed = 2f;
     [SerializeField] private int playerMaxAmmo = 12;
     [SerializeField] private int projectileForce = 25;
 
-    public List<GameObject> projectilePool { get; private set; }
-
     void Start()
     {
         InitializeProjectilePool();
         ammoDisplay.text = playerAmmo.ToString();
-        KnifeAudioSource = gameObject.GetComponent<AudioSource>();
+        AudioSource = gameObject.GetComponent<AudioSource>();
         PlayerInstance = PlayerControllerScript.Instance;
     }
 
@@ -88,7 +62,7 @@ public class MainAttackScript : MonoBehaviour
 
         for (int i = 0; i < numberOfBulletsPerShot * 4; i++)
         {
-            GameObject projectile = Instantiate(UnstableProjectilePrefab, gameObject.transform.position, gameObject.transform.rotation);
+            GameObject projectile = Instantiate(ProjectilePrefab, gameObject.transform.position, gameObject.transform.rotation);
             DontDestroyOnLoad(projectile);
             projectile.SetActive(false);
             projectilePool.Add(projectile);
@@ -152,7 +126,7 @@ public class MainAttackScript : MonoBehaviour
         //    }
         //}
 
-        GameObject newProjectile = Instantiate(UnstableProjectilePrefab);
+        GameObject newProjectile = Instantiate(ProjectilePrefab);
         newProjectile.SetActive(false);
         projectilePool.Add(newProjectile);
 
@@ -161,7 +135,7 @@ public class MainAttackScript : MonoBehaviour
 
     private void CheckReload()
     {
-        if (playerAmmo <= 0 && reloading == false && !secondaryFire || Input.GetKeyDown(KeyCode.R) && reloading == false && playerAmmo < playerMaxAmmo && !secondaryFire)
+        if (playerAmmo <= 0 && reloading == false || Input.GetKeyDown(KeyCode.R) && reloading == false && playerAmmo < playerMaxAmmo)
         {
             StartCoroutine(ReloadWeapon());
             return;
@@ -170,7 +144,7 @@ public class MainAttackScript : MonoBehaviour
 
     private IEnumerator ReloadWeapon()
     {
-        KnifeAudioSource.PlayOneShot(CrossbowReload, 0.6f);
+        AudioSource.PlayOneShot(Reload, 0.6f);
         canFire = false;
         reloading = true;
         firing = false;
