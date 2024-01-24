@@ -8,15 +8,6 @@ public class Chest : MonoBehaviour
 {
     public bool locked;
 
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-    }
-
     public void OpenChest()
     {
         if (!locked)

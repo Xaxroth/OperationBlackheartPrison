@@ -79,6 +79,8 @@ public class Natia : MonoBehaviour
         HandleNatiaState();
         CheckNatiaAffection();
         IncreaseNatiaAffection();
+        MoveToNewPosition();
+        DistanceCheck();
 
         if (CurrentEnemyState == NatiaState.Waiting)
         {
@@ -86,7 +88,6 @@ public class Natia : MonoBehaviour
             return;
         }
 
-        MoveToNewPosition();
 
         if (PlayerControllerScript.Instance.CurrentMovementState == PlayerControllerScript.PlayerMovementState.Running)
         {
@@ -103,7 +104,6 @@ public class Natia : MonoBehaviour
             transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, 0f);
         }
 
-        DistanceCheck();
     }
 
     void CheckNatiaAffection()

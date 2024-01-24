@@ -606,7 +606,7 @@ public class DialogueManagerScript : MonoBehaviour
                     case 0:
                         break;
                     case 1:
-                        PlayDialogue("I'm Natia. I'm quite capable you'll come to find out, but it would be foolish to go down here without any backup. I just hate the fact that it had to be... you.", 0, null, null, null, null);
+                        PlayDialogue("My name... is Natia. I'm the one who asked The Guild for help. I just hate the fact that it had to be... you. Let's just go.", 0, null, null, null, null);
                         currentDialogueNode = 3;
                         Invoke("Event1", 5.0f);
                         break;

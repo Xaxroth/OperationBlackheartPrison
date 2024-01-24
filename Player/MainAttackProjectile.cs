@@ -9,10 +9,6 @@ public class MainAttackProjectile : MonoBehaviour
     [SerializeField] public Rigidbody ProjectileRigidbody;
     [SerializeField] public ParticleSystem ProjectileParticleSystem;
     [SerializeField] private GameObject ExplosionPrefab;
-    [SerializeField] private GameObject MuzzleFlashPrefab;
-    [SerializeField] private GameObject damageTarget;
-    [SerializeField] private GameObject arrowExplosionPrefab;
-    [SerializeField] public GameObject arrowHead;
     [SerializeField] public GameObject player;
     [SerializeField] public GameObject BloodSplat;
     [SerializeField] public Vector3 fallDirection = new Vector3(0, -2, 0);
@@ -105,11 +101,8 @@ public class MainAttackProjectile : MonoBehaviour
         {
             if (spreadHit.collider.gameObject.CompareTag("Enemy"))
             {
-                //ProjectileRigidbody.isKinematic = true;
-                //ProjectileParticleSystem.Stop();
-                //StartCoroutine(FadeOut());
-                GameObject explosion = Instantiate(ExplosionPrefab, spreadHit.collider.gameObject.transform.position, transform.rotation);
-                //Explosion();
+                GameObject explosion = Instantiate(ExplosionPrefab, spreadHit.point, transform.rotation);
+                Explosion();
 
                 Enemy spreadDamageable = spreadHit.collider.gameObject.GetComponent<Enemy>();
 
