@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,19 +8,21 @@ public class Natia : MonoBehaviour
 {
     public static Natia Instance;
 
-    public Transform player;
-    public Animator enemyAnimator;
-    public GameObject playerCharacter;
-    public AudioSource EnemyAudioSource;
-    public AudioClip BellRinging;
-    public AudioClip EnemyAlert;
-    public GameObject destinationGameObject;
-    public GameObject FireTeleportSpell;
-    public NavMeshAgent EnemyNavMeshAgent;
-    public GameObject enemyBody;
-    public Collider NatiaCollider; 
+    [Header("Emotions")]
 
-    public enum EnemyState
+    [Range(0, 100)]
+    public int Affection;
+    [Range(0, 100)]
+    public int Sanity;
+
+    [Header("Logistics")]
+
+    public Transform PlayerTransform;
+    public AudioSource EnemyAudioSource;
+    public NavMeshAgent EnemyNavMeshAgent;
+    public Collider NatiaCollider;
+
+    public enum NatiaState
     {
         Waiting,
         Following,
@@ -29,7 +32,21 @@ public class Natia : MonoBehaviour
         PickedUp
     }
 
-    public EnemyState CurrentEnemyState;
+    public enum AffectionLevel
+    {
+        Enemy,
+        Rival,
+        Stranger,
+        Acquaintance,
+        Friend,
+        Partner,
+        Lover
+    }
+
+    public event Action<AffectionLevel> OnStateChanged;
+
+    public NatiaState CurrentEnemyState;
+    public AffectionLevel CurrentAffectionLevel;
 
     public Door DoorToOpen;
     public Chest ChestToOpen;
@@ -59,9 +76,11 @@ public class Natia : MonoBehaviour
 
     void Update()
     {
-        NatiaState();
+        HandleNatiaState();
+        CheckNatiaAffection();
+        IncreaseNatiaAffection();
 
-        if (CurrentEnemyState == EnemyState.Waiting)
+        if (CurrentEnemyState == NatiaState.Waiting)
         {
             StandStill();
             return;
@@ -85,6 +104,74 @@ public class Natia : MonoBehaviour
         }
 
         DistanceCheck();
+    }
+
+    void CheckNatiaAffection()
+    {
+        if (Affection <= 20)
+        {
+            SetAffectionLevel(AffectionLevel.Enemy);
+        }
+        else if (Affection <= 35)
+        {
+            SetAffectionLevel(AffectionLevel.Rival);
+        }
+        else if (Affection <= 50)
+        {
+            SetAffectionLevel(AffectionLevel.Stranger);
+        }
+        else if (Affection <= 65)
+        {
+            SetAffectionLevel(AffectionLevel.Acquaintance);
+        }
+        else if (Affection <= 80)
+        {
+            SetAffectionLevel(AffectionLevel.Friend);
+        }
+        else if (Affection < 100)
+        {
+            SetAffectionLevel(AffectionLevel.Partner);
+        }
+        else if (Affection >= 100)
+        {
+            SetAffectionLevel(AffectionLevel.Lover);
+        }
+        else
+        {
+            Debug.LogError("AffectionLevel not valid.");
+        }
+    }
+
+    void SetAffectionLevel(AffectionLevel NewAffectionLevel)
+    {
+        if (NewAffectionLevel != CurrentAffectionLevel)
+        {
+            CurrentAffectionLevel = NewAffectionLevel;
+            CheckStateChange(CurrentAffectionLevel);
+        }
+    }
+
+    void IncreaseNatiaAffection()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Affection++;
+            CheckNatiaAffection();
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            Affection--;
+            CheckNatiaAffection();
+        }
+    }
+    
+    void CheckStateChange(AffectionLevel NewAffectionLevel)
+    {
+        if (DialogueManagerScript.Instance != null)
+        {
+            DialogueManagerScript.Instance.NatiaChangedAffectionDialogue(NewAffectionLevel);
+        }
     }
 
     void DistanceCheck()
@@ -114,31 +201,31 @@ public class Natia : MonoBehaviour
         DistanceCheck();
     }
 
-    void NatiaState()
+    void HandleNatiaState()
     {
         EnemyNavMeshAgent.enabled = true;
 
         switch (CurrentEnemyState)
         {
-            case EnemyState.Waiting:
+            case NatiaState.Waiting:
                 EnemyNavMeshAgent.stoppingDistance = 10;
                 break;
-            case EnemyState.Following:
+            case NatiaState.Following:
                 EnemyNavMeshAgent.stoppingDistance = 8;
                 EnemyNavMeshAgent.destination = PlayerControllerScript.Instance.gameObject.transform.position;
                 break;
-            case EnemyState.Relaxed:
+            case NatiaState.Relaxed:
                 EnemyNavMeshAgent.stoppingDistance = 15;
                 EnemyNavMeshAgent.destination = PlayerControllerScript.Instance.gameObject.transform.position;
                 break;
-            case EnemyState.Cautious:
+            case NatiaState.Cautious:
                 EnemyNavMeshAgent.stoppingDistance = 8;
                 EnemyNavMeshAgent.destination = PlayerControllerScript.Instance.gameObject.transform.position;
                 break;
-            case EnemyState.Lockpicking:
+            case NatiaState.Lockpicking:
                 EnemyNavMeshAgent.stoppingDistance = 3;
                 break;
-            case EnemyState.PickedUp:
+            case NatiaState.PickedUp:
                 NatiaCollider.enabled = false;
                 EnemyNavMeshAgent.stoppingDistance = 0;
                 EnemyNavMeshAgent.enabled = false;
@@ -149,9 +236,9 @@ public class Natia : MonoBehaviour
 
     void MoveToNewPosition()
     {
-        if (CanMove && !OpeningDoor && CurrentEnemyState != EnemyState.PickedUp)
+        if (CanMove && !OpeningDoor && CurrentEnemyState != NatiaState.PickedUp)
         {
-            EnemyNavMeshAgent.destination = player.transform.position;
+            EnemyNavMeshAgent.destination = PlayerTransform.transform.position;
         }
 
         if (OpeningDoor && EnemyNavMeshAgent.remainingDistance < 3f && DoorToOpen != null && !StartedLockpicking)
@@ -182,7 +269,7 @@ public class Natia : MonoBehaviour
             DoorToOpen = null;
         }
 
-        CurrentEnemyState = EnemyState.Following;
+        CurrentEnemyState = NatiaState.Following;
 
         StartedLockpicking = false;
         OpeningDoor = false;

@@ -237,7 +237,7 @@ public class PlayerControllerScript : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (Natia.Instance.CurrentEnemyState != Natia.EnemyState.PickedUp && Natia.Instance != null && Natia.Instance.InConversation)
+            if (Natia.Instance.CurrentEnemyState != Natia.NatiaState.PickedUp && Natia.Instance != null && Natia.Instance.InConversation)
             {
                 Ray ray = new Ray(Orientation.position, Orientation.forward);
                 float raycastDistance = 15;
@@ -253,7 +253,7 @@ public class PlayerControllerScript : MonoBehaviour
                     {
                         DialogueManagerScript.Instance.EndOfDialogue();
                         DialogueManagerScript.Instance.CloseDialogue();
-                        Natia.Instance.CurrentEnemyState = Natia.EnemyState.PickedUp;
+                        Natia.Instance.CurrentEnemyState = Natia.NatiaState.PickedUp;
                         DialogueManagerScript.Instance.NatiaPickedUp();
                     }
 
@@ -268,9 +268,9 @@ public class PlayerControllerScript : MonoBehaviour
                     }
                 }
             }
-            else if (Natia.Instance.CurrentEnemyState == Natia.EnemyState.PickedUp && Natia.Instance != null)
+            else if (Natia.Instance.CurrentEnemyState == Natia.NatiaState.PickedUp && Natia.Instance != null)
             {
-                Natia.Instance.CurrentEnemyState = Natia.EnemyState.Following;
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Following;
                 Natia.Instance.NatiaCollider.enabled = true;
                 Natia.Instance.gameObject.transform.position = gameObject.transform.position + new Vector3(-5, 0, 0);
                 DialogueManagerScript.Instance.NatiaDropped();
@@ -321,7 +321,7 @@ public class PlayerControllerScript : MonoBehaviour
 
         if (Natia.Instance != null)
         {
-            if (Natia.Instance.CurrentEnemyState == Natia.EnemyState.PickedUp)
+            if (Natia.Instance.CurrentEnemyState == Natia.NatiaState.PickedUp)
             {
                 Incapacitated = true;
             }

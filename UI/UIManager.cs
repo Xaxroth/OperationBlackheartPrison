@@ -61,7 +61,7 @@ public class UIManager : MonoBehaviour
 
         if (Natia.Instance != null)
         {
-            if (Natia.Instance.CurrentEnemyState != Natia.EnemyState.Waiting)
+            if (Natia.Instance.CurrentEnemyState != Natia.NatiaState.Waiting)
             {
                 Natia.Instance.EnemyNavMeshAgent.enabled = false;
                 Natia.Instance.gameObject.transform.position = position.position;

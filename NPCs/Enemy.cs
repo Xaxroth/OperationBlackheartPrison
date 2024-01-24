@@ -190,6 +190,7 @@ public class Enemy : MonoBehaviour
             if (ShouldExplode)
             {
                 Explode();
+                Natia.Instance.Affection += 20;
             }
         }
     }

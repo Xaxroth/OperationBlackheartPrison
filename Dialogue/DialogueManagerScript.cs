@@ -16,45 +16,34 @@ public class DialogueManagerScript : MonoBehaviour
 
     [SerializeField] private Image _spriteImage;
 
-    [SerializeField] private Sprite _cultist;
-    [SerializeField] private Sprite _shadow;
-    [SerializeField] private Sprite _creature;
+    [SerializeField] private Sprite _sprite;
+
+    [SerializeField] private bool isClosingDialogue;
 
     public LetterByLetter letterByLetterScript;
 
     public Color NatiaLetterColor;
-    public Color CultistLetterColor;
-    public Color ShadowLetterColor;
+    public Color PlayerLetterColor;
     public Color WarningLetterColor;
 
     public GameObject DialogueBox;
     public GameObject[] choiceBoxesButtons;
     public OptionsLetterByLetter[] choiceBoxes;
 
-    public float dialogueDuration = 21;
-    public float optionSpawn = 21;
-    public float dialogueReopen = 25;
     public float DistanceToNatia = 0f;
+    private float TargetAlpha = 1.0f;
+    private float fadeOutProgress = 0.0f;
+    private float fadeOutThreshold = 0.01f;
 
+    public bool InProgress;
     public bool isInDialogue;
     private bool setEventFunction = false;
     private bool _inProgress;
 
-    public int currentDialogueNode = 1;
+    private int currentDialogueNode = 1;
     public int selectedOption;
     public int choicesToBeDisplayed;
 
-    public float TargetAlpha = 1.0f;
-
-    [SerializeField] public bool InProgress;
-
-    private float fadeOutProgress = 0.0f;
-    private float fadeOutThreshold = 0.01f;
-
-    private int badKarma = 0;
-    private int goodKarma = 0;
-
-    [SerializeField] private bool isClosingDialogue;
 
     private void Awake()
     {
@@ -195,6 +184,54 @@ public class DialogueManagerScript : MonoBehaviour
         }
     }
 
+    public void NatiaChangedAffectionDialogue(Natia.AffectionLevel AffectionLevel)
+    {
+        StartOfDialogue();
+
+        switch (currentDialogueNode)
+        {
+            case 0:
+                Invoke("NatiaPickedUp", 3.0f);
+                SetColor(WarningLetterColor);
+                SetSprite(_sprite);
+
+                switch (AffectionLevel)
+                {
+                    case Natia.AffectionLevel.Enemy:
+                        PlayDialogue("You know what, you bastard? I hate you. I fucking hate you, and I'm going to kill you if it's the last thing I do!", 1, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Rival:
+                        PlayDialogue("You don't make this easy, Halicon. If you keep being an arsehole, I'll fucking leave you here to rot. Got it?!", 1, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Stranger:
+                        PlayDialogue("I'm never asking The Guild for help ever again...", 1, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Acquaintance:
+                        PlayDialogue("I guess you Half-Orcs aren't 'Half-Bad' after all.", 1, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Friend:
+                        PlayDialogue("Maybe I was wrong about you. You're actually quite good at your job. I wish I had gotten someone like you sooner.", 1, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Partner:
+                        PlayDialogue("I'm glad you came, Halicon. Without you, I don't think I would have made it this far. Thank you.", 1, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Lover:
+                        PlayDialogue("Halicon... We need to talk.", 1, null, null, null, null);
+                        break;
+                }
+                break;
+            case 1:
+                EndOfDialogue();
+                CloseDialogue();
+                break;
+        }
+
+        if (panel.activeInHierarchy)
+        {
+            currentDialogueNode++;
+        }
+    }
+
     public void NatiaPickedUp()
     {
         StartOfDialogue();
@@ -204,7 +241,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("NatiaPickedUp", 1.0f);
                 SetColor(WarningLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
                 PlayDialogue("Hey! Let me go!", 1, null, null, null, null);
                 break;
             case 1:
@@ -228,7 +265,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("NatiaDropped", 2.0f);
                 SetColor(WarningLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
                 PlayDialogue("Ouch! I'll kill you for that.", 1, null, null, null, null);
                 break;
             case 1:
@@ -252,7 +289,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("NatiaDied", 5.0f);
                 SetColor(WarningLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
                 PlayDialogue("Natia is dead. Her life snuffed out forever. How you proceed from here is up to you.", 1, null, null, null, null);
                 break;
             case 1:
@@ -275,7 +312,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("NatiaFriendlyFireEvent", 2.0f);
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
 
                 int RandomNumber = Random.Range(1, 8);
 
@@ -326,11 +363,11 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("PlayerTooFarAway", 2.0f);
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
 
                 int RandomNumber = Random.Range(1, 5);
 
-                Natia.Instance.CurrentEnemyState = Natia.EnemyState.Waiting;
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
 
                 switch (RandomNumber)
                 {
@@ -370,7 +407,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("PlayerComesBack", 2.0f);
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
 
                 int RandomNumber = Random.Range(1, 5);
 
@@ -407,7 +444,7 @@ public class DialogueManagerScript : MonoBehaviour
     {
         StartOfDialogue();
 
-        Natia.Instance.CurrentEnemyState = Natia.EnemyState.Lockpicking;
+        Natia.Instance.CurrentEnemyState = Natia.NatiaState.Lockpicking;
 
         switch (currentDialogueNode)
         {
@@ -415,7 +452,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
 
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
 
                 int RandomNumber = Random.Range(1, 4);
 
@@ -475,7 +512,7 @@ public class DialogueManagerScript : MonoBehaviour
             // ENTRY POINT FOR DIALOGUE
             case 0:
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
                 PlayDialogue("You need something? Or are you just wasting our time?", 4, "Can you keep your distance?", "Can you stick closer to me?", "Stay here.", "Let's go.");
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Question1, 1.0f);
 
@@ -490,22 +527,22 @@ public class DialogueManagerScript : MonoBehaviour
                     case 1:
                         PlayDialogue("What did you just...?! Fine. But you better keep an eye out for me.", 0, "[Leave]", null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.KeepDistance, 1.0f);
-                        Natia.Instance.CurrentEnemyState = Natia.EnemyState.Relaxed;
+                        Natia.Instance.CurrentEnemyState = Natia.NatiaState.Relaxed;
                         break;
                     case 2:
                         PlayDialogue("I'll stay as close as I can.", 0, "[Leave]", null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.StayClose, 1.0f);
-                        Natia.Instance.CurrentEnemyState = Natia.EnemyState.Cautious;
+                        Natia.Instance.CurrentEnemyState = Natia.NatiaState.Cautious;
                         break;
                     case 3:
                         PlayDialogue("Alright. I hope you know what you're doing. You better come back for me.", 0, "[Leave]", null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.HoldPosition, 1.0f);
-                        Natia.Instance.CurrentEnemyState = Natia.EnemyState.Waiting;
+                        Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
                         break;
                     case 4:
                         PlayDialogue("Lead the way.", 0, "[Leave]", null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.FollowMe, 1.0f);
-                        Natia.Instance.CurrentEnemyState = Natia.EnemyState.Following;
+                        Natia.Instance.CurrentEnemyState = Natia.NatiaState.Following;
                         break;
                 }
 
@@ -553,7 +590,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("Event1", 3.0f);
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
                 PlayDialogue("Halicon... I should have known that The Guild would send you of all people...", 4, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.RevealStinger, 1.0f);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue1x1, 1.0f);
@@ -603,7 +640,7 @@ public class DialogueManagerScript : MonoBehaviour
                 EndOfDialogue();
                 CloseDialogue();
                 UIManager.Instance.ShowHint("You can talk to Natia by pressing the interact key. ('E' by default)");
-                Natia.Instance.CurrentEnemyState = Natia.EnemyState.Following;
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Following;
                 break;
             case 5:
                 switch (selectedOption)
@@ -629,7 +666,7 @@ public class DialogueManagerScript : MonoBehaviour
                 EndOfDialogue();
                 CloseDialogue();
                 UIManager.Instance.ShowHint("You can talk to Natia by pressing the interact key. ('E' by default)");
-                Natia.Instance.CurrentEnemyState = Natia.EnemyState.Following;
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Following;
                 break;
 
 
@@ -643,7 +680,7 @@ public class DialogueManagerScript : MonoBehaviour
 
     public void Event2()
     {
-        if (Natia.Instance.CurrentEnemyState == Natia.EnemyState.Waiting)
+        if (Natia.Instance.CurrentEnemyState == Natia.NatiaState.Waiting)
         {
             return;
         }
@@ -656,7 +693,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("Event2", 3.0f);
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
                 PlayDialogue("It's so dark in here... I can't see a thing.", 2, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue2x1, 1.0f);
                 break;
@@ -672,7 +709,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 2:
                 EndOfDialogue();
                 CloseDialogue();
-                Natia.Instance.CurrentEnemyState = Natia.EnemyState.Waiting;
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
                 break;
         }
 
@@ -684,7 +721,7 @@ public class DialogueManagerScript : MonoBehaviour
 
     public void Event3()
     {
-        if (Natia.Instance.CurrentEnemyState == Natia.EnemyState.Waiting)
+        if (Natia.Instance.CurrentEnemyState == Natia.NatiaState.Waiting)
         {
             return;
         }
@@ -697,7 +734,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("Event3", 5.0f);
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
                 PlayDialogue("This place is awfully quiet... Almost too quiet.", 0, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue2x1, 1.0f);
                 break;
@@ -724,7 +761,7 @@ public class DialogueManagerScript : MonoBehaviour
 
     public void Event4()
     {
-        if (Natia.Instance.CurrentEnemyState == Natia.EnemyState.Waiting)
+        if (Natia.Instance.CurrentEnemyState == Natia.NatiaState.Waiting)
         {
             return;
         }
@@ -737,7 +774,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("Event4", 7.0f);
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
                 PlayDialogue("Explosives! Well, they can certainly come in handy... As long as we're careful.", 0, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue4x1, 1.0f);
                 break;
@@ -764,7 +801,7 @@ public class DialogueManagerScript : MonoBehaviour
 
     public void Event5()
     {
-        if (Natia.Instance.CurrentEnemyState == Natia.EnemyState.Waiting)
+        if (Natia.Instance.CurrentEnemyState == Natia.NatiaState.Waiting)
         {
             return;
         }
@@ -777,7 +814,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("Event5", 3.0f);
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
                 PlayDialogue("These rooms... they all seem like trials of some sort. I wonder why?", 0, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue5x1, 1.0f);
                 break;
@@ -798,7 +835,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 3:
                 EndOfDialogue();
                 CloseDialogue();
-                Natia.Instance.CurrentEnemyState = Natia.EnemyState.Waiting;
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
                 break;
         }
 
@@ -810,7 +847,7 @@ public class DialogueManagerScript : MonoBehaviour
 
     public void Event6()
     {
-        if (Natia.Instance.CurrentEnemyState == Natia.EnemyState.Waiting)
+        if (Natia.Instance.CurrentEnemyState == Natia.NatiaState.Waiting)
         {
             return;
         }
@@ -823,7 +860,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 0:
                 Invoke("Event6", 3.0f);
                 SetColor(NatiaLetterColor);
-                SetSprite(_creature);
+                SetSprite(_sprite);
                 PlayDialogue("Halicon... The braziers, they're all lit.", 0, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue5x1, 1.0f);
                 break;
@@ -843,7 +880,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 3:
                 EndOfDialogue();
                 CloseDialogue();
-                Natia.Instance.CurrentEnemyState = Natia.EnemyState.Waiting;
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
                 break;
         }
 
