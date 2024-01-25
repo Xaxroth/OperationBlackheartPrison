@@ -81,11 +81,6 @@ public class MeleeAttack : MonoBehaviour
                 StartCoroutine(CameraAnimation());
                 StartCoroutine(MeleeQuickSwing());
             }
-            //else if (Input.GetMouseButtonDown(1) && canSwing)
-            //{
-            //    StartCoroutine(CameraAnimation());
-            //    StartCoroutine(MeleePowerSwing());
-            //}
 
             if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
             {

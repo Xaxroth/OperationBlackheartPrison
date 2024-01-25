@@ -59,7 +59,7 @@ public class MainAttackProjectile : MonoBehaviour
         fuseStarted = false;
         ProjectileRigidbody.isKinematic = false;
         gameObject.SetActive(true);
-        Invoke("Deactivate", 1.0f);
+        //Invoke("Deactivate", 2.0f);
     }
 
     public void Deactivate()
@@ -101,9 +101,6 @@ public class MainAttackProjectile : MonoBehaviour
         {
             if (spreadHit.collider.gameObject.CompareTag("Enemy"))
             {
-                GameObject explosion = Instantiate(ExplosionPrefab, spreadHit.point, transform.rotation);
-                Explosion();
-
                 Enemy spreadDamageable = spreadHit.collider.gameObject.GetComponent<Enemy>();
 
                 if (spreadDamageable != null)
@@ -114,6 +111,15 @@ public class MainAttackProjectile : MonoBehaviour
         }
 
         Debug.DrawRay(ray.origin, spreadDirection.normalized * (hit.distance > 10f ? hit.distance : 80), Color.red, 2f);
+
+        GameObject explosion = PlayerControllerScript.Instance.GetComponent<MainAttackScript>().GetPooledExplosion();
+
+        if (explosion != null)
+        {
+            explosion.SetActive(true);
+            explosion.GetComponentInChildren<ParticleSystem>().Play();
+            explosion.transform.position = spreadHit.point;
+        }
 
         ProjectileRigidbody.AddForce(spreadDirection * projectileSpeed * power, ForceMode.Impulse);
     }
@@ -126,15 +132,6 @@ public class MainAttackProjectile : MonoBehaviour
             ProjectileRigidbody.AddForce(fallDirection * fallSpeed * 0.3f, ForceMode.Impulse);
         }
     }
-
-    void Explosion()
-    {
-        ProjectileRigidbody.isKinematic = true;
-        ProjectileParticleSystem.Stop();
-        StartCoroutine(FadeOut());
-        GameObject explosion = Instantiate(ExplosionPrefab, transform.position, transform.rotation);
-    }
-
 
     IEnumerator FadeOut()
     {

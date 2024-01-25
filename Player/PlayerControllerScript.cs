@@ -166,6 +166,12 @@ public class PlayerControllerScript : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
 
+        CurrentWeaponState = WeaponState.Ranged;
+        MeleeWeapon.SetActive(false);
+        RangedWeapon.SetActive(true);
+        GetComponent<MainAttackScript>().enabled = true;
+        GetComponent<MeleeAttack>().enabled = false;
+
         PlayerAudioSource = gameObject.GetComponent<AudioSource>();
         playerRigidbody = GetComponentInChildren<Rigidbody>();
         playerCollider = gameObject.GetComponent<CapsuleCollider>();

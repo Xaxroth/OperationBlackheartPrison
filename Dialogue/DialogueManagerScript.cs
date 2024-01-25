@@ -198,7 +198,7 @@ public class DialogueManagerScript : MonoBehaviour
                 switch (AffectionLevel)
                 {
                     case Natia.AffectionLevel.Enemy:
-                        PlayDialogue("You know what, you bastard? I hate you. I fucking hate you, and I'm going to kill you if it's the last thing I do!", 1, null, null, null, null);
+                        PlayDialogue("You know what, you bastard? I hate you. I fucking hate you!", 1, null, null, null, null);
                         break;
                     case Natia.AffectionLevel.Rival:
                         PlayDialogue("You don't make this easy, Halicon. If you keep being an arsehole, I'll fucking leave you here to rot. Got it?!", 1, null, null, null, null);
@@ -216,7 +216,7 @@ public class DialogueManagerScript : MonoBehaviour
                         PlayDialogue("I'm glad you came, Halicon. Without you, I don't think I would have made it this far. Thank you.", 1, null, null, null, null);
                         break;
                     case Natia.AffectionLevel.Lover:
-                        PlayDialogue("Halicon... We need to talk.", 1, null, null, null, null);
+                        PlayDialogue("Halicon... W-we need to talk.", 1, null, null, null, null);
                         break;
                 }
                 break;

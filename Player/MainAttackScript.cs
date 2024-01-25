@@ -6,15 +6,19 @@ using UnityEngine.UI;
 public class MainAttackScript : MonoBehaviour
 {
     private PlayerControllerScript PlayerInstance;
-    public List<GameObject> projectilePool { get; private set; }
+    public List<GameObject> projectilePool = new List<GameObject>();
+    public List<GameObject> explosivePool = new List<GameObject>();
     private List<GameObject> Projectiles = new List<GameObject>();
     [SerializeField] private int ProjectilePoolAmount = 30;
 
     [SerializeField] private AudioSource AudioSource;
     [SerializeField] private AudioClip Reload;
     [SerializeField] private GameObject ProjectilePrefab;
+    [SerializeField] private GameObject ExplosionPrefab;
     [SerializeField] private GameObject ShootEffect;
     [SerializeField] private Transform ShootPosition;
+    [SerializeField] public Light ProjectilePointLight;
+    public ParticleSystem MuzzleFlash;
     [SerializeField] private Text ammoDisplay;
     [SerializeField] private Transform Orientation;
 
@@ -58,14 +62,20 @@ public class MainAttackScript : MonoBehaviour
 
     private void InitializeProjectilePool()
     {
-        projectilePool = new List<GameObject>();
-
-        for (int i = 0; i < numberOfBulletsPerShot * 4; i++)
+        for (int i = 0; i < numberOfBulletsPerShot * 30; i++)
         {
             GameObject projectile = Instantiate(ProjectilePrefab, gameObject.transform.position, gameObject.transform.rotation);
             DontDestroyOnLoad(projectile);
             projectile.SetActive(false);
             projectilePool.Add(projectile);
+        }
+
+        for (int i = 0; i < numberOfBulletsPerShot * 30; i++)
+        {
+            GameObject projectile = Instantiate(ExplosionPrefab, gameObject.transform.position, gameObject.transform.rotation);
+            DontDestroyOnLoad(projectile);
+            projectile.SetActive(false);
+            explosivePool.Add(projectile);
         }
     }
 
@@ -73,9 +83,27 @@ public class MainAttackScript : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && canFire )
         {
-            PlayerControllerScript.Instance.casting = true;
             StartCoroutine(FireShotgun());
         }
+    }
+
+    IEnumerator FadeOut()
+    {
+        float elapsedTime = 0f;
+        float startIntensity = 35;
+
+        while (elapsedTime < 0.35f)
+        {
+            float currentIntensity = Mathf.Lerp(startIntensity, 0f, elapsedTime / 0.35f);
+
+            ProjectilePointLight.intensity = currentIntensity;
+
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+
+        ProjectilePointLight.intensity = 0f;
     }
 
     private IEnumerator FireShotgun()
@@ -99,7 +127,6 @@ public class MainAttackScript : MonoBehaviour
                 currentProjectile.GetComponent<MainAttackProjectile>().power = projectileForce;
                 currentProjectile.GetComponent<MainAttackProjectile>().SetRayCast();
                 Physics.IgnoreCollision(currentProjectile.GetComponent<Collider>(), GetComponent<Collider>());
-                PlayerControllerScript.Instance.casting = false;
             }
 
             yield return new WaitForSeconds(rateOfFire);
@@ -110,25 +137,46 @@ public class MainAttackScript : MonoBehaviour
     private IEnumerator ShotgunVFX()
     {
         ShootEffect.SetActive(true);
-        yield return new WaitForSeconds(0.3f);
+        MuzzleFlash.Play();
+        StartCoroutine(FadeOut());
+        PlayerControllerScript.Instance.playerAnimator.SetBool("Fire", true);
+        PlayerControllerScript.Instance.CameraAnimator.SetBool("ShotgunRecoil", true);
+        yield return new WaitForSeconds(0.2f);
+        MuzzleFlash.Stop();
+        PlayerControllerScript.Instance.playerAnimator.SetBool("Fire", false);
+        PlayerControllerScript.Instance.CameraAnimator.SetBool("ShotgunRecoil", false);
         ShootEffect.SetActive(false);
     }
 
     private GameObject GetPooledProjectile()
     {
-        // WHY IS THIS CAUSING PROBLEMS
-
-        //for (int i = 0; i < projectilePool.Count; i++)
-        //{
-        //    if (!projectilePool[i].activeInHierarchy)
-        //    {
-        //        return projectilePool[i];
-        //    }
-        //}
+        for (int i = 0; i < projectilePool.Count; i++)
+        {
+            if (!projectilePool[i].activeInHierarchy)
+            {
+                return projectilePool[i];
+            }
+        }
 
         GameObject newProjectile = Instantiate(ProjectilePrefab);
         newProjectile.SetActive(false);
         projectilePool.Add(newProjectile);
+
+        return newProjectile;
+    }
+
+    public GameObject GetPooledExplosion()
+    {
+        for (int i = 0; i < explosivePool.Count; i++)
+        {
+            if (!explosivePool[i].activeInHierarchy)
+            {
+                return explosivePool[i];
+            }
+        }
+
+        GameObject newProjectile = Instantiate(ProjectilePrefab);
+        explosivePool.Add(newProjectile);
 
         return newProjectile;
     }
