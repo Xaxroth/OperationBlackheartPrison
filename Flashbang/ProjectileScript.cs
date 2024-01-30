@@ -12,6 +12,7 @@ public class ProjectileScript : MonoBehaviour
     [SerializeField] public float baseSpeed = 15f;
     [SerializeField] private float fuseTimer = 1.5f;
     [SerializeField] public GameObject Explosion;
+    [SerializeField] private GameObject GrenadeObject;
     [SerializeField] public Light FlashbangLight;
     [SerializeField] private AudioClip FlashbangCollision;
     [SerializeField] private AudioClip EarsRinging;
@@ -55,7 +56,7 @@ public class ProjectileScript : MonoBehaviour
         if (FlashbangAudioSource != null)
         {
             hasCollided = true;
-            FlashbangAudioSource.PlayOneShot(FlashbangCollision, 1.0f);
+            FlashbangAudioSource.PlayOneShot(FlashbangCollision, 0.5f);
         }
     }
 
@@ -113,10 +114,10 @@ public class ProjectileScript : MonoBehaviour
             }
         }
 
-        Destroy(FlashEffect, 1.0f);
+        Destroy(FlashEffect, 2.0f);
 
         flashbangRigidbody.isKinematic = true;
-        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        GrenadeObject.SetActive(false);
         gameObject.GetComponent<SphereCollider>().enabled = false;
 
         Destroy(gameObject, 6.0f);

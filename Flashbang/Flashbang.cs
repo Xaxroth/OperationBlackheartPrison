@@ -14,6 +14,11 @@ public class Flashbang : MonoBehaviour
     {
         ShootPosition.transform.rotation = PlayerControllerScript.Instance.Orientation.transform.rotation;
 
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            AudioManager.Instance.PlaySound(AudioManager.Instance.PullGrenadePin, 0.1f);
+        }
+
         if (Input.GetKey(KeyCode.T))
         {
             chargingFlashbang = true;

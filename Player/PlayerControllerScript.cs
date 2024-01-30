@@ -105,6 +105,7 @@ public class PlayerControllerScript : MonoBehaviour
     public bool forceCrouch = false;
     public bool Dead = false;
     public bool dashingBackwards = false;
+    public bool recovering = false;
 
     public bool paralyzed = false;
     public bool Incapacitated;
@@ -611,6 +612,11 @@ public class PlayerControllerScript : MonoBehaviour
             }
             else
             {
+                if (!recovering)
+                {
+                    StartCoroutine(Recover());
+                }
+
                 CurrentMovementState = PlayerMovementState.Exhausted;
             }
 
@@ -668,10 +674,19 @@ public class PlayerControllerScript : MonoBehaviour
             }
         }
     }
+    
+    private IEnumerator Recover()
+    {
+        recovering = true;
+        playerStamina = 0;
+        yield return new WaitForSeconds(3);
+        playerStamina = 1;
+        recovering = false;
+    }
 
     private void Jump()
     {
-        if (Input.GetButtonDown("Jump") && OnGround && !paralyzed && canJump && playerStamina > JumpCost)
+        if (Input.GetButtonDown("Jump") && OnGround && !paralyzed && canJump && playerStamina > JumpCost && CurrentMovementState != PlayerMovementState.Crouching)
         {
             StartCoroutine(AnimatorCoroutine());
 

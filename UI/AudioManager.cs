@@ -65,6 +65,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip HoldPosition;
     public AudioClip FollowMe;
 
+    public AudioClip PullGrenadePin;
     public AudioClip[] FlashbangSounds;
     public AudioClip EarsRinging;
 

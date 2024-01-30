@@ -5,7 +5,7 @@ using UnityEngine;
 public class FadeLight : MonoBehaviour
 {
     [SerializeField] private Light ProjectilePointLight;
-    private float fadeDuration = 1.0f;
+    private float fadeDuration = 0.50f;
     public void Start()
     {
         StartCoroutine(FadeOut());
