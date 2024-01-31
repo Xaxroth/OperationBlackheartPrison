@@ -39,8 +39,8 @@ public class PlayerControllerScript : MonoBehaviour
     [SerializeField] private GameObject RangedWeapon;
     [SerializeField] private GameObject MeleeWeapon;
 
-    [SerializeField] private int playerHealth = 100;
-    [SerializeField] private int playerMaxHealth = 100;
+    [SerializeField] public int playerHealth = 100;
+    [SerializeField] public int playerMaxHealth = 100;
 
     [SerializeField] public int playerStamina = 1000;
     [SerializeField] public int playerMaxStamina = 1000;

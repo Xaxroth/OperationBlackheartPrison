@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DontDestroyOnLoad : MonoBehaviour
+public class Essentials : MonoBehaviour
 {
     public static bool Initialized;
-    public DontDestroyOnLoad Instance;
+    public static Essentials Instance;
 
     void Awake()
     {
