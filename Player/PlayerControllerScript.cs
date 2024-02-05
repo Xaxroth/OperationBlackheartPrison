@@ -264,6 +264,14 @@ public class PlayerControllerScript : MonoBehaviour
                         DialogueManagerScript.Instance.NatiaPickedUp();
                     }
 
+                    if (hit.collider.CompareTag("SaveStation"))
+                    {
+                        AudioManager.Instance.PlaySound(AudioManager.Instance.SaveGame, 1.0f);
+                        hit.collider.gameObject.GetComponent<SaveStation>().PlayParticles();
+                        UIManager.Instance.ShowHint("Game saved successfully.");
+                        GameDataHandler.Instance.SaveEssentialsData();
+                    }
+
                     if (hit.collider.CompareTag("Door"))
                     {
                         hit.collider.GetComponent<Door>().ChangeScene();

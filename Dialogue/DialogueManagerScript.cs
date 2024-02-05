@@ -44,6 +44,8 @@ public class DialogueManagerScript : MonoBehaviour
     public int selectedOption;
     public int choicesToBeDisplayed;
 
+    private bool secretDialogue1Played;
+
 
     private void Awake()
     {
@@ -144,7 +146,7 @@ public class DialogueManagerScript : MonoBehaviour
 
     public void CheckDistance()
     {
-        if (PlayerControllerScript.Instance != null && Natia.Instance != null) 
+        if (PlayerControllerScript.Instance != null && Natia.Instance != null)
         {
             float Distance = Vector3.Distance(PlayerControllerScript.Instance.transform.position, Natia.Instance.transform.position);
         }
@@ -216,7 +218,7 @@ public class DialogueManagerScript : MonoBehaviour
                         PlayDialogue("I'm glad you came, Halicon. Without you, I don't think I would have made it this far. Thank you.", 1, null, null, null, null);
                         break;
                     case Natia.AffectionLevel.Lover:
-                        PlayDialogue("Halicon... W-we need to talk.", 1, null, null, null, null);
+                        PlayDialogue("Halicon... I need to speak to you.", 1, null, null, null, null);
                         break;
                 }
                 break;
@@ -417,7 +419,7 @@ public class DialogueManagerScript : MonoBehaviour
                         PlayDialogue("Oh, there you are! Don't scare me like that.", 1, null, null, null, null);
                         break;
                     case 2:
-                        PlayDialogue("Hello there. Did you find anything interesting?", 1, null, null, null, null);
+                        PlayDialogue("There you are. Did you find anything interesting?", 1, null, null, null, null);
                         break;
                     case 3:
                         PlayDialogue("Is it safe?", 1, null, null, null, null);
@@ -511,50 +513,340 @@ public class DialogueManagerScript : MonoBehaviour
         {
             // ENTRY POINT FOR DIALOGUE
             case 0:
-                SetColor(NatiaLetterColor);
-                SetSprite(_sprite);
-                PlayDialogue("You need something? Or are you just wasting our time?", 4, "Can you keep your distance?", "Can you stick closer to me?", "Stay here.", "Let's go.");
-                //AudioManager.Instance.PlaySound(AudioManager.Instance.Question1, 1.0f);
+                switch (Natia.Instance.CurrentAffectionLevel)
+                {
+                    case Natia.AffectionLevel.Enemy:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("What, you piece of shit?", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
+                        break;
+                    case Natia.AffectionLevel.Rival:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("What do you want?", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
+                        break;
+                    case Natia.AffectionLevel.Stranger:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("You need something? Or are you just wasting our time?", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
+                        break;
+                    case Natia.AffectionLevel.Acquaintance:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("Speak.", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
+                        break;
+                    case Natia.AffectionLevel.Friend:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("Hey, Halicon. What's on your mind?", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
+                        break;
+                    case Natia.AffectionLevel.Partner:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("I was hoping you'd come to chat. See something you like?", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
+                        break;
+                    case Natia.AffectionLevel.Lover:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("Oh, came to give me some attention, Hal? Just don't get too carried away.", 4, "I want to talk to you.", "Can you keep your distance?", "Stay here.", "Let's go.");
+                        break;
+                }
 
                 break;
             // PLAYERS FIRST CHOICE
             case 1:
-                //AudioManager.Instance.GlobalAudioSource.Stop();
+                AudioManager.Instance.GlobalAudioSource.Stop();
                 switch (selectedOption)
                 {
                     case 0:
                         break;
                     case 1:
-                        PlayDialogue("What did you just...?! Fine. But you better keep an eye out for me.", 0, "[Leave]", null, null, null);
-                        //AudioManager.Instance.PlaySound(AudioManager.Instance.KeepDistance, 1.0f);
-                        Natia.Instance.CurrentEnemyState = Natia.NatiaState.Relaxed;
+                        switch (Natia.Instance.CurrentAffectionLevel)
+                        {
+                            case Natia.AffectionLevel.Enemy:
+                                SetColor(NatiaLetterColor);
+                                SetSprite(_sprite);
+                                PlayDialogue("Spit it out before I decide to kill you.", 2, "Noticed anything strange?", "Nevermind.", "", "");
+                                break;
+                            case Natia.AffectionLevel.Rival:
+                                SetColor(NatiaLetterColor);
+                                SetSprite(_sprite);
+                                PlayDialogue("Oh? And what makes you think I want to talk to -you-?", 2, "Noticed anything strange?", "Nevermind.", "", "");
+                                break;
+                            case Natia.AffectionLevel.Stranger:
+                                SetColor(NatiaLetterColor);
+                                SetSprite(_sprite);
+                                PlayDialogue("Is that so?", 2, "Noticed anything strange?", "Nevermind", "", "");
+                                break;
+                            case Natia.AffectionLevel.Acquaintance:
+                                SetColor(NatiaLetterColor);
+                                SetSprite(_sprite);
+                                PlayDialogue("Fine. What's on your mind?", 3, "Noticed anything strange?", "Can you stick closer to me?", "Stay here.", "");
+                                break;
+                            case Natia.AffectionLevel.Friend:
+                                SetColor(NatiaLetterColor);
+                                SetSprite(_sprite);
+                                PlayDialogue("Oh, alright. What do you need?", 3, "Noticed anything strange?", "Who are you?", "Nevermind.", "");
+                                break;
+                            case Natia.AffectionLevel.Partner:
+                                SetColor(NatiaLetterColor);
+                                SetSprite(_sprite);
+                                PlayDialogue("Interesting. What do you want to talk about?", 3, "Noticed anything strange?", "Tell me more about yourself.", "Nevermind.", "");
+                                break;
+                            case Natia.AffectionLevel.Lover:
+                                SetColor(NatiaLetterColor);
+                                SetSprite(_sprite);
+                                PlayDialogue("Anything you want, Hal.", 4, "Noticed anything strange?", "Can you play a song for me?", "Take off your clothes.", "Nevermind.");
+                                break;
+                        }
+
+                        currentDialogueNode = 2;
+                        //PlayDialogue("What did you just...?! Fine. But you better keep an eye out for me.", 0, "[Leave]", null, null, null);
+                        //Natia.Instance.CurrentEnemyState = Natia.NatiaState.Relaxed;
+
                         break;
                     case 2:
                         PlayDialogue("I'll stay as close as I can.", 0, "[Leave]", null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.StayClose, 1.0f);
                         Natia.Instance.CurrentEnemyState = Natia.NatiaState.Cautious;
+                        for (int i = 0; i < choiceBoxes.Length; i++)
+                        {
+                            choiceBoxes[i].gameObject.SetActive(false);
+                            choiceBoxes[i].ButtonFunction.onClick.RemoveAllListeners();
+                        }
+
+                        Invoke("AdaptabilityDialogue", 3.0f);
                         break;
                     case 3:
                         PlayDialogue("Alright. I hope you know what you're doing. You better come back for me.", 0, "[Leave]", null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.HoldPosition, 1.0f);
                         Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
+                        for (int i = 0; i < choiceBoxes.Length; i++)
+                        {
+                            choiceBoxes[i].gameObject.SetActive(false);
+                            choiceBoxes[i].ButtonFunction.onClick.RemoveAllListeners();
+                        }
+
+                        Invoke("AdaptabilityDialogue", 3.0f);
                         break;
                     case 4:
                         PlayDialogue("Lead the way.", 0, "[Leave]", null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.FollowMe, 1.0f);
                         Natia.Instance.CurrentEnemyState = Natia.NatiaState.Following;
+                        for (int i = 0; i < choiceBoxes.Length; i++)
+                        {
+                            choiceBoxes[i].gameObject.SetActive(false);
+                            choiceBoxes[i].ButtonFunction.onClick.RemoveAllListeners();
+                        }
+
+                        Invoke("AdaptabilityDialogue", 3.0f);
                         break;
                 }
 
-                for (int i = 0; i < choiceBoxes.Length; i++)
-                {
-                    choiceBoxes[i].gameObject.SetActive(false);
-                    choiceBoxes[i].ButtonFunction.onClick.RemoveAllListeners();
-                }
-
-                Invoke("AdaptabilityDialogue", 3.0f);
                 break;
             case 2:
+                EndOfDialogue();
+                CloseDialogue();
+                break;
+            case 3:
+
+                switch (Natia.Instance.CurrentAffectionLevel)
+                {
+                    case Natia.AffectionLevel.Enemy:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("Spit it out before I decide to kill you.", 2, "Noticed anything strange?", "Nevermind.", "", "");
+                        break;
+                    case Natia.AffectionLevel.Rival:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("Oh? And what makes you think I want to talk to -you-?", 2, "Noticed anything strange?", "Nevermind.", "", "");
+                        break;
+                    case Natia.AffectionLevel.Stranger:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("Is that so?", 2, "Notice anything strange?", "Nevermind", "", "");
+                        break;
+                    case Natia.AffectionLevel.Acquaintance:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("Fine. What's on your mind?", 3, "Notice anything strange?", "Can you stick closer to me?", "Stay here.", "");
+                        break;
+                    case Natia.AffectionLevel.Friend:
+                        SetColor(NatiaLetterColor);
+                        SetSprite(_sprite);
+                        PlayDialogue("Oh, alright. What do you need?", 3, "Notice anything strange?", "Who are you?", "Nevermind.", "");
+                        break;
+                    case Natia.AffectionLevel.Partner:
+                        switch (selectedOption)
+                        {
+                            case 1:
+                                PlayDialogue("There has to be multiple ways out of a prison like this. It wouldn't make sense to just build one pathway to the surface. Don't you think?", 0, "", "", "", "");
+                                Invoke("AdaptabilityDialogue", 3.0f);
+                                break;
+                            case 2:
+                                if (!secretDialogue1Played)
+                                {
+                                    PlayDialogue("Why are you so curious about me, Halicon? Do you think I'm hiding something from you?", 3, "I know you are.", "Just trying to lighten the mood.", "Forget about it.", "");
+                                    currentDialogueNode = 4;
+                                    secretDialogue1Played = true;
+                                }
+                                else
+                                {
+                                    PlayDialogue("Now is not the time. Let's just get on with the mission.", 0, "", "", "", "");
+                                    Invoke("AdaptabilityDialogue", 3.0f);
+                                }
+                                break;
+                            case 3:
+                                PlayDialogue("Let's make haste. I've got your back, if you have mine.", 0, "", "", "", "");
+                                Invoke("AdaptabilityDialogue", 3.0f);
+                                break;
+                        }
+                        break;
+                    case Natia.AffectionLevel.Lover:
+                        switch (selectedOption)
+                        {
+                            case 1:
+                                PlayDialogue("Nothing out of the ordinary. Besides meeting the love of my life in a dungeon like this.", 0, "", "", "", "");
+                                break;
+                            case 2:
+                                PlayDialogue("I suppose I could. But only because you asked so nicely.", 0, "", "", "", "");
+                                break;
+                            case 3:
+                                PlayDialogue("Hahaha! Well, I suppose you've earned it. Not many people get to see me like this, so consider yourself lucky.", 0, "", "", "", "");
+                                break;
+                            case 4:
+                                PlayDialogue("We need to get out of here.", 0, "", "", "", "");
+                                break;
+                        }
+                        Invoke("AdaptabilityDialogue", 3.0f);
+                        break;
+                }
+                break;
+
+            case 4:
+                EndOfDialogue();
+                CloseDialogue();
+                break;
+
+            case 5:
+                if (Natia.Instance.CurrentAffectionLevel == Natia.AffectionLevel.Partner)
+                {
+                    switch (selectedOption)
+                    {
+                        case 1:
+                            PlayDialogue("And what makes you think that? Oh, I see. You don't trust me.", 3, "Your hostility.", "This location.", "I just feel like you're hiding something from me.", "");
+                            currentDialogueNode = 6;
+                            break;
+                        case 2:
+                            PlayDialogue("Whatever. Just focus on the mission for once, please.", 0, "", "", "", "");
+                            break;
+                        case 3:
+                            PlayDialogue("I suggest you do the same.", 0, "", "", "", "");
+                            break;
+                    }
+                }
+                break;
+
+            case 6:
+                EndOfDialogue();
+                CloseDialogue();
+                break;
+
+            case 7:
+                switch (selectedOption)
+                {
+                    case 1:
+                        PlayDialogue("Hostility? I've been nothing but kind to you, and you think I'm... hostile?! Fuck you, Halicon.", 0, "", "", "", "");
+                        break;
+                    case 2:
+                        PlayDialogue("And what's so special about this location? Hmm?", 3, "This place is dangerous. You have no reason to go down here so unprepared.", "You know the man we encountered earlier.", "SECRET: I know you are sick, Natia. You believe the cure is down here.", "");
+                        currentDialogueNode = 8;
+                        break;
+                    case 3:
+                        PlayDialogue("Well, I'm not. And frankly, I'm offended you think I am. Just get going, will you?", 0, "", "", "", "");
+                        break;
+                }
+                break;
+
+            case 8:
+                EndOfDialogue();
+                CloseDialogue();
+                break;
+
+            case 9:
+                switch (selectedOption)
+                {
+                    case 1:
+                        PlayDialogue("Oh, you think I'm useless? That I can't handle myself on my own? You know what. Fuck you.", 0, "", "", "", "");
+                        Invoke("AdaptabilityDialogue", 3.0f);
+                        break;
+                    case 2:
+                        PlayDialogue("If I did, I wouldn't have gone down here to face certain death, now would I? Just shut up, and let's go.", 0, "", "", "", "");
+                        Invoke("AdaptabilityDialogue", 3.0f);
+                        break;
+                    case 3:
+                        PlayDialogue("Y-you... How do you know that?! I... I've never told anyone about it. Not even my parents.", 0, "", "", "", "");
+                        currentDialogueNode = 10; 
+                        Invoke("AdaptabilityDialogue", 3.0f);
+                        break;
+                }
+                break;
+
+            case 10:
+                EndOfDialogue();
+                CloseDialogue();
+                break;
+
+            case 11:
+                PlayDialogue("You knew all this time...", 0, "", "", "", "");
+                Invoke("AdaptabilityDialogue", 3.0f);
+                break;
+
+            case 12:
+                PlayDialogue("I... I guess there's no point hiding it anymore...", 0, "", "", "", "");
+                Invoke("AdaptabilityDialogue", 4.0f);
+                break;
+
+            case 13:
+                PlayDialogue("It's true... I don't have much time left, Halicon.", 0, "", "", "", "");
+                Invoke("AdaptabilityDialogue", 4.0f);
+                break;
+
+            case 14:
+                PlayDialogue("The cure was said to be here, in this very prison. I'm sure that devil bastard was behind it all along, just waiting for me to show up at his doorstep...", 0, "", "", "", "");
+                Invoke("AdaptabilityDialogue", 4.0f);
+                break;
+
+            case 15:
+                PlayDialogue("Please... Halicon. I just want to grow old like everyone else, I want a family of my own, a place where I can feel safe... I-I don't want to die.", 0, "", "", "", "");
+                Invoke("AdaptabilityDialogue", 4.0f);
+                break;
+
+            case 16:
+                PlayDialogue("I-Is that too much to ask for? To not be forgotten as a corpse in some dungeon?!", 0, "", "", "", "");
+                Invoke("AdaptabilityDialogue", 4.0f);
+                break;
+
+            case 17:
+                PlayDialogue("I need your help. You have to help me find the cure. PLEASE!", 2, "We'll get through this, Natia. I'll help you look for the cure.", "You've caused me enough trouble. I'm done with you.", "", "");
+                break;
+
+            case 18:
+                switch (selectedOption)
+                {
+                    case 1:
+                        PlayDialogue("I... I don't know what to say. Thank you, Halicon... I'm sorry for everything. Please forgive me.", 0, "", "", "", "");
+                        Invoke("AdaptabilityDialogue", 4.0f);
+                        break;
+                    case 2:
+                        PlayDialogue("W-what...? You... You're abandoning me? After I just spilled my guts for you?", 0, "", "", "", "");
+                        Invoke("AdaptabilityDialogue", 4.0f);
+                        break;
+                }
+                break;
+
+            case 19:
                 EndOfDialogue();
                 CloseDialogue();
                 break;

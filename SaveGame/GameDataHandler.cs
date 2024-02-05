@@ -24,15 +24,7 @@ public class GameDataHandler : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            SaveEssentialsData();
-        }
 
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            LoadEssentialsData();
-        }
     }
 
     void OnApplicationQuit()
@@ -54,6 +46,10 @@ public class GameDataHandler : MonoBehaviour
             fire1 = JumpTrialPuzzle.JumpTrialPassed,
             fire2 = FlashbangPuzzle.FlashbangPuzzlePassed,
             fire3 = SpikeTrapPuzzle.SpikeTrialPassed,
+
+            natiaAffection = Natia.Instance.CurrentAffectionLevel,
+            natiaState = Natia.Instance.CurrentEnemyState,
+            natiaAffectionLevel = Natia.Instance.Affection,
 
             currentSceneName = CurrentSceneName,
         };
@@ -95,6 +91,19 @@ public class GameDataHandler : MonoBehaviour
         }
     }
 
+    public void LoadGame()
+    {
+        StartCoroutine(FadeOutScreen());
+    }
+
+    public IEnumerator FadeOutScreen()
+    {
+        UIManager.Instance.FadeInScreen();
+        yield return new WaitForSeconds(3);
+        LoadEssentialsData();
+        UIManager.Instance.FadeOutScreen();
+    }
+
     [System.Serializable]
     class EssentialsData
     {
@@ -110,6 +119,11 @@ public class GameDataHandler : MonoBehaviour
         public bool fire2;
         public bool fire3;
         public bool fire4;
+
+        public Natia.NatiaState natiaState;
+        public Natia.AffectionLevel natiaAffection;
+
+        public int natiaAffectionLevel;
         // Add other essential data fields here
     }
 }

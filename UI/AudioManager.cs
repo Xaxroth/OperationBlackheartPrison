@@ -60,6 +60,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip Lockpicking3;
     public AudioClip Lockpicking4;
 
+    public AudioClip SaveGame;
+
     public AudioClip KeepDistance;
     public AudioClip StayClose;
     public AudioClip HoldPosition;
@@ -68,6 +70,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip PullGrenadePin;
     public AudioClip[] FlashbangSounds;
     public AudioClip EarsRinging;
+
+    public AudioClip NatiaSong;
 
     public AudioClip Question1;
 

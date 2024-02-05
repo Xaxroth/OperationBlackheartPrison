@@ -99,6 +99,17 @@ public class UIManager : MonoBehaviour
         targetPosition = DisplayHint ? new Vector2(0, popUpHeight) : new Vector2(0, -popUpHeight);
     }
 
+    public void LoadGame()
+    {
+        Time.timeScale = 1;
+        GameDataHandler.Instance.LoadGame();
+        PlayerUI.SetActive(false);
+        menuActive = false;
+        PlayerControllerScript.Instance.paralyzed = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
     public void PlayerMenu()
     {
         if (Input.GetKeyDown(KeyCode.Escape) || ForceCall)
