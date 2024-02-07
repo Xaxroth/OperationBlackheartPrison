@@ -81,6 +81,8 @@ public class UIManager : MonoBehaviour
             Natia.Instance.EnemyNavMeshAgent.enabled = true;
         }
 
+        StartCoroutine(FadeOut());
+
         if (blackScreen.color.a == 1.0f)
         {
             AudioManager.Instance.PlaySound(AudioManager.Instance.CloseDoor, 1.0f);

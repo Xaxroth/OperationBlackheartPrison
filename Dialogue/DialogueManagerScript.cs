@@ -518,7 +518,7 @@ public class DialogueManagerScript : MonoBehaviour
                     case Natia.AffectionLevel.Enemy:
                         SetColor(NatiaLetterColor);
                         SetSprite(_sprite);
-                        PlayDialogue("What, you piece of shit?", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
+                        PlayDialogue("Go to hell.", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
                         break;
                     case Natia.AffectionLevel.Rival:
                         SetColor(NatiaLetterColor);
@@ -543,12 +543,12 @@ public class DialogueManagerScript : MonoBehaviour
                     case Natia.AffectionLevel.Partner:
                         SetColor(NatiaLetterColor);
                         SetSprite(_sprite);
-                        PlayDialogue("I was hoping you'd come to chat. See something you like?", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
+                        PlayDialogue("I was hoping you'd come to chat. What would you have me do?", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
                         break;
                     case Natia.AffectionLevel.Lover:
                         SetColor(NatiaLetterColor);
                         SetSprite(_sprite);
-                        PlayDialogue("Oh, came to give me some attention, Hal? Just don't get too carried away.", 4, "I want to talk to you.", "Can you keep your distance?", "Stay here.", "Let's go.");
+                        PlayDialogue("Hello there, handsome. Need me for something special, perhaps?", 4, "I want to talk to you.", "Can you keep your distance?", "Stay here.", "Let's go.");
                         break;
                 }
 
@@ -786,8 +786,8 @@ public class DialogueManagerScript : MonoBehaviour
                         Invoke("AdaptabilityDialogue", 3.0f);
                         break;
                     case 3:
-                        PlayDialogue("Y-you... How do you know that?! I... I've never told anyone about it. Not even my parents.", 0, "", "", "", "");
-                        currentDialogueNode = 10; 
+                        PlayDialogue("Y-you... How did you know that?! I... I've never told anyone about it.", 0, "", "", "", "");
+                        currentDialogueNode = 10;
                         Invoke("AdaptabilityDialogue", 3.0f);
                         break;
                 }
@@ -824,7 +824,7 @@ public class DialogueManagerScript : MonoBehaviour
                 break;
 
             case 16:
-                PlayDialogue("I-Is that too much to ask for? To not be forgotten as a corpse in some dungeon?!", 0, "", "", "", "");
+                PlayDialogue("You can relate, can't you Halicon?! I don't want to be forgotten... Abandoned... Alone.", 0, "", "", "", "");
                 Invoke("AdaptabilityDialogue", 4.0f);
                 break;
 
@@ -836,17 +836,35 @@ public class DialogueManagerScript : MonoBehaviour
                 switch (selectedOption)
                 {
                     case 1:
-                        PlayDialogue("I... I don't know what to say. Thank you, Halicon... I'm sorry for everything. Please forgive me.", 0, "", "", "", "");
+                        PlayDialogue("I... I don't know what to say. Thank you, Halicon...", 0, "", "", "", "");
                         Invoke("AdaptabilityDialogue", 4.0f);
                         break;
                     case 2:
-                        PlayDialogue("W-what...? You... You're abandoning me? After I just spilled my guts for you?", 0, "", "", "", "");
+                        PlayDialogue("W-what...? You... You're abandoning me? After I just spilled my guts out for you?", 0, "", "", "", "");
+                        currentDialogueNode = 19;
                         Invoke("AdaptabilityDialogue", 4.0f);
                         break;
                 }
                 break;
 
             case 19:
+                EndOfDialogue();
+                CloseDialogue();
+                break;
+
+            case 20:
+                PlayDialogue("I thought... I thought you were going to help me... I thought you were different!", 0, "", "", "", "");
+                Invoke("AdaptabilityDialogue", 4.0f);
+                break;
+
+            case 21:
+                PlayDialogue("I will find the cure... with or without you!", 0, "", "", "", "");
+                Natia.Instance.CurrentAffectionLevel -= 100;
+                // EPIC TELEPORT, NATIA IS FOUND DEAD LATER IN THE MAIN CHAMBER 
+                Invoke("AdaptabilityDialogue", 4.0f);
+                break;
+
+            case 22:
                 EndOfDialogue();
                 CloseDialogue();
                 break;
@@ -889,7 +907,7 @@ public class DialogueManagerScript : MonoBehaviour
                 break;
             // PLAYERS FIRST CHOICE
             case 1:
-                PlayDialogue("Nevermind... Supposedly there's an ancient treasure somewhere within this prison. You are going to help me find it. Got it?", 4, "Who are you?", "What are we looking for?", "You're coming with me.", null);
+                PlayDialogue("You will do as I say, and protect me with your life. Got it?", 4, "Who are you?", "What are we looking for?", "You're coming with me.", null);
                 UIManager.Instance.ShowHint("You can select the options shown on screen by pressing '1', '2', '3' or '4' respectively.");
                 break;
             case 2:
@@ -898,7 +916,7 @@ public class DialogueManagerScript : MonoBehaviour
                     case 0:
                         break;
                     case 1:
-                        PlayDialogue("My name... is Natia. I'm the one who asked The Guild for help. I just hate the fact that it had to be... you. Let's just go.", 0, null, null, null, null);
+                        PlayDialogue("My name... is Natia. I'm the one who's going to be paying you if you do a good job. Now, keep your eyes sharp. There's no telling what lurks in the dark.", 0, null, null, null, null);
                         currentDialogueNode = 3;
                         Invoke("Event1", 5.0f);
                         break;
@@ -919,7 +937,7 @@ public class DialogueManagerScript : MonoBehaviour
                     case 0:
                         break;
                     case 1:
-                        PlayDialogue("You bastard! What did I ever do to you?! Fine, but if you touch me, I'll kill you. Got it?", 0, null, null, null, null);
+                        PlayDialogue("Oh, is that how it's going to be? Lead the way then, you bastard. Don't expect any bonuses after we're done here.", 0, null, null, null, null);
                         Invoke("Event1", 4.0f);
                         break;
                     case 2:
@@ -1108,6 +1126,7 @@ public class DialogueManagerScript : MonoBehaviour
                 SetColor(NatiaLetterColor);
                 SetSprite(_sprite);
                 PlayDialogue("These rooms... they all seem like trials of some sort. I wonder why?", 0, null, null, null, null);
+                Natia.Instance.EnemyNavMeshAgent.speed = 0;
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue5x1, 1.0f);
                 break;
             // PLAYERS FIRST CHOICE
@@ -1160,7 +1179,7 @@ public class DialogueManagerScript : MonoBehaviour
             case 1:
                 // WHAT OPTION DID THE PLAYER SELECT?
                 Invoke("Event6", 8.0f);
-                PlayDialogue("You knew what to do all along, didn't you? Hmmph... You're a bastard, but at least you're capable.", 0, null, null, null, null);
+                PlayDialogue("You knew what to do all along, didn't you? I guess I underestimated your intelligence.", 0, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue5x3, 1.0f);
                 break;
 
