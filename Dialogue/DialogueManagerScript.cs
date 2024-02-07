@@ -200,7 +200,7 @@ public class DialogueManagerScript : MonoBehaviour
                 switch (AffectionLevel)
                 {
                     case Natia.AffectionLevel.Enemy:
-                        PlayDialogue("You know what, you bastard? I hate you. I fucking hate you!", 1, null, null, null, null);
+                        PlayDialogue("You're a damned criminal. I hate you. I hate you so fucking much.", 1, null, null, null, null);
                         break;
                     case Natia.AffectionLevel.Rival:
                         PlayDialogue("You don't make this easy, Halicon. If you keep being an arsehole, I'll fucking leave you here to rot. Got it?!", 1, null, null, null, null);
@@ -244,7 +244,30 @@ public class DialogueManagerScript : MonoBehaviour
                 Invoke("NatiaPickedUp", 1.0f);
                 SetColor(WarningLetterColor);
                 SetSprite(_sprite);
-                PlayDialogue("Hey! Let me go!", 1, null, null, null, null);
+                switch (Natia.Instance.CurrentAffectionLevel)
+                {
+                    case Natia.AffectionLevel.Enemy:
+                        PlayDialogue("Hnngh! I'll kill you!", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Rival:
+                        PlayDialogue("Unhand me, you brute!", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Stranger:
+                        PlayDialogue("Hey! Let me go!", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Acquaintance:
+                        PlayDialogue("What are you doing?!", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Friend:
+                        PlayDialogue("Ugh, alright.", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Partner:
+                        PlayDialogue("Oh, alright. I'm holding on!", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Lover:
+                        PlayDialogue("Ah! I forgot how strong you were. I'm ready.", 0, null, null, null, null);
+                        break;
+                }
                 break;
             case 1:
                 EndOfDialogue();
@@ -268,7 +291,30 @@ public class DialogueManagerScript : MonoBehaviour
                 Invoke("NatiaDropped", 2.0f);
                 SetColor(WarningLetterColor);
                 SetSprite(_sprite);
-                PlayDialogue("Ouch! I'll kill you for that.", 1, null, null, null, null);
+                switch (Natia.Instance.CurrentAffectionLevel)
+                {
+                    case Natia.AffectionLevel.Enemy:
+                        PlayDialogue("Stop doing that, you big dumb oaf!", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Rival:
+                        PlayDialogue("Bastard. Don't touch me ever again.", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Stranger:
+                        PlayDialogue("Ouch! I'll kill you for that.", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Acquaintance:
+                        PlayDialogue("What the hell was that about?", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Friend:
+                        PlayDialogue("Finally... I can walk on my own, you know?", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Partner:
+                        PlayDialogue("Ugh... I don't think I can get used to that. Thank you, I guess.", 0, null, null, null, null);
+                        break;
+                    case Natia.AffectionLevel.Lover:
+                        PlayDialogue("Thanks, Halicon. You make a great bodyguard.", 0, null, null, null, null);
+                        break;
+                }
                 break;
             case 1:
                 EndOfDialogue();
@@ -714,6 +760,7 @@ public class DialogueManagerScript : MonoBehaviour
                                 break;
                             case 3:
                                 PlayDialogue("Hahaha! Well, I suppose you've earned it. Not many people get to see me like this, so consider yourself lucky.", 0, "", "", "", "");
+                                Natia.Instance.ChangeClothes();
                                 break;
                             case 4:
                                 PlayDialogue("We need to get out of here.", 0, "", "", "", "");
@@ -916,8 +963,8 @@ public class DialogueManagerScript : MonoBehaviour
                     case 0:
                         break;
                     case 1:
-                        PlayDialogue("My name... is Natia. I'm the one who's going to be paying you if you do a good job. Now, keep your eyes sharp. There's no telling what lurks in the dark.", 0, null, null, null, null);
-                        currentDialogueNode = 3;
+                        PlayDialogue("My name... is Natia. I'm a warlock, if that tells you anything. I also happen to be the one paying you.", 0, null, null, null, null);
+                        currentDialogueNode = 5;
                         Invoke("Event1", 5.0f);
                         break;
                     case 2:

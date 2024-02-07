@@ -22,6 +22,12 @@ public class Natia : MonoBehaviour
     public NavMeshAgent EnemyNavMeshAgent;
     public Collider NatiaCollider;
 
+    public Transform headBone;
+
+    public GameObject Armor;
+    public GameObject Underwear;
+    public GameObject Boots;
+
     public enum NatiaState
     {
         Waiting,
@@ -51,6 +57,7 @@ public class Natia : MonoBehaviour
     public Door DoorToOpen;
     public Chest ChestToOpen;
 
+    public bool Naked;
     public bool CanMove = false;
     public bool Dead = false;
     public bool OpeningDoor = false;
@@ -81,6 +88,7 @@ public class Natia : MonoBehaviour
         IncreaseNatiaAffection();
         MoveToNewPosition();
         DistanceCheck();
+        HeadTurn();
 
         if (CurrentEnemyState == NatiaState.Waiting)
         {
@@ -104,6 +112,39 @@ public class Natia : MonoBehaviour
             transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, 0f);
         }
 
+    }
+
+    public void ChangeClothes()
+    {
+        Naked = !Naked;
+
+        if (!Naked)
+        {
+            Armor.SetActive(true);
+            Underwear.SetActive(false);
+            Boots.SetActive(true);
+        }
+        else
+        {
+            Armor.SetActive(false);
+            Underwear.SetActive(true);
+            Boots.SetActive(false);
+        }
+    }
+
+    public void HeadTurn()
+    {
+        if (PlayerControllerScript.Instance.CinemachineCamera.transform.position == null || headBone == null)
+        {
+            Debug.LogWarning("Player transform or head bone is not assigned!");
+            return;
+        }
+
+        Vector3 directionToPlayer = (PlayerControllerScript.Instance.CinemachineCamera.transform.position - headBone.position).normalized;
+
+        Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+
+        headBone.rotation = Quaternion.Slerp(headBone.rotation, targetRotation, 5 * Time.deltaTime);
     }
 
     void CheckNatiaAffection()
@@ -165,7 +206,7 @@ public class Natia : MonoBehaviour
             CheckNatiaAffection();
         }
     }
-    
+
     void CheckStateChange(AffectionLevel NewAffectionLevel)
     {
         if (DialogueManagerScript.Instance != null)
