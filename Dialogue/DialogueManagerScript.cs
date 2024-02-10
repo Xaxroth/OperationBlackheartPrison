@@ -247,7 +247,7 @@ public class DialogueManagerScript : MonoBehaviour
                 switch (Natia.Instance.CurrentAffectionLevel)
                 {
                     case Natia.AffectionLevel.Enemy:
-                        PlayDialogue("Hnngh! I'll kill you!", 0, null, null, null, null);
+                        PlayDialogue("Hnngh! I'll kill you! Let me go!", 0, null, null, null, null);
                         break;
                     case Natia.AffectionLevel.Rival:
                         PlayDialogue("Unhand me, you brute!", 0, null, null, null, null);
@@ -259,13 +259,13 @@ public class DialogueManagerScript : MonoBehaviour
                         PlayDialogue("What are you doing?!", 0, null, null, null, null);
                         break;
                     case Natia.AffectionLevel.Friend:
-                        PlayDialogue("Ugh, alright.", 0, null, null, null, null);
+                        PlayDialogue("Again?!", 0, null, null, null, null);
                         break;
                     case Natia.AffectionLevel.Partner:
-                        PlayDialogue("Oh, alright. I'm holding on!", 0, null, null, null, null);
+                        PlayDialogue("Woah! Hey!", 0, null, null, null, null);
                         break;
                     case Natia.AffectionLevel.Lover:
-                        PlayDialogue("Ah! I forgot how strong you were. I'm ready.", 0, null, null, null, null);
+                        PlayDialogue("I'm holding on tight!", 0, null, null, null, null);
                         break;
                 }
                 break;
@@ -417,19 +417,126 @@ public class DialogueManagerScript : MonoBehaviour
 
                 Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
 
-                switch (RandomNumber)
+                switch (Natia.Instance.CurrentAffectionLevel)
                 {
-                    case 1:
-                        PlayDialogue("Halicon?", 1, null, null, null, null);
+                    case Natia.AffectionLevel.Enemy:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("And now you're abandoning me. I hope you fucking die.", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Piece of shit.", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Yeah, sure, run away! You won't last long.", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Incompetent bastard.", 1, null, null, null, null);
+                                break;
+                        }
                         break;
-                    case 2:
-                        PlayDialogue("Wait! Come back!", 1, null, null, null, null);
+                    case Natia.AffectionLevel.Rival:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Idiot... Can you slow down?!", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Can you stop, for one second?!", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Halicon?!", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Stop!", 1, null, null, null, null);
+                                break;
+                        }
                         break;
-                    case 3:
-                        PlayDialogue("Halicon...? Where are you?", 1, null, null, null, null);
+                    case Natia.AffectionLevel.Stranger:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Hello?!", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Get back here, you idiot!", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Halicon?!", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Stop!", 1, null, null, null, null);
+                                break;
+                        }
                         break;
-                    case 4:
-                        PlayDialogue("Hey! Don't just leave me here!", 1, null, null, null, null);
+                    case Natia.AffectionLevel.Acquaintance:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Halicon?", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Wait up!", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Wait!", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Stop running!", 1, null, null, null, null);
+                                break;
+                        }
+                        break;
+                    case Natia.AffectionLevel.Friend:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Hello? Halicon?", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Wait! Come back!", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Hey! Wait up!", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Hey! Don't just leave me here!", 1, null, null, null, null);
+                                break;
+                        }
+                        break;
+                    case Natia.AffectionLevel.Partner:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Halicon?", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Wait! Come back!", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Halicon...? Where are you?", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Hey! Don't just leave me here!", 1, null, null, null, null);
+                                break;
+                        }
+                        break;
+                    case Natia.AffectionLevel.Lover:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Wait, Halicon! Don't leave me here!", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Please, wait for me!", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Waaait!", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Halicon! I need you!", 1, null, null, null, null);
+                                break;
+                        }
                         break;
                 }
 
@@ -459,19 +566,126 @@ public class DialogueManagerScript : MonoBehaviour
 
                 int RandomNumber = Random.Range(1, 5);
 
-                switch (RandomNumber)
+                switch (Natia.Instance.CurrentAffectionLevel)
                 {
-                    case 1:
-                        PlayDialogue("Oh, there you are! Don't scare me like that.", 1, null, null, null, null);
+                    case Natia.AffectionLevel.Enemy:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("And now you're abandoning me. I hope you fucking die.", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Piece of shit.", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Yeah, sure, run away! You won't last long.", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Incompetent bastard.", 1, null, null, null, null);
+                                break;
+                        }
                         break;
-                    case 2:
-                        PlayDialogue("There you are. Did you find anything interesting?", 1, null, null, null, null);
+                    case Natia.AffectionLevel.Rival:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Idiot... Can you slow down?!", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Can you stop, for one second?!", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Halicon?!", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Stop!", 1, null, null, null, null);
+                                break;
+                        }
                         break;
-                    case 3:
-                        PlayDialogue("Is it safe?", 1, null, null, null, null);
+                    case Natia.AffectionLevel.Stranger:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Hello?!", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Get back here, you idiot!", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Halicon?!", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Stop!", 1, null, null, null, null);
+                                break;
+                        }
                         break;
-                    case 4:
-                        PlayDialogue("Great... I was just starting to enjoy the peace and quiet...", 1, null, null, null, null);
+                    case Natia.AffectionLevel.Acquaintance:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Oh, there you are! Don't scare me like that.", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("There you are. Did you find anything interesting?", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Is it safe?", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Great... I was just starting to enjoy the peace and quiet...", 1, null, null, null, null);
+                                break;
+                        }
+                        break;
+                    case Natia.AffectionLevel.Friend:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Oh, there you are! Don't scare me like that.", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("There you are. Did you find anything interesting?", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Is it safe?", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("Great... I was just starting to enjoy the peace and quiet...", 1, null, null, null, null);
+                                break;
+                        }
+                        break;
+                    case Natia.AffectionLevel.Partner:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Oh, Halicon! I thought I had lost you.", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Whew... What a relief. It certainly isn't the nicest being alone down here.", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("I don't feel too good, Halicon... Don't run off like that, please.", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("You... At least tell me how long you're going to be gone!", 1, null, null, null, null);
+                                break;
+                        }
+                        break;
+                    case Natia.AffectionLevel.Lover:
+                        switch (RandomNumber)
+                        {
+                            case 1:
+                                PlayDialogue("Oh, Hal... Thank the hells you're alright.", 1, null, null, null, null);
+                                break;
+                            case 2:
+                                PlayDialogue("Don't make me wait here, Halicon. I want to come with you.", 1, null, null, null, null);
+                                break;
+                            case 3:
+                                PlayDialogue("Is there something amiss?", 1, null, null, null, null);
+                                break;
+                            case 4:
+                                PlayDialogue("H-hey! Don't just appear like that in front of me! You scared the hells out of me.", 1, null, null, null, null);
+                                break;
+                        }
                         break;
                 }
 

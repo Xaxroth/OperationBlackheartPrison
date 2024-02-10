@@ -14,8 +14,14 @@ public class MainRoomPuzzle : MonoBehaviour
 
     public static bool AltarUnlocked;
 
+    public bool TogglePuzzleSolved;
+
     void Update()
     {
+        if (TogglePuzzleSolved)
+        {
+            AltarUnlocked = true;
+        }
         if (JumpTrialPuzzle.JumpTrialPassed)
         {
             FirstFlame.SetActive(true);
