@@ -557,7 +557,6 @@ public class DialogueManagerScript : MonoBehaviour
 
         switch (currentDialogueNode)
         {
-            // ENTRY POINT FOR DIALOGUE
             case 0:
                 switch (Natia.Instance.CurrentAffectionLevel)
                 {
@@ -597,9 +596,9 @@ public class DialogueManagerScript : MonoBehaviour
                         PlayDialogue("Hello there, handsome. Need me for something special, perhaps?", 4, "I want to talk to you.", "Can you keep your distance?", "Stay here.", "Let's go.");
                         break;
                 }
+                PlayerControllerScript.Instance.AdaptabilityDialogue = true;
 
                 break;
-            // PLAYERS FIRST CHOICE
             case 1:
                 AudioManager.Instance.GlobalAudioSource.Stop();
                 switch (selectedOption)
@@ -646,9 +645,8 @@ public class DialogueManagerScript : MonoBehaviour
                                 break;
                         }
 
+                        PlayerControllerScript.Instance.AdaptabilityDialogue = false;
                         currentDialogueNode = 2;
-                        //PlayDialogue("What did you just...?! Fine. But you better keep an eye out for me.", 0, "[Leave]", null, null, null);
-                        //Natia.Instance.CurrentEnemyState = Natia.NatiaState.Relaxed;
 
                         break;
                     case 2:
@@ -787,9 +785,11 @@ public class DialogueManagerScript : MonoBehaviour
                             break;
                         case 2:
                             PlayDialogue("Whatever. Just focus on the mission for once, please.", 0, "", "", "", "");
+                            Invoke("AdaptabilityDialogue", 3f);
                             break;
                         case 3:
                             PlayDialogue("I suggest you do the same.", 0, "", "", "", "");
+                            Invoke("AdaptabilityDialogue", 3f);
                             break;
                     }
                 }
@@ -805,6 +805,7 @@ public class DialogueManagerScript : MonoBehaviour
                 {
                     case 1:
                         PlayDialogue("Hostility? I've been nothing but kind to you, and you think I'm... hostile?! Fuck you, Halicon.", 0, "", "", "", "");
+                        Invoke("AdaptabilityDialogue", 5f);
                         break;
                     case 2:
                         PlayDialogue("And what's so special about this location? Hmm?", 3, "This place is dangerous. You have no reason to go down here so unprepared.", "You know the man we encountered earlier.", "SECRET: I know you are sick, Natia. You believe the cure is down here.", "");
@@ -812,6 +813,7 @@ public class DialogueManagerScript : MonoBehaviour
                         break;
                     case 3:
                         PlayDialogue("Well, I'm not. And frankly, I'm offended you think I am. Just get going, will you?", 0, "", "", "", "");
+                        Invoke("AdaptabilityDialogue", 5f);
                         break;
                 }
                 break;
@@ -943,7 +945,6 @@ public class DialogueManagerScript : MonoBehaviour
 
         switch (currentDialogueNode)
         {
-            // ENTRY POINT FOR DIALOGUE
             case 0:
                 Invoke("Event1", 3.0f);
                 SetColor(NatiaLetterColor);
@@ -952,7 +953,6 @@ public class DialogueManagerScript : MonoBehaviour
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.RevealStinger, 1.0f);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue1x1, 1.0f);
                 break;
-            // PLAYERS FIRST CHOICE
             case 1:
                 PlayDialogue("You will do as I say, and protect me with your life. Got it?", 4, "Who are you?", "What are we looking for?", "You're coming with me.", null);
                 UIManager.Instance.ShowHint("You can select the options shown on screen by pressing '1', '2', '3' or '4' respectively.");
@@ -1046,7 +1046,6 @@ public class DialogueManagerScript : MonoBehaviour
 
         switch (currentDialogueNode)
         {
-            // ENTRY POINT FOR DIALOGUE
             case 0:
                 Invoke("Event2", 3.0f);
                 SetColor(NatiaLetterColor);
@@ -1054,15 +1053,12 @@ public class DialogueManagerScript : MonoBehaviour
                 PlayDialogue("It's so dark in here... I can't see a thing.", 2, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue2x1, 1.0f);
                 break;
-            // PLAYERS FIRST CHOICE
             case 1:
-                // WHAT OPTION DID THE PLAYER SELECT?
                 Invoke("Event2", 3.0f);
                 PlayDialogue("Maybe we should turn back? I'm not going.", 2, null, null, null, null);
                 UIManager.Instance.ShowHint("Natia can be picked up by pressing 'E' while in conversation with her.");
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue2x2, 1.0f);
                 break;
-            // PLAYERS SECOND CHOICE
             case 2:
                 EndOfDialogue();
                 CloseDialogue();
@@ -1087,7 +1083,6 @@ public class DialogueManagerScript : MonoBehaviour
 
         switch (currentDialogueNode)
         {
-            // ENTRY POINT FOR DIALOGUE
             case 0:
                 Invoke("Event3", 5.0f);
                 SetColor(NatiaLetterColor);
@@ -1095,15 +1090,12 @@ public class DialogueManagerScript : MonoBehaviour
                 PlayDialogue("This place is awfully quiet... Almost too quiet.", 0, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue2x1, 1.0f);
                 break;
-            // PLAYERS FIRST CHOICE
             case 1:
-                // WHAT OPTION DID THE PLAYER SELECT?
                 Invoke("Event3", 5.0f);
                 PlayDialogue("How long has this place been dormant?", 0, null, null, null, null);
                 UIManager.Instance.ShowHint("Being a thief, Natia will try her best to pick the locks of chests and doors.");
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue2x2, 1.0f);
                 break;
-            // PLAYERS SECOND CHOICE
             case 2:
                 EndOfDialogue();
                 CloseDialogue();
@@ -1127,7 +1119,6 @@ public class DialogueManagerScript : MonoBehaviour
 
         switch (currentDialogueNode)
         {
-            // ENTRY POINT FOR DIALOGUE
             case 0:
                 Invoke("Event4", 7.0f);
                 SetColor(NatiaLetterColor);
@@ -1135,15 +1126,12 @@ public class DialogueManagerScript : MonoBehaviour
                 PlayDialogue("Explosives! Well, they can certainly come in handy... As long as we're careful.", 0, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue4x1, 1.0f);
                 break;
-            // PLAYERS FIRST CHOICE
             case 1:
-                // WHAT OPTION DID THE PLAYER SELECT?
                 Invoke("Event4", 5.0f);
                 PlayDialogue("Why are you giving me that look? Don't even think about it.", 0, null, null, null, null);
                 UIManager.Instance.ShowHint("You now have access to Flashbangs. Use the 'T' key to charge, and release to throw. Use them wisely.");
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue4x2, 1.0f);
                 break;
-            // PLAYERS SECOND CHOICE
             case 2:
                 EndOfDialogue();
                 CloseDialogue();
@@ -1167,28 +1155,20 @@ public class DialogueManagerScript : MonoBehaviour
 
         switch (currentDialogueNode)
         {
-            // ENTRY POINT FOR DIALOGUE
             case 0:
                 Invoke("Event5", 3.0f);
                 SetColor(NatiaLetterColor);
                 SetSprite(_sprite);
                 PlayDialogue("These rooms... they all seem like trials of some sort. I wonder why?", 0, null, null, null, null);
                 Natia.Instance.EnemyNavMeshAgent.speed = 0;
-                //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue5x1, 1.0f);
                 break;
-            // PLAYERS FIRST CHOICE
             case 1:
-                // WHAT OPTION DID THE PLAYER SELECT?
                 Invoke("Event5", 4.0f);
                 PlayDialogue("I mean, look there. I've never seen so many traps in one place.", 0, null, null, null, null);
-                //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue5x2, 1.0f);
                 break;
-            // PLAYERS SECOND CHOICE
             case 2:
-                // WHAT OPTION DID THE PLAYER SELECT?
                 Invoke("Event5", 5.0f);
                 PlayDialogue("I think it's time you earned your pay. I'll stay here. And keep your hands off of me.", 0, null, null, null, null);
-                //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue5x3, 1.0f);
                 break;
             case 3:
                 EndOfDialogue();
@@ -1214,26 +1194,57 @@ public class DialogueManagerScript : MonoBehaviour
 
         switch (currentDialogueNode)
         {
-            // ENTRY POINT FOR DIALOGUE
             case 0:
                 Invoke("Event6", 3.0f);
                 SetColor(NatiaLetterColor);
                 SetSprite(_sprite);
                 PlayDialogue("Halicon... The braziers, they're all lit.", 0, null, null, null, null);
-                //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue5x1, 1.0f);
                 break;
-            // PLAYERS FIRST CHOICE
             case 1:
-                // WHAT OPTION DID THE PLAYER SELECT?
                 Invoke("Event6", 8.0f);
                 PlayDialogue("You knew what to do all along, didn't you? I guess I underestimated your intelligence.", 0, null, null, null, null);
-                //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue5x3, 1.0f);
                 break;
-
             case 2:
-                // WHAT OPTION DID THE PLAYER SELECT?
                 Invoke("Event6", 5.0f);
                 PlayDialogue("I guess the only way forward is... down. What are we waiting for?", 0, null, null, null, null);
+                break;
+            case 3:
+                EndOfDialogue();
+                CloseDialogue();
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
+                break;
+        }
+
+        if (panel.activeInHierarchy)
+        {
+            currentDialogueNode++;
+        }
+    }
+
+    public void Event7()
+    {
+        if (Natia.Instance.CurrentEnemyState == Natia.NatiaState.Waiting)
+        {
+            return;
+        }
+
+        StartOfDialogue();
+
+        switch (currentDialogueNode)
+        {
+            case 0:
+                Invoke("Event7", 4.0f);
+                SetColor(NatiaLetterColor);
+                SetSprite(_sprite);
+                PlayDialogue("Wait, Halicon...", 0, null, null, null, null);
+                break;
+            case 1:
+                Invoke("Event7", 6.0f);
+                PlayDialogue("The magical engravings on this door... They are used to imprison powerful, magical beings...", 0, null, null, null, null);
+                break;
+            case 2:
+                Invoke("Event7", 5.0f);
+                PlayDialogue("But that means... N-no, that's impossible... We should leave. Now.", 0, null, null, null, null);
                 break;
             case 3:
                 EndOfDialogue();

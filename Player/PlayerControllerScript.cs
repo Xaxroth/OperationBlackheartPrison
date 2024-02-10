@@ -117,6 +117,7 @@ public class PlayerControllerScript : MonoBehaviour
     private bool hasDoubleJumped = false;
     private bool normalHit = false;
     private bool fallDeath = false;
+    public bool AdaptabilityDialogue;
 
     [SerializeField] private Rigidbody playerRigidbody;
     [SerializeField] private CapsuleCollider playerCollider;
@@ -256,7 +257,7 @@ public class PlayerControllerScript : MonoBehaviour
                     {
                         DialogueManagerScript.Instance.AdaptabilityDialogue();
                     }
-                    else if (hit.collider.CompareTag("Natia") && DialogueManagerScript.Instance.InProgress)
+                    else if (hit.collider.CompareTag("Natia") && DialogueManagerScript.Instance.InProgress && AdaptabilityDialogue)
                     {
                         DialogueManagerScript.Instance.EndOfDialogue();
                         DialogueManagerScript.Instance.CloseDialogue();

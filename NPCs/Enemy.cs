@@ -6,51 +6,57 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    public Transform player;
-    public Animator enemyAnimator;
+    [SerializeField] private Transform player;
+    [SerializeField] private Animator enemyAnimator;
+    [SerializeField] private NavMeshAgent EnemyNavMeshAgent;
 
-    public AudioSource EnemyAudioSource;
-    public AudioClip Footsteps;
-    public AudioClip AlertScream;
-    public AudioClip DamageScream;
-    public AudioClip Swing;
+    [SerializeField] private AudioSource EnemyAudioSource;
+    [SerializeField] private AudioClip Footsteps;
+    [SerializeField] private AudioClip AlertScream;
+    [SerializeField] private AudioClip DamageScream;
+    [SerializeField] private AudioClip AttackSound;
+    [SerializeField] private AudioClip Swing;
 
-    public GameObject playerCharacter;
-    public GameObject destinationGameObject;
-    public GameObject FireTeleportSpell;
-    public GameObject GoreExplosion;
-    public GameObject enemyBody;
+    [SerializeField] private GameObject playerCharacter;
+    [SerializeField] private GameObject destinationGameObject;
+    [SerializeField] private GameObject FireTeleportSpell;
+    [SerializeField] private GameObject GoreExplosion;
+    [SerializeField] private GameObject enemyBody;
 
-    public NavMeshAgent EnemyNavMeshAgent;
 
-    public ParticleSystem BloodParticles;
+    [SerializeField] private ParticleSystem BloodParticles;
 
-    public enum EnemyState
+    [SerializeField]
+    private enum EnemyState
     {
         Waiting,
         Chasing,
         Attacking
     }
 
-    public EnemyState CurrentEnemyState;
+    private EnemyState CurrentEnemyState;
 
     [Range(0, 360)]
     public float viewAngle;
 
     public float coneRadius = 2.0f;
     public float coneLength = 5.0f;
-    public LayerMask hitMask;
-    public LayerMask blockedMask;
 
-    public bool dead;
-    public bool InRange = false;
-    public bool InLineOfSight;
-    public bool CanMove = false;
+    private LayerMask hitMask;
+    private LayerMask blockedMask;
 
-    public int EnemyDamage = 10;
-    public float Health = 10f;
-    float refreshRate = 0.5f;
-    float MovementSpeed = 9f;
+    private bool dead;
+    private bool InRange = false;
+    private bool InLineOfSight;
+    private bool CanMove = false;
+
+    private float MeleeRange = 5f;
+
+    private int EnemyDamage = 10;
+    private float Health = 10f;
+    private float refreshRate = 0.5f;
+    private float NormalMovementSpeed = 9f;
+    private float MovementSpeed = 9f;
     private bool isAttacking = false;
 
 
@@ -59,18 +65,18 @@ public class Enemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         EnemyNavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         EnemyAudioSource = gameObject.GetComponent<AudioSource>();
+        enemyAnimator = gameObject.GetComponentInChildren<Animator>();
+
+        InvokeRepeating("CheckLoS", 1.0f, 1.0f);
     }
 
     void Update()
     {
         MoveToNewPosition();
 
-        if (CurrentEnemyState == EnemyState.Waiting)
-        {
-            CheckLoS();
-        }
+        float distanceToTarget = Vector3.Distance(EnemyNavMeshAgent.transform.position, PlayerControllerScript.Instance.transform.position);
 
-        if (EnemyNavMeshAgent.remainingDistance < 4.0f)
+        if (distanceToTarget <= MeleeRange)
         {
             InRange = true;
         }
@@ -91,13 +97,13 @@ public class Enemy : MonoBehaviour
         if (CanMove)
         {
             EnemyNavMeshAgent.destination = player.transform.position;
-            EnemyNavMeshAgent.stoppingDistance = 4;
+            EnemyNavMeshAgent.stoppingDistance = 2;
         }
     }
 
     public void Attack()
     {
-        if (InRange && CurrentEnemyState != EnemyState.Attacking && !isAttacking)
+        if (InRange && CurrentEnemyState != EnemyState.Attacking && !isAttacking && CanMove)
         {
             StartCoroutine(AttackCoroutine());
         }
@@ -110,13 +116,17 @@ public class Enemy : MonoBehaviour
 
         while (InRange)
         {
+            EnemyAudioSource.PlayOneShot(AttackSound, 0.7f);
+            enemyAnimator.SetBool("Attack", true);
+
             MovementSpeed = 0;
             EnemyNavMeshAgent.speed = MovementSpeed;
-            Vector3 coneDirection = transform.forward;
-            yield return new WaitForSeconds(0.5f);
-            // Perform a sphere cast in the cone direction
-            RaycastHit[] hits = Physics.SphereCastAll(transform.position, coneRadius, coneDirection, coneLength);
 
+            Vector3 coneDirection = transform.forward;
+
+            yield return new WaitForSeconds(0.5f);
+
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, coneRadius, coneDirection, coneLength);
             List<GameObject> hitObjects = new List<GameObject>();
 
             foreach (RaycastHit hit in hits)
@@ -135,10 +145,14 @@ public class Enemy : MonoBehaviour
                 }
             }
 
-            MovementSpeed = 15;
+            enemyAnimator.SetBool("Attack", false);
+
+            MovementSpeed = NormalMovementSpeed;
             EnemyNavMeshAgent.speed = MovementSpeed;
 
-            yield return new WaitForSeconds(1.0f);
+            hitObjects.Clear();
+
+            yield return new WaitForSeconds(0.7f);
         }
 
         isAttacking = false;
@@ -148,7 +162,7 @@ public class Enemy : MonoBehaviour
     {
         Collider[] cone = Physics.OverlapSphere(transform.position, coneRadius);
 
-        if (cone.Length != 0)
+        if (cone.Length != 0 && !CanMove)
         {
             foreach (var hitCollider in cone)
             {
@@ -164,7 +178,8 @@ public class Enemy : MonoBehaviour
                     {
                         InLineOfSight = true;
                         CanMove = true;
-                        EnemyAudioSource.PlayOneShot(AlertScream);
+                        EnemyAudioSource.PlayOneShot(AlertScream, 1.0f);
+                        enemyAnimator.SetBool("Awaken", true);
                         CurrentEnemyState = EnemyState.Chasing;
                     }
                     else
@@ -184,7 +199,6 @@ public class Enemy : MonoBehaviour
 
         if (Health <= 0 && !dead)
         {
-
             StartCoroutine(DeathCoroutine());
 
             if (ShouldExplode)

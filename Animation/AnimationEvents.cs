@@ -25,6 +25,11 @@ public class AnimationEvents : MonoBehaviour
         PlayerControllerScript.Instance.PlayerAudioSource.PlayOneShot(BackpackSounds[Random.Range(0, BackpackSounds.Length)], 0.4f);
     }
 
+    public void NatiaFootsteps()
+    {
+        Natia.Instance.EnemyAudioSource.PlayOneShot(SneakerFootstepSounds[Random.Range(0, SneakerFootstepSounds.Length)], 0.55f);
+    }
+
     public void Panting()
     {
         //PlayerControllerScript.Instance.PlayerAudioSource.PlayOneShot(PantingSounds[Random.Range(0, BackpackSounds.Length)], 0.7f);

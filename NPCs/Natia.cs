@@ -22,6 +22,8 @@ public class Natia : MonoBehaviour
     public NavMeshAgent EnemyNavMeshAgent;
     public Collider NatiaCollider;
 
+    public Animator NatiaAnimator;
+
     public Transform headBone;
 
     public GameObject Armor;
@@ -96,14 +98,23 @@ public class Natia : MonoBehaviour
             return;
         }
 
-
-        if (PlayerControllerScript.Instance.CurrentMovementState == PlayerControllerScript.PlayerMovementState.Running)
+        if (EnemyNavMeshAgent.velocity.magnitude < 0.15f || CurrentEnemyState == NatiaState.Waiting || EnemyNavMeshAgent.speed == 0)
         {
-            EnemyNavMeshAgent.speed = 25;
+            NatiaAnimator.SetBool("Walking", false);
         }
         else
         {
-            EnemyNavMeshAgent.speed = 10;
+            NatiaAnimator.SetBool("Walking", true);
+        }
+
+
+        if (PlayerControllerScript.Instance.CurrentMovementState == PlayerControllerScript.PlayerMovementState.Running)
+        {
+            EnemyNavMeshAgent.speed = 16;
+        }
+        else
+        {
+            EnemyNavMeshAgent.speed = 16;
         }
         if (PlayerControllerScript.Instance != null)
         {
@@ -134,17 +145,30 @@ public class Natia : MonoBehaviour
 
     public void HeadTurn()
     {
-        if (PlayerControllerScript.Instance.CinemachineCamera.transform.position == null || headBone == null)
+        Vector3 playerDirection = PlayerControllerScript.Instance.transform.position - transform.position;
+        Vector3 forwardDirection = transform.forward;
+
+        float dotProduct = Vector3.Dot(playerDirection.normalized, forwardDirection);
+
+        if (PlayerControllerScript.Instance.CinemachineCamera.transform == null || headBone == null)
         {
             Debug.LogWarning("Player transform or head bone is not assigned!");
             return;
         }
 
-        Vector3 directionToPlayer = (PlayerControllerScript.Instance.CinemachineCamera.transform.position - headBone.position).normalized;
+        if (dotProduct > 0)
+        {
 
-        Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+            Vector3 directionToPlayer = (PlayerControllerScript.Instance.CinemachineCamera.transform.position - headBone.position).normalized;
 
-        headBone.rotation = Quaternion.Slerp(headBone.rotation, targetRotation, 5 * Time.deltaTime);
+            Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+
+            float yRotation = headBone.rotation.eulerAngles.y;
+
+            headBone.rotation = Quaternion.Slerp(headBone.rotation, targetRotation, 5 * Time.deltaTime);
+
+        }
+
     }
 
     void CheckNatiaAffection()
@@ -190,6 +214,18 @@ public class Natia : MonoBehaviour
             CurrentAffectionLevel = NewAffectionLevel;
             CheckStateChange(CurrentAffectionLevel);
         }
+    }
+
+    public void StartDialogue()
+    {
+        StartCoroutine(TalkAnimation());
+    }
+
+    private IEnumerator TalkAnimation()
+    {
+        NatiaAnimator.SetBool("Talking", true);
+        yield return new WaitForSeconds(2f);
+        NatiaAnimator.SetBool("Talking", false);
     }
 
     void IncreaseNatiaAffection()
@@ -239,12 +275,29 @@ public class Natia : MonoBehaviour
     {
         EnemyNavMeshAgent.destination = gameObject.transform.position;
         CanMove = false;
+
+        Vector3 playerDirection = PlayerControllerScript.Instance.transform.position - transform.position;
+        Vector3 forwardDirection = transform.forward;
+
+        float dotProduct = Vector3.Dot(playerDirection.normalized, forwardDirection);
+
+        if (DistanceToPlayer < 25 && dotProduct > 0)
+        {
+            Debug.Log("Player in front");
+            HeadTurn();
+        }
+        else
+        {
+            Debug.Log("Player behind");
+        }
+
         DistanceCheck();
     }
 
     void HandleNatiaState()
     {
         EnemyNavMeshAgent.enabled = true;
+        NatiaAnimator.SetBool("Carrying", false);
 
         switch (CurrentEnemyState)
         {
@@ -271,6 +324,7 @@ public class Natia : MonoBehaviour
                 EnemyNavMeshAgent.stoppingDistance = 0;
                 EnemyNavMeshAgent.enabled = false;
                 gameObject.transform.position = PlayerControllerScript.Instance.gameObject.transform.position;
+                NatiaAnimator.SetBool("Carrying", true);
                 break;
         }
     }

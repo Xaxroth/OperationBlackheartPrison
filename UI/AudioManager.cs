@@ -157,7 +157,7 @@ public class AudioManager : MonoBehaviour
         float initialVolume = audioSource.volume;
         float elapsedTime = 0f;
 
-        while (elapsedTime < FadeDuration)
+        while (elapsedTime < FadeDuration && audioSource != null)
         {
             audioSource.volume = Mathf.Lerp(initialVolume, targetVolume, elapsedTime / FadeDuration);
             elapsedTime += Time.deltaTime;
