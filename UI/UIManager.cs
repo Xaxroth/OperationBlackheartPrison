@@ -9,12 +9,12 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
-    public Image blackScreen;
     public float fadeDuration = 3f;
     public float popUpSpeed = 2.0f;
     public float popUpHeight = 100.0f;
     private Vector2 targetPosition;
 
+    public Image blackScreen;
     public GameObject PlayerUI;
     public GameObject HintsPopUp;
     public GameObject GameOverScreenObject;
@@ -23,9 +23,8 @@ public class UIManager : MonoBehaviour
     public RectTransform PopUpWindow;
     public TextMeshProUGUI HintText;
 
-    public bool changingScene = false;
     private bool soundPlayed = false;
-
+    public bool changingScene = false;
     public bool DisplayHint;
     public bool menuActive = false;
     public bool ForceCall;
@@ -70,7 +69,7 @@ public class UIManager : MonoBehaviour
         {
             if (Natia.Instance.CurrentEnemyState != Natia.NatiaState.Waiting)
             {
-                Natia.Instance.EnemyNavMeshAgent.enabled = false;
+                Natia.Instance.NatiaNavMeshAgent.enabled = false;
                 Natia.Instance.gameObject.transform.position = position.position;
             }
         }
@@ -85,7 +84,7 @@ public class UIManager : MonoBehaviour
 
         if (Natia.Instance != null)
         {
-            Natia.Instance.EnemyNavMeshAgent.enabled = true;
+            Natia.Instance.NatiaNavMeshAgent.enabled = true;
         }
 
         StartCoroutine(FadeOut());

@@ -7,22 +7,27 @@ using UnityEngine.UI;
 public class ProjectileScript : MonoBehaviour
 {
     [SerializeField] public Vector3 direction;
+
     [SerializeField] public Rigidbody flashbangRigidbody;
-    [SerializeField] public float force;
-    [SerializeField] public float baseSpeed = 15f;
-    [SerializeField] private float fuseTimer = 1.5f;
     [SerializeField] public GameObject Explosion;
-    [SerializeField] private GameObject GrenadeObject;
-    [SerializeField] public Light FlashbangLight;
+    [SerializeField] public GameObject GrenadeObject;
     [SerializeField] private AudioClip FlashbangCollision;
     [SerializeField] private AudioClip EarsRinging;
     [SerializeField] private AudioSource FlashbangAudioSource;
     [SerializeField] private Image WhiteScreen;
+    [SerializeField] public Light FlashbangLight;
 
-    public float blastRadius = 30;
+    [SerializeField] public float force;
+    [SerializeField] public float baseSpeed = 15f;
+    [SerializeField] private float fuseTimer = 1.5f;
+
+    public float flashbangPassiveRotationSpeed = 480.0f;
+    public float flashbangExtraFallSpeed = 0.1f;
+    public float blastRadius = 40;
 
     public bool Detonation = false;
     private bool hasCollided = false;
+
     void Start()
     {
         flashbangRigidbody = GetComponent<Rigidbody>();
@@ -43,14 +48,12 @@ public class ProjectileScript : MonoBehaviour
 
     public void Update()
     {
-        flashbangRigidbody.AddForce(Vector3.down * 0.1f, ForceMode.Impulse);
-
-        float rotationSpeed = 480.0f;
+        flashbangRigidbody.AddForce(Vector3.down * flashbangExtraFallSpeed, ForceMode.Impulse);
 
         if (!hasCollided)
         {
-            transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
-            transform.Rotate(Vector3.left, rotationSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.up, flashbangPassiveRotationSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.left, flashbangPassiveRotationSpeed * Time.deltaTime);
         }
     }
 
@@ -119,10 +122,6 @@ public class ProjectileScript : MonoBehaviour
                         StartCoroutine(FadeIn(fadeFactor));
                     }
                 }
-            }
-            else
-            {
-                Debug.Log("Player is too far from the explosion.");
             }
         }
 

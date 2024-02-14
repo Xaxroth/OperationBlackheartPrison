@@ -19,13 +19,14 @@ public class Natia : MonoBehaviour
 
     public Transform PlayerTransform;
     public AudioSource EnemyAudioSource;
-    public NavMeshAgent EnemyNavMeshAgent;
+    public NavMeshAgent NatiaNavMeshAgent;
     public Collider NatiaCollider;
 
     public Animator NatiaAnimator;
 
     public Transform headBone;
 
+    [Header("Armor")]
     public GameObject Armor;
     public GameObject Underwear;
     public GameObject Boots;
@@ -80,7 +81,7 @@ public class Natia : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        EnemyNavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+        NatiaNavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         EnemyAudioSource = gameObject.GetComponent<AudioSource>();
     }
 
@@ -99,31 +100,52 @@ public class Natia : MonoBehaviour
             return;
         }
 
-        if (EnemyNavMeshAgent.velocity.magnitude < 0.15f || CurrentEnemyState == NatiaState.Waiting || EnemyNavMeshAgent.speed == 0)
-        {
-            NatiaAnimator.SetBool("Walking", false);
-        }
-        else
-        {
-            NatiaAnimator.SetBool("Walking", true);
-        }
+        HandleMovement();
+        Rotation();
 
+    }
 
-        if (PlayerControllerScript.Instance.CurrentMovementState == PlayerControllerScript.PlayerMovementState.Running)
-        {
-            EnemyNavMeshAgent.speed = 16;
-        }
-        else
-        {
-            EnemyNavMeshAgent.speed = 16;
-        }
-        if (PlayerControllerScript.Instance != null)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(PlayerControllerScript.Instance.transform.position - transform.position);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 6 * Time.deltaTime);
-            transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, 0f);
-        }
+    void HandleNatiaState()
+    {
+        NatiaNavMeshAgent.enabled = true;
+        NatiaAnimator.SetBool("Carrying", false);
 
+        switch (CurrentEnemyState)
+        {
+            case NatiaState.Waiting:
+                NatiaNavMeshAgent.stoppingDistance = 10;
+                NatiaAnimator.SetBool("Walking", false);
+                break;
+            case NatiaState.Following:
+                NatiaNavMeshAgent.stoppingDistance = 8;
+                NatiaNavMeshAgent.destination = PlayerControllerScript.Instance.gameObject.transform.position;
+                break;
+            case NatiaState.Relaxed:
+                NatiaNavMeshAgent.stoppingDistance = 15;
+                NatiaNavMeshAgent.destination = PlayerControllerScript.Instance.gameObject.transform.position;
+                break;
+            case NatiaState.Cautious:
+                NatiaNavMeshAgent.stoppingDistance = 8;
+                NatiaNavMeshAgent.destination = PlayerControllerScript.Instance.gameObject.transform.position;
+                break;
+            case NatiaState.Lockpicking:
+                NatiaNavMeshAgent.stoppingDistance = 3;
+                break;
+            case NatiaState.PickedUp:
+                NatiaCollider.enabled = false;
+                NatiaNavMeshAgent.stoppingDistance = 0;
+                NatiaNavMeshAgent.enabled = false;
+                gameObject.transform.position = PlayerControllerScript.Instance.gameObject.transform.position;
+                NatiaAnimator.SetBool("Carrying", true);
+                break;
+            case NatiaState.Dead:
+                NatiaCollider.enabled = false;
+                NatiaNavMeshAgent.stoppingDistance = 0;
+                NatiaNavMeshAgent.speed = 0;
+                NatiaNavMeshAgent.enabled = false;
+                NatiaAnimator.SetBool("Dead", true);
+                break;
+        }
     }
 
     public void ChangeClothes()
@@ -144,18 +166,24 @@ public class Natia : MonoBehaviour
         }
     }
 
+    public void HandleMovement()
+    {
+        if (NatiaNavMeshAgent.velocity.magnitude < 0.15f || CurrentEnemyState == NatiaState.Waiting || NatiaNavMeshAgent.speed == 0)
+        {
+            NatiaAnimator.SetBool("Walking", false);
+        }
+        else
+        {
+            NatiaAnimator.SetBool("Walking", true);
+        }
+    }
+
     public void HeadTurn()
     {
         Vector3 playerDirection = PlayerControllerScript.Instance.transform.position - transform.position;
         Vector3 forwardDirection = transform.forward;
 
         float dotProduct = Vector3.Dot(playerDirection.normalized, forwardDirection);
-
-        if (PlayerControllerScript.Instance.CinemachineCamera.transform == null || headBone == null)
-        {
-            Debug.LogWarning("Player transform or head bone is not assigned!");
-            return;
-        }
 
         if (dotProduct > 0)
         {
@@ -170,6 +198,16 @@ public class Natia : MonoBehaviour
 
         }
 
+    }
+
+    public void Rotation()
+    {
+        if (PlayerControllerScript.Instance != null)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(PlayerControllerScript.Instance.transform.position - transform.position);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 6 * Time.deltaTime);
+            transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, 0f);
+        }
     }
 
     void CheckNatiaAffection()
@@ -274,7 +312,7 @@ public class Natia : MonoBehaviour
 
     void StandStill()
     {
-        EnemyNavMeshAgent.destination = gameObject.transform.position;
+        NatiaNavMeshAgent.destination = gameObject.transform.position;
         CanMove = false;
 
         Vector3 playerDirection = PlayerControllerScript.Instance.transform.position - transform.position;
@@ -284,73 +322,26 @@ public class Natia : MonoBehaviour
 
         if (DistanceToPlayer < 25 && dotProduct > 0)
         {
-            Debug.Log("Player in front");
             HeadTurn();
-        }
-        else
-        {
-            Debug.Log("Player behind");
         }
 
         DistanceCheck();
     }
 
-    void HandleNatiaState()
-    {
-        EnemyNavMeshAgent.enabled = true;
-        NatiaAnimator.SetBool("Carrying", false);
-
-        switch (CurrentEnemyState)
-        {
-            case NatiaState.Waiting:
-                EnemyNavMeshAgent.stoppingDistance = 10;
-                NatiaAnimator.SetBool("Walking", false);
-                break;
-            case NatiaState.Following:
-                EnemyNavMeshAgent.stoppingDistance = 8;
-                EnemyNavMeshAgent.destination = PlayerControllerScript.Instance.gameObject.transform.position;
-                break;
-            case NatiaState.Relaxed:
-                EnemyNavMeshAgent.stoppingDistance = 15;
-                EnemyNavMeshAgent.destination = PlayerControllerScript.Instance.gameObject.transform.position;
-                break;
-            case NatiaState.Cautious:
-                EnemyNavMeshAgent.stoppingDistance = 8;
-                EnemyNavMeshAgent.destination = PlayerControllerScript.Instance.gameObject.transform.position;
-                break;
-            case NatiaState.Lockpicking:
-                EnemyNavMeshAgent.stoppingDistance = 3;
-                break;
-            case NatiaState.PickedUp:
-                NatiaCollider.enabled = false;
-                EnemyNavMeshAgent.stoppingDistance = 0;
-                EnemyNavMeshAgent.enabled = false;
-                gameObject.transform.position = PlayerControllerScript.Instance.gameObject.transform.position;
-                NatiaAnimator.SetBool("Carrying", true);
-                break;
-            case NatiaState.Dead:
-                NatiaCollider.enabled = false;
-                EnemyNavMeshAgent.stoppingDistance = 0;
-                EnemyNavMeshAgent.speed = 0;
-                EnemyNavMeshAgent.enabled = false;
-                NatiaAnimator.SetBool("Dead", true);
-                break;
-        }
-    }
 
     void MoveToNewPosition()
     {
         if (CanMove && !OpeningDoor && CurrentEnemyState != NatiaState.PickedUp)
         {
-            EnemyNavMeshAgent.destination = PlayerTransform.transform.position;
+            NatiaNavMeshAgent.destination = PlayerTransform.transform.position;
         }
 
-        if (OpeningDoor && EnemyNavMeshAgent.remainingDistance < 3f && DoorToOpen != null && !StartedLockpicking)
+        if (OpeningDoor && NatiaNavMeshAgent.remainingDistance < 3f && DoorToOpen != null && !StartedLockpicking)
         {
             StartCoroutine(PickLock());
         }
 
-        if (OpeningDoor && EnemyNavMeshAgent.remainingDistance < 3f && ChestToOpen != null && !StartedLockpicking)
+        if (OpeningDoor && NatiaNavMeshAgent.remainingDistance < 3f && ChestToOpen != null && !StartedLockpicking)
         {
             StartCoroutine(PickLock());
         }
@@ -384,8 +375,8 @@ public class Natia : MonoBehaviour
         if (CanMove)
         {
             OpeningDoor = true;
-            EnemyNavMeshAgent.stoppingDistance = 1;
-            EnemyNavMeshAgent.destination = Door.transform.position;
+            NatiaNavMeshAgent.stoppingDistance = 1;
+            NatiaNavMeshAgent.destination = Door.transform.position;
             DoorToOpen = Door.GetComponent<Door>();
         }
     }
@@ -395,8 +386,8 @@ public class Natia : MonoBehaviour
         if (CanMove)
         {
             OpeningDoor = true;
-            EnemyNavMeshAgent.stoppingDistance = 1;
-            EnemyNavMeshAgent.destination = Chest.transform.position;
+            NatiaNavMeshAgent.stoppingDistance = 1;
+            NatiaNavMeshAgent.destination = Chest.transform.position;
             ChestToOpen = Chest.GetComponent<Chest>();
         }
     }
@@ -417,27 +408,24 @@ public class Natia : MonoBehaviour
                 DialogueManagerScript.Instance.NatiaDied();
                 StartCoroutine(DeathCoroutine());
             }
-            else
-            {
-                //DialogueManagerScript.Instance.NatiaFriendlyFireEvent();
-            }
         }
     }
 
     private IEnumerator DeathCoroutine()
     {
-        //AudioManager.Instance.PlaySound(AudioManager.Instance.MissionFailed, 1.0f);
-        UIManager.Instance.FadeInScreen();
         Dead = true;
         CurrentEnemyState = NatiaState.Dead;
         EnemyAudioSource.PlayOneShot(AudioManager.Instance.NatiaDeath, 1.0f);
+
+        UIManager.Instance.FadeInScreen();
         DialogueManagerScript.Instance.EndOfDialogue();
         DialogueManagerScript.Instance.CloseDialogue();
+
         yield return new WaitForSeconds(3);
+
         AudioManager.Instance.PlaySound(AudioManager.Instance.MissionFailed, 1.0f);
         UIManager.Instance.FadeOutScreen();
         UIManager.Instance.GameOverSceen("Natia is dead.");
         UIManager.Instance.ForceCall = true;
-        //Destroy(gameObject);
     }
 }

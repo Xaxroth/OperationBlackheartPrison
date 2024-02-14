@@ -812,14 +812,18 @@ public class PlayerControllerScript : MonoBehaviour
     {
         if (!Dead)
         {
+            Dead = true;
             CameraAnimator.SetBool("Death", true);
+
             playerRigidbody.velocity = Vector3.zero;
             playerRigidbody.isKinematic = true;
-            Dead = true;
+
             UIManager.Instance.FadeInScreen();
             AudioManager.Instance.BGMAudioSource.Stop();
             AudioManager.Instance.PlaySound(AudioManager.Instance.HaliconDeath, 1.0f);
+
             yield return new WaitForSeconds(3f);
+
             AudioManager.Instance.PlaySound(AudioManager.Instance.MissionFailed, 1.0f);
             UIManager.Instance.GameOverSceen("You died.");
             UIManager.Instance.FadeOutScreen();

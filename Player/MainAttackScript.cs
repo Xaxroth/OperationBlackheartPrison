@@ -18,9 +18,9 @@ public class MainAttackScript : MonoBehaviour
     [SerializeField] private GameObject ShootEffect;
     [SerializeField] private Transform ShootPosition;
     [SerializeField] public Light ProjectilePointLight;
-    public ParticleSystem MuzzleFlash;
     [SerializeField] private Text ammoDisplay;
     [SerializeField] private Transform Orientation;
+    public ParticleSystem MuzzleFlash;
 
     private bool reloading = false;
     private bool canFire = true;

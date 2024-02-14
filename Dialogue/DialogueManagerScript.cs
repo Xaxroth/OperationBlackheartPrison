@@ -1270,13 +1270,11 @@ public class DialogueManagerScript : MonoBehaviour
                 SetColor(NatiaLetterColor);
                 SetSprite(_sprite);
                 PlayDialogue("It's so dark in here... I can't see a thing.", 2, null, null, null, null);
-                //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue2x1, 1.0f);
                 break;
             case 1:
                 Invoke("Event2", 3.0f);
                 PlayDialogue("Maybe we should turn back? I'm not going.", 2, null, null, null, null);
                 UIManager.Instance.ShowHint("Natia can be picked up by pressing 'E' while in conversation with her.");
-                //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue2x2, 1.0f);
                 break;
             case 2:
                 EndOfDialogue();
@@ -1307,13 +1305,11 @@ public class DialogueManagerScript : MonoBehaviour
                 SetColor(NatiaLetterColor);
                 SetSprite(_sprite);
                 PlayDialogue("This place is awfully quiet... Almost too quiet.", 0, null, null, null, null);
-                //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue2x1, 1.0f);
                 break;
             case 1:
                 Invoke("Event3", 5.0f);
                 PlayDialogue("How long has this place been dormant?", 0, null, null, null, null);
                 UIManager.Instance.ShowHint("Being a thief, Natia will try her best to pick the locks of chests and doors.");
-                //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue2x2, 1.0f);
                 break;
             case 2:
                 EndOfDialogue();
@@ -1379,7 +1375,7 @@ public class DialogueManagerScript : MonoBehaviour
                 SetColor(NatiaLetterColor);
                 SetSprite(_sprite);
                 PlayDialogue("These rooms... they all seem like trials of some sort. I wonder why?", 0, null, null, null, null);
-                Natia.Instance.EnemyNavMeshAgent.speed = 0;
+                Natia.Instance.NatiaNavMeshAgent.speed = 0;
                 break;
             case 1:
                 Invoke("Event5", 4.0f);
