@@ -60,6 +60,11 @@ public class AudioManager : MonoBehaviour
     public AudioClip Lockpicking3;
     public AudioClip Lockpicking4;
 
+    public AudioClip NatiaDeath;
+    public AudioClip HaliconDeath;
+
+    public AudioClip MissionFailed;
+
     public AudioClip SaveGame;
 
     public AudioClip KeepDistance;

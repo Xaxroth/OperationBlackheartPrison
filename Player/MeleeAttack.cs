@@ -39,7 +39,7 @@ public class MeleeAttack : MonoBehaviour
 
     [SerializeField] private int baseDamage = 25;
     [SerializeField] private float attackCooldown = 0.5f;
-    [SerializeField] private float coneRadius = 4;
+    [SerializeField] private float coneRadius = 6;
     [SerializeField] private float LungeAttackForceModifier = 1.5f;
 
     [Header("Range")]
@@ -105,8 +105,8 @@ public class MeleeAttack : MonoBehaviour
                         Enemy enemy = hitCollider.GetComponent<Enemy>();
                         if (!hitEnemies.Contains(enemy))
                         {
-                            hitEnemies.Add(enemy);
                             enemy.TakeDamage(baseDamage, false);
+                            hitEnemies.Add(enemy);
 
                             PlayerControllerScript.Instance.playerStamina += baseDamage;
 
@@ -136,8 +136,6 @@ public class MeleeAttack : MonoBehaviour
             attackAnimationNumber++;
 
             canSwing = false;
-
-            yield return new WaitForSeconds(0.1f);
 
             MeleeSwing();
 

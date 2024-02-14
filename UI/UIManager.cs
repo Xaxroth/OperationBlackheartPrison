@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
 
     public GameObject PlayerUI;
     public GameObject HintsPopUp;
+    public GameObject GameOverScreenObject;
 
     public GameObject HintBox;
     public RectTransform PopUpWindow;
@@ -52,6 +53,12 @@ public class UIManager : MonoBehaviour
         else
         {
             PopUpWindow.anchoredPosition = Vector2.Lerp(PopUpWindow.anchoredPosition, new Vector2(targetPosition.x, -popUpHeight), Time.deltaTime * popUpSpeed);
+        }
+
+        if (GameOverScreenObject.activeInHierarchy)
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Confined;
         }
     }
 
@@ -114,7 +121,7 @@ public class UIManager : MonoBehaviour
 
     public void PlayerMenu()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) || ForceCall)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!menuActive)
             {
@@ -136,6 +143,15 @@ public class UIManager : MonoBehaviour
 
             ForceCall = false;
         }
+    }
+
+    public void GameOverSceen(string GameOverText)
+    {
+        GameOverScreenObject.SetActive(true);
+        GameOverScreenObject.GetComponentInChildren<TextMeshProUGUI>().text = GameOverText;
+        PlayerControllerScript.Instance.paralyzed = true;
+        menuActive = true;
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     public void FadeOutScreen()

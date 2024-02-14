@@ -31,7 +31,8 @@ public class Enemy : MonoBehaviour
     {
         Waiting,
         Chasing,
-        Attacking
+        Attacking,
+        Stunned
     }
 
     private EnemyState CurrentEnemyState;
@@ -49,16 +50,21 @@ public class Enemy : MonoBehaviour
     private bool InRange = false;
     private bool InLineOfSight;
     private bool CanMove = false;
+    private Transform _targetPosition;
 
     private float MeleeRange = 5f;
 
+    private bool canBeHarmed;
+
     private int EnemyDamage = 10;
-    private float Health = 10f;
+    public float Health = 10f;
+    private float stunDuration = 3f;
     private float refreshRate = 0.5f;
-    private float NormalMovementSpeed = 9f;
+    public float NormalMovementSpeed = 9f;
     private float MovementSpeed = 9f;
     private bool isAttacking = false;
 
+    public bool Initialized { get; private set; }
 
     void Start()
     {
@@ -72,9 +78,29 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        if (CurrentEnemyState == EnemyState.Stunned)
+        {
+            EnemyNavMeshAgent.speed = 0;
+            InRange = false;
+            StopCoroutine(AttackCoroutine());
+            return;
+        }
+        else
+        {
+            EnemyNavMeshAgent.speed = NormalMovementSpeed;
+        }
+
+        if (Natia.Instance.Dead || PlayerControllerScript.Instance.Dead)
+        {
+            StopAllCoroutines();
+            return;
+        }
+
+        DetermineTarget();
+
         MoveToNewPosition();
 
-        float distanceToTarget = Vector3.Distance(EnemyNavMeshAgent.transform.position, PlayerControllerScript.Instance.transform.position);
+        float distanceToTarget = Vector3.Distance(EnemyNavMeshAgent.transform.position, _targetPosition.position);
 
         if (distanceToTarget <= MeleeRange)
         {
@@ -96,7 +122,8 @@ public class Enemy : MonoBehaviour
     {
         if (CanMove)
         {
-            EnemyNavMeshAgent.destination = player.transform.position;
+            DetermineTarget();
+            EnemyNavMeshAgent.destination = _targetPosition.transform.position;
             EnemyNavMeshAgent.stoppingDistance = 2;
         }
     }
@@ -106,6 +133,32 @@ public class Enemy : MonoBehaviour
         if (InRange && CurrentEnemyState != EnemyState.Attacking && !isAttacking && CanMove)
         {
             StartCoroutine(AttackCoroutine());
+        }
+    }
+
+    public void StunEnemy()
+    {
+        StartCoroutine(StunnedCoroutine());
+    }
+
+    private IEnumerator StunnedCoroutine()
+    {
+        CurrentEnemyState = EnemyState.Stunned;
+        enemyAnimator.SetBool("Flashed", true);
+        yield return new WaitForSeconds(stunDuration);
+        enemyAnimator.SetBool("Flashed", false);
+        CurrentEnemyState = EnemyState.Chasing;
+    }
+
+    public void DetermineTarget()
+    {
+        if (Vector3.Distance(transform.position, PlayerControllerScript.Instance.transform.position) > Vector3.Distance(transform.position, Natia.Instance.transform.position))
+        {
+            _targetPosition = Natia.Instance.transform;
+        }
+        else
+        {
+            _targetPosition = PlayerControllerScript.Instance.transform;
         }
     }
 
@@ -143,6 +196,10 @@ public class Enemy : MonoBehaviour
                 {
                     hitObject.GetComponent<PlayerControllerScript>().TakeDamage(EnemyDamage);
                 }
+                else if (hitObject.CompareTag("Natia") && InRange)
+                {
+                    hitObject.GetComponent<Natia>().TakeDamage(EnemyDamage);
+                }
             }
 
             enemyAnimator.SetBool("Attack", false);
@@ -167,20 +224,21 @@ public class Enemy : MonoBehaviour
             foreach (var hitCollider in cone)
             {
                 var target = hitCollider.GetComponent<PlayerControllerScript>();
+                var Natia = hitCollider.GetComponent<Natia>();
                 Transform targetTransform = hitCollider.GetComponent<Transform>();
                 Vector3 targetDirection = (targetTransform.position - transform.position).normalized;
 
-                if (Vector3.Angle(transform.forward, targetDirection) < viewAngle / 2 && target)
+                if (Vector3.Angle(transform.forward, targetDirection) < viewAngle / 2 && target || Vector3.Angle(transform.forward, targetDirection) < viewAngle / 2 && Natia)
                 {
                     float distanceToTarget = Vector3.Distance(transform.position, targetTransform.position);
 
                     if (!Physics.Raycast(transform.position, targetDirection, distanceToTarget, blockedMask))
                     {
                         InLineOfSight = true;
-                        CanMove = true;
-                        EnemyAudioSource.PlayOneShot(AlertScream, 1.0f);
+                        EnemyAudioSource.PlayOneShot(AlertScream, 0.5f);
                         enemyAnimator.SetBool("Awaken", true);
-                        CurrentEnemyState = EnemyState.Chasing;
+
+                        StartCoroutine(AwakeCoroutine());
                     }
                     else
                     {
@@ -194,18 +252,29 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float Damage, bool ShouldExplode)
     {
-        Health -= (int)Damage;
-        BloodParticles.Play();
-
-        if (Health <= 0 && !dead)
+        if (canBeHarmed)
         {
-            StartCoroutine(DeathCoroutine());
+            Health -= (int)Damage;
+            BloodParticles.Play();
 
-            if (ShouldExplode)
+            if (Health <= 0 && !dead)
             {
-                Explode();
+                StartCoroutine(DeathCoroutine());
+
+                if (ShouldExplode)
+                {
+                    Explode();
+                }
             }
         }
+    }
+
+    private IEnumerator AwakeCoroutine()
+    {
+        yield return new WaitForSeconds(1);
+        canBeHarmed = true;
+        CanMove = true;
+        CurrentEnemyState = EnemyState.Chasing;
     }
 
     private IEnumerator DeathCoroutine()

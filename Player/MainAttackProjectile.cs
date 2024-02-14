@@ -108,6 +108,16 @@ public class MainAttackProjectile : MonoBehaviour
                     spreadDamageable.TakeDamage(Damage, true);
                 }
             }
+            
+            if (spreadHit.collider.gameObject.CompareTag("Natia"))
+            {
+                Natia natia = spreadHit.collider.gameObject.GetComponent<Natia>();
+
+                if (natia != null)
+                {
+                    natia.TakeDamage(Damage);
+                }
+            }
         }
 
         Debug.DrawRay(ray.origin, spreadDirection.normalized * (hit.distance > 10f ? hit.distance : 80), Color.red, 2f);

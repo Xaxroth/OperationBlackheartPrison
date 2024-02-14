@@ -18,6 +18,9 @@ public class ProjectileScript : MonoBehaviour
     [SerializeField] private AudioClip EarsRinging;
     [SerializeField] private AudioSource FlashbangAudioSource;
     [SerializeField] private Image WhiteScreen;
+
+    public float blastRadius = 30;
+
     public bool Detonation = false;
     private bool hasCollided = false;
     void Start()
@@ -64,6 +67,15 @@ public class ProjectileScript : MonoBehaviour
     {
         yield return new WaitForSeconds(fuseTimer);
         Detonation = true;
+
+        Collider[] hitColliders = Physics.OverlapSphere(gameObject.transform.position, blastRadius);
+        foreach (Collider hitCollider in hitColliders)
+        {
+            if (hitCollider.gameObject.CompareTag("Enemy"))
+            {
+                hitCollider.gameObject.GetComponent<Enemy>().StunEnemy();
+            }
+        }
 
         if (Natia.Instance != null)
         {

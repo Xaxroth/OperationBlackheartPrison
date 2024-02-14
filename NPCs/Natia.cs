@@ -37,7 +37,8 @@ public class Natia : MonoBehaviour
         Cautious,
         Relaxed,
         Lockpicking,
-        PickedUp
+        PickedUp,
+        Dead
     }
 
     public enum AffectionLevel
@@ -303,6 +304,7 @@ public class Natia : MonoBehaviour
         {
             case NatiaState.Waiting:
                 EnemyNavMeshAgent.stoppingDistance = 10;
+                NatiaAnimator.SetBool("Walking", false);
                 break;
             case NatiaState.Following:
                 EnemyNavMeshAgent.stoppingDistance = 8;
@@ -325,6 +327,13 @@ public class Natia : MonoBehaviour
                 EnemyNavMeshAgent.enabled = false;
                 gameObject.transform.position = PlayerControllerScript.Instance.gameObject.transform.position;
                 NatiaAnimator.SetBool("Carrying", true);
+                break;
+            case NatiaState.Dead:
+                NatiaCollider.enabled = false;
+                EnemyNavMeshAgent.stoppingDistance = 0;
+                EnemyNavMeshAgent.speed = 0;
+                EnemyNavMeshAgent.enabled = false;
+                NatiaAnimator.SetBool("Dead", true);
                 break;
         }
     }
@@ -396,30 +405,39 @@ public class Natia : MonoBehaviour
     {
         Health -= (int)Damage;
 
-        if (Health <= 0)
+        if (Health <= 0 && !Dead)
         {
             StartCoroutine(DeathCoroutine());
         }
 
         if (!DialogueManagerScript.Instance.InProgress)
         {
-            if (Health < 0)
+            if (Health < 0 && !Dead)
             {
                 DialogueManagerScript.Instance.NatiaDied();
                 StartCoroutine(DeathCoroutine());
             }
             else
             {
-                DialogueManagerScript.Instance.NatiaFriendlyFireEvent();
+                //DialogueManagerScript.Instance.NatiaFriendlyFireEvent();
             }
         }
     }
 
     private IEnumerator DeathCoroutine()
     {
+        //AudioManager.Instance.PlaySound(AudioManager.Instance.MissionFailed, 1.0f);
         UIManager.Instance.FadeInScreen();
-        yield return new WaitForSeconds(2);
+        Dead = true;
+        CurrentEnemyState = NatiaState.Dead;
+        EnemyAudioSource.PlayOneShot(AudioManager.Instance.NatiaDeath, 1.0f);
+        DialogueManagerScript.Instance.EndOfDialogue();
+        DialogueManagerScript.Instance.CloseDialogue();
+        yield return new WaitForSeconds(3);
+        AudioManager.Instance.PlaySound(AudioManager.Instance.MissionFailed, 1.0f);
+        UIManager.Instance.FadeOutScreen();
+        UIManager.Instance.GameOverSceen("Natia is dead.");
         UIManager.Instance.ForceCall = true;
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 }

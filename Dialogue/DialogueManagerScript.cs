@@ -75,6 +75,11 @@ public class DialogueManagerScript : MonoBehaviour
         DialogueBoxTMP.text = textToBeDisplayed;
         letterByLetterScript.fullText = textToBeDisplayed;
 
+        for (int i = 3; i > numberOfChoices - 1; i--)
+        {
+            choiceBoxes[i].ButtonFunction.onClick.RemoveAllListeners();
+        }
+
         choiceBoxes[0].fullText = choice1;
         choiceBoxes[1].fullText = choice2;
         choiceBoxes[2].fullText = choice3;
@@ -367,25 +372,25 @@ public class DialogueManagerScript : MonoBehaviour
                 switch (RandomNumber)
                 {
                     case 1:
-                        PlayDialogue("Fuck! You're hurting me!", 1, null, null, null, null);
+                        PlayDialogue("Ow! You're hurting me!", 0, null, null, null, null);
                         break;
                     case 2:
-                        PlayDialogue("Nnngh! Halicon! You idiot!", 1, null, null, null, null);
+                        PlayDialogue("Nnngh! Halicon! You idiot!", 0, null, null, null, null);
                         break;
                     case 3:
-                        PlayDialogue("My eyes! I can't... I can't see!", 1, null, null, null, null);
+                        PlayDialogue("My eyes! I can't... I can't see!", 0, null, null, null, null);
                         break;
                     case 4:
-                        PlayDialogue("Ahh! What in the hells are you doing?!", 1, null, null, null, null);
+                        PlayDialogue("Ahh! What in the hells are you doing?!", 0, null, null, null, null);
                         break;
                     case 5:
-                        PlayDialogue("You piece of shit!", 1, null, null, null, null);
+                        PlayDialogue("You piece of shit!", 0, null, null, null, null);
                         break;
                     case 6:
-                        PlayDialogue("Stop throwing those in my face!", 1, null, null, null, null);
+                        PlayDialogue("Stop throwing those in my face!", 0, null, null, null, null);
                         break;
                     case 7:
-                        PlayDialogue("You BASTARD!", 1, null, null, null, null);
+                        PlayDialogue("You BASTARD!", 0, null, null, null, null);
                         break;
                 }
 
@@ -423,16 +428,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("And now you're abandoning me. I hope you fucking die.", 1, null, null, null, null);
+                                PlayDialogue("And now you're abandoning me. I hope you fucking die.", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Piece of shit.", 1, null, null, null, null);
+                                PlayDialogue("Piece of shit.", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Yeah, sure, run away! You won't last long.", 1, null, null, null, null);
+                                PlayDialogue("Yeah, sure, run away! You won't last long.", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Incompetent bastard.", 1, null, null, null, null);
+                                PlayDialogue("Incompetent bastard.", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -440,16 +445,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Idiot... Can you slow down?!", 1, null, null, null, null);
+                                PlayDialogue("Idiot... Can you slow down?!", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Can you stop, for one second?!", 1, null, null, null, null);
+                                PlayDialogue("Can you stop, for one second?!", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Halicon?!", 1, null, null, null, null);
+                                PlayDialogue("Halicon?!", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Stop!", 1, null, null, null, null);
+                                PlayDialogue("Stop!", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -457,16 +462,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Hello?!", 1, null, null, null, null);
+                                PlayDialogue("Hello?!", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Get back here, you idiot!", 1, null, null, null, null);
+                                PlayDialogue("Get back here, you idiot!", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Halicon?!", 1, null, null, null, null);
+                                PlayDialogue("Halicon?!", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Stop!", 1, null, null, null, null);
+                                PlayDialogue("Stop!", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -474,16 +479,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Halicon?", 1, null, null, null, null);
+                                PlayDialogue("Halicon?", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Wait up!", 1, null, null, null, null);
+                                PlayDialogue("Wait up!", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Wait!", 1, null, null, null, null);
+                                PlayDialogue("Wait!", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Stop running!", 1, null, null, null, null);
+                                PlayDialogue("Stop running!", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -491,16 +496,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Hello? Halicon?", 1, null, null, null, null);
+                                PlayDialogue("Hello? Halicon?", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Wait! Come back!", 1, null, null, null, null);
+                                PlayDialogue("Wait! Come back!", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Hey! Wait up!", 1, null, null, null, null);
+                                PlayDialogue("Hey! Wait up!", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Hey! Don't just leave me here!", 1, null, null, null, null);
+                                PlayDialogue("Hey! Don't just leave me here!", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -508,16 +513,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Halicon?", 1, null, null, null, null);
+                                PlayDialogue("Halicon?", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Wait! Come back!", 1, null, null, null, null);
+                                PlayDialogue("Wait! Come back!", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Halicon...? Where are you?", 1, null, null, null, null);
+                                PlayDialogue("Halicon...? Where are you?", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Hey! Don't just leave me here!", 1, null, null, null, null);
+                                PlayDialogue("Hey! Don't just leave me here!", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -525,16 +530,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Wait, Halicon! Don't leave me here!", 1, null, null, null, null);
+                                PlayDialogue("Wait, Halicon! Don't leave me here!", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Please, wait for me!", 1, null, null, null, null);
+                                PlayDialogue("Please, wait for me!", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Waaait!", 1, null, null, null, null);
+                                PlayDialogue("Waaait!", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Halicon! I need you!", 1, null, null, null, null);
+                                PlayDialogue("Halicon! I need you!", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -572,16 +577,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("And now you're abandoning me. I hope you fucking die.", 1, null, null, null, null);
+                                PlayDialogue("And now you're abandoning me. I hope you fucking die.", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Piece of shit.", 1, null, null, null, null);
+                                PlayDialogue("Piece of shit.", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Yeah, sure, run away! You won't last long.", 1, null, null, null, null);
+                                PlayDialogue("Yeah, sure, run away! You won't last long.", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Incompetent bastard.", 1, null, null, null, null);
+                                PlayDialogue("Incompetent bastard.", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -589,16 +594,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Idiot... Can you slow down?!", 1, null, null, null, null);
+                                PlayDialogue("You idiot... Slow down!", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Can you stop, for one second?!", 1, null, null, null, null);
+                                PlayDialogue("Can you stop, for one second?!", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Halicon?!", 1, null, null, null, null);
+                                PlayDialogue("Halicon?!", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Stop!", 1, null, null, null, null);
+                                PlayDialogue("Stop!", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -606,16 +611,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Hello?!", 1, null, null, null, null);
+                                PlayDialogue("Hello?!", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Get back here, you idiot!", 1, null, null, null, null);
+                                PlayDialogue("Get back here, you idiot!", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Halicon?!", 1, null, null, null, null);
+                                PlayDialogue("Halicon?!", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Stop!", 1, null, null, null, null);
+                                PlayDialogue("Stop!", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -623,16 +628,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Oh, there you are! Don't scare me like that.", 1, null, null, null, null);
+                                PlayDialogue("Took you long enough.", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("There you are. Did you find anything interesting?", 1, null, null, null, null);
+                                PlayDialogue("What news?", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Is it safe?", 1, null, null, null, null);
+                                PlayDialogue("Is it safe?", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Great... I was just starting to enjoy the peace and quiet...", 1, null, null, null, null);
+                                PlayDialogue("Great... I was just starting to enjoy the peace and quiet...", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -640,16 +645,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Oh, there you are! Don't scare me like that.", 1, null, null, null, null);
+                                PlayDialogue("Oh, there you are! Don't scare me like that.", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("There you are. Did you find anything interesting?", 1, null, null, null, null);
+                                PlayDialogue("There you are. Did you find anything interesting?", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Is it safe?", 1, null, null, null, null);
+                                PlayDialogue("Is it safe?", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("Great... I was just starting to enjoy the peace and quiet...", 1, null, null, null, null);
+                                PlayDialogue("Can I come with you?", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -657,16 +662,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Oh, Halicon! I thought I had lost you.", 1, null, null, null, null);
+                                PlayDialogue("Halicon! I thought I had lost you.", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Whew... What a relief. It certainly isn't the nicest being alone down here.", 1, null, null, null, null);
+                                PlayDialogue("Now that's a relief. Being alone in this darkness is disturbing to say the least.", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("I don't feel too good, Halicon... Don't run off like that, please.", 1, null, null, null, null);
+                                PlayDialogue("I don't feel too good, Halicon... Don't run off like that, please.", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("You... At least tell me how long you're going to be gone!", 1, null, null, null, null);
+                                PlayDialogue("You... At least tell me how long you're going to be gone!", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -674,16 +679,16 @@ public class DialogueManagerScript : MonoBehaviour
                         switch (RandomNumber)
                         {
                             case 1:
-                                PlayDialogue("Oh, Hal... Thank the hells you're alright.", 1, null, null, null, null);
+                                PlayDialogue("Oh, Hal... Thank the hells you're alright.", 0, null, null, null, null);
                                 break;
                             case 2:
-                                PlayDialogue("Don't make me wait here, Halicon. I want to come with you.", 1, null, null, null, null);
+                                PlayDialogue("Don't make me wait here, Halicon. I want to come with you.", 0, null, null, null, null);
                                 break;
                             case 3:
-                                PlayDialogue("Is there something amiss?", 1, null, null, null, null);
+                                PlayDialogue("Is there something amiss?", 0, null, null, null, null);
                                 break;
                             case 4:
-                                PlayDialogue("H-hey! Don't just appear like that in front of me! You scared the hells out of me.", 1, null, null, null, null);
+                                PlayDialogue("H-hey! Don't just appear like that in front of me! You scared the hells out of me.", 0, null, null, null, null);
                                 break;
                         }
                         break;
@@ -721,19 +726,19 @@ public class DialogueManagerScript : MonoBehaviour
                 switch (RandomNumber)
                 {
                     case 1:
-                        PlayDialogue("Ooh, there's something good on the other side of this one. I can tell.", 1, null, null, null, null);
+                        PlayDialogue("Ooh, there's something good on the other side of this one. I can tell.", 0, null, null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.Lockpicking1, 1.0f);
                         break;
                     case 2:
-                        PlayDialogue("Watch my back. I'll get this thing open.", 1, null, null, null, null);
+                        PlayDialogue("Watch my back. I'll get this thing open.", 0, null, null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.Lockpicking2, 1.0f);
                         break;
                     case 3:
-                        PlayDialogue("This will only take a second.", 1, null, null, null, null);
+                        PlayDialogue("This will only take a second.", 0, null, null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.Lockpicking3, 1.0f);
                         break;
                     case 4:
-                        PlayDialogue("Ooh, there's something good on the other side of this one. I can tell.", 1, null, null, null, null);
+                        PlayDialogue("Ooh, there's something good on the other side of this one. I can tell.", 0, null, null, null, null);
                         //AudioManager.Instance.PlaySound(AudioManager.Instance.Lockpicking4, 1.0f);
                         break;
                 }
@@ -1022,7 +1027,7 @@ public class DialogueManagerScript : MonoBehaviour
                         Invoke("AdaptabilityDialogue", 5f);
                         break;
                     case 2:
-                        PlayDialogue("And what's so special about this location? Hmm?", 3, "This place is dangerous. You have no reason to go down here so unprepared.", "You know the man we encountered earlier.", "SECRET: I know you are sick, Natia. You believe the cure is down here.", "");
+                        PlayDialogue("And what's so special about this location? Hmm?", 3, "This place is dangerous. You went down here completely unprepared.", "You know the man we encountered earlier.", "SECRET: I know you are sick, Natia. You believe the cure is down here.", "");
                         currentDialogueNode = 8;
                         break;
                     case 3:
@@ -1041,7 +1046,7 @@ public class DialogueManagerScript : MonoBehaviour
                 switch (selectedOption)
                 {
                     case 1:
-                        PlayDialogue("Oh, you think I'm useless? That I can't handle myself on my own? You know what. Fuck you.", 0, "", "", "", "");
+                        PlayDialogue("Oh, you think I'm useless? That I can't handle myself on my own? Maybe you're right... I'm just a useless, dumb whore to you.", 0, "", "", "", "");
                         Invoke("AdaptabilityDialogue", 3.0f);
                         break;
                     case 2:
@@ -1082,7 +1087,7 @@ public class DialogueManagerScript : MonoBehaviour
                 break;
 
             case 15:
-                PlayDialogue("Please... Halicon. I just want to grow old like everyone else, I want a family of my own, a place where I can feel safe... I-I don't want to die.", 0, "", "", "", "");
+                PlayDialogue("Please... Halicon. I live with so much pain and torment, but also so many things I've never done... I-I don't want to die.", 0, "", "", "", "");
                 Invoke("AdaptabilityDialogue", 4.0f);
                 break;
 
@@ -1163,12 +1168,12 @@ public class DialogueManagerScript : MonoBehaviour
                 Invoke("Event1", 3.0f);
                 SetColor(NatiaLetterColor);
                 SetSprite(_sprite);
-                PlayDialogue("Halicon... I should have known that The Guild would send you of all people...", 4, null, null, null, null);
+                PlayDialogue("Halicon... I should have known that The Guild would send you of all people...", 0, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.RevealStinger, 1.0f);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue1x1, 1.0f);
                 break;
             case 1:
-                PlayDialogue("You will do as I say, and protect me with your life. Got it?", 4, "Who are you?", "What are we looking for?", "You're coming with me.", null);
+                PlayDialogue("You will do as I say, and protect me with your life. Got it?", 3, "Who are you?", "What are we looking for?", "You're coming with me.", null);
                 UIManager.Instance.ShowHint("You can select the options shown on screen by pressing '1', '2', '3' or '4' respectively.");
                 break;
             case 2:
@@ -1182,7 +1187,7 @@ public class DialogueManagerScript : MonoBehaviour
                         Invoke("Event1", 5.0f);
                         break;
                     case 2:
-                        PlayDialogue("None of your business. All you need to think about is protecting me, and you'll get your pay.", 1, "That's what I do.", "I can tell we're gonna be good friends.", null, null);
+                        PlayDialogue("None of your business. All you need to think about is protecting me, and you'll get your pay.", 2, "That's what I do.", "I can tell we're gonna be good friends.", null, null);
                         currentDialogueNode = 4;
                         break;
                     case 3:

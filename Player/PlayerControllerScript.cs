@@ -221,7 +221,7 @@ public class PlayerControllerScript : MonoBehaviour
     {
         if (!DialogueManagerScript.Instance.InProgress)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if (Input.GetKeyDown(KeyCode.Alpha3))
             {
                 CurrentWeaponState = WeaponState.Melee;
                 MeleeWeapon.SetActive(true);
@@ -230,7 +230,7 @@ public class PlayerControllerScript : MonoBehaviour
                 GetComponent<MeleeAttack>().enabled = true;
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha2))
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 CurrentWeaponState = WeaponState.Ranged;
                 MeleeWeapon.SetActive(false);
@@ -298,6 +298,23 @@ public class PlayerControllerScript : MonoBehaviour
     {
         OnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight / 2.1f, layerMask);
 
+        if (Natia.Instance != null && Natia.Instance.CurrentEnemyState == Natia.NatiaState.PickedUp)
+        {
+            CurrentMovementState = PlayerMovementState.Carrying;
+        }
+
+        switch (CurrentWeaponState)
+        {
+            case WeaponState.Melee:
+                walkSpeed = 8;
+                runSpeed = 14;
+                break;
+            case WeaponState.Ranged:
+                walkSpeed = 7;
+                runSpeed = 13;
+                break;
+        }
+
         switch (CurrentMovementState)
         {
             case PlayerMovementState.Walking:
@@ -330,7 +347,7 @@ public class PlayerControllerScript : MonoBehaviour
             case PlayerMovementState.Carrying:
                 playerCollider.height = normalHeight;
                 playerAirDrag = normalPlayerDrag;
-                playerSpeed = exhaustedSpeed;
+                playerSpeed = exhaustedSpeed * 1.25f;
                 break;
 
         }
@@ -801,7 +818,11 @@ public class PlayerControllerScript : MonoBehaviour
             Dead = true;
             UIManager.Instance.FadeInScreen();
             AudioManager.Instance.BGMAudioSource.Stop();
-            yield return new WaitForSeconds(2f);
+            AudioManager.Instance.PlaySound(AudioManager.Instance.HaliconDeath, 1.0f);
+            yield return new WaitForSeconds(3f);
+            AudioManager.Instance.PlaySound(AudioManager.Instance.MissionFailed, 1.0f);
+            UIManager.Instance.GameOverSceen("You died.");
+            UIManager.Instance.FadeOutScreen();
             UIManager.Instance.ForceCall = true;
         }
     }
