@@ -7,12 +7,15 @@ using UnityEngine;
 public class Chest : MonoBehaviour
 {
     public bool locked;
+    public bool payloadDelivered;
+
+    public List<GameObject> Payload = new List<GameObject>();
 
     public void OpenChest()
     {
         if (!locked)
         {
-            AudioManager.Instance.PlaySound(AudioManager.Instance.OpenDoor, 1.0f);
+            //AudioManager.Instance.PlaySound(AudioManager.Instance.OpenDoor, 1.0f);
         }
         else
         {
@@ -27,6 +30,20 @@ public class Chest : MonoBehaviour
                     Natia.Instance.OpenChest(gameObject);
                 }
             }
+        }
+    }
+
+    private void Update()
+    {
+        if (!payloadDelivered && !locked)
+        {
+            for (int i = 0; i < Payload.Count; i++)
+            {
+                Payload[i].SetActive(true);
+                Payload[i].GetComponent<Rigidbody>().AddForce(transform.forward * 1, ForceMode.Impulse);
+            }
+
+            payloadDelivered = true;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,9 @@ public class MainAttackScript : MonoBehaviour
     [SerializeField] public Light ProjectilePointLight;
     [SerializeField] private Text ammoDisplay;
     [SerializeField] private Transform Orientation;
+    [SerializeField] private TextMeshProUGUI AmmoText;
+    public float Ammo = 10;
+    public float MaxAmmo = 20;
     public ParticleSystem MuzzleFlash;
 
     private bool reloading = false;
@@ -29,7 +33,7 @@ public class MainAttackScript : MonoBehaviour
     [SerializeField] private int amountOfProjectilesPerShot = 10;
     [SerializeField] private int numberOfBulletsPerShot = 1;
     [SerializeField] private float rateOfFire = 0.6f;
-    [SerializeField] private int playerAmmo = 12;
+    [SerializeField] private int playerAmmo = 1;
     [SerializeField] private float reloadSpeed = 2f;
     [SerializeField] private int playerMaxAmmo = 12;
     [SerializeField] private int projectileForce = 25;
@@ -81,9 +85,17 @@ public class MainAttackScript : MonoBehaviour
 
     private void PrimaryFire()
     {
-        if (Input.GetMouseButtonDown(0) && canFire )
+        if (Input.GetMouseButtonDown(0) && canFire)
         {
-            StartCoroutine(FireShotgun());
+            if (Ammo > 0)
+            {
+
+                StartCoroutine(FireShotgun());
+            }
+            else
+            {
+                AudioManager.Instance.PlaySound(AudioManager.Instance.NoAmmo, 1.0f);
+            }
         }
     }
 
@@ -113,7 +125,7 @@ public class MainAttackScript : MonoBehaviour
             canFire = false;
             StartCoroutine(ShotgunVFX());
             AudioManager.Instance.PlaySound(AudioManager.Instance.ReleaseEnergy, 1.0f);
-
+            Ammo--;
             playerAmmo--;
 
             for (int i = 0; i < amountOfProjectilesPerShot; i++)
@@ -198,7 +210,7 @@ public class MainAttackScript : MonoBehaviour
         firing = false;
         yield return new WaitForSeconds(reloadSpeed);
         playerAmmo = playerMaxAmmo;
-        ammoDisplay.text = playerAmmo.ToString();
+        ammoDisplay.text = Ammo.ToString();
         canFire = true;
         reloading = false;
     }

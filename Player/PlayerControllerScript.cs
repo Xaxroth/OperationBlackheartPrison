@@ -46,10 +46,14 @@ public class PlayerControllerScript : MonoBehaviour
     [SerializeField] public int playerMaxStamina = 1000;
     [SerializeField] public float staminaDrainMultiplier = 1f;
 
-    [SerializeField] private float playerSpeed = 35f;
-    [SerializeField] private float normalPlayerSpeed = 35f;
-    [SerializeField] private float playerMaxSpeed = 15f;
-    [SerializeField] private float playerHeight = 2f;
+    private float playerSpeed = 35f;
+    private float normalPlayerSpeed = 35f;
+    private float playerMaxSpeed = 15f;
+    private float playerHeight = 3f;
+
+    public int playerConstitution;
+
+    [Range(0, 100)] [SerializeField] public int MutationLevel;
 
     float TargetFoV = 90;
     float NormalFoV = 80;
@@ -63,8 +67,8 @@ public class PlayerControllerScript : MonoBehaviour
     private float TimeBetweenDashes = 0.33f;
     private int DashCost = 20;
     private int JumpCost = 20;
-    private float walkSpeed = 7f;
-    private float runSpeed = 13f;
+    public float walkSpeed = 7f;
+    public float runSpeed = 13f;
     private float crouchSpeed = 3f;
     private float exhaustedSpeed = 4f;
 
@@ -74,7 +78,7 @@ public class PlayerControllerScript : MonoBehaviour
     [SerializeField] private float playerGroundDrag = 8f;
     [SerializeField] private float playerAirDrag = 2f;
 
-    [SerializeField] private float playerJumpHeight = 4f;
+    [SerializeField] public float playerJumpHeight = 4f;
     [SerializeField] private float horizontalMovement;
     [SerializeField] private float verticalMovement;
 
@@ -303,17 +307,17 @@ public class PlayerControllerScript : MonoBehaviour
             CurrentMovementState = PlayerMovementState.Carrying;
         }
 
-        switch (CurrentWeaponState)
-        {
-            case WeaponState.Melee:
-                walkSpeed = 8;
-                runSpeed = 14;
-                break;
-            case WeaponState.Ranged:
-                walkSpeed = 7;
-                runSpeed = 13;
-                break;
-        }
+        //switch (CurrentWeaponState)
+        //{
+        //    case WeaponState.Melee:
+        //        walkSpeed = walkSpeed + 1;
+        //        runSpeed = runSpeed + 1;
+        //        break;
+        //    case WeaponState.Ranged:
+        //        walkSpeed = 7;
+        //        runSpeed = 13;
+        //        break;
+        //}
 
         switch (CurrentMovementState)
         {

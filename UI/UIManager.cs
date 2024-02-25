@@ -18,8 +18,10 @@ public class UIManager : MonoBehaviour
     public GameObject PlayerUI;
     public GameObject HintsPopUp;
     public GameObject GameOverScreenObject;
+    public Texture2D CustomCursor;
 
     public GameObject HintBox;
+    public GameObject InventoryUIScreen;
     public RectTransform PopUpWindow;
     public TextMeshProUGUI HintText;
 
@@ -28,6 +30,7 @@ public class UIManager : MonoBehaviour
     public bool DisplayHint;
     public bool menuActive = false;
     public bool ForceCall;
+    public bool toggleInventory = false;
 
     void Awake()
     {
@@ -38,6 +41,8 @@ public class UIManager : MonoBehaviour
         }
 
         SceneManager.sceneLoaded += OnSceneLoaded;
+        Cursor.SetCursor(CustomCursor, Vector3.zero, CursorMode.ForceSoftware);
+        Cursor.visible = false;
 
     }
 
@@ -141,6 +146,26 @@ public class UIManager : MonoBehaviour
             }
 
             ForceCall = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab) && !menuActive)
+        {
+            if (!toggleInventory)
+            {
+                InventoryUIScreen.SetActive(true);
+                toggleInventory = true;
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.Confined;
+                AudioManager.Instance.PlaySound(AudioManager.Instance.InventoryToggle, 1.0f);
+            }
+            else
+            {
+                InventoryUIScreen.SetActive(false);
+                toggleInventory = false;
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+                AudioManager.Instance.PlaySound(AudioManager.Instance.InventoryToggle, 1.0f);
+            }
         }
     }
 

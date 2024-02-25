@@ -6,9 +6,8 @@ using UnityEngine;
 
 public class MainMenu : MonoBehaviour
 {
-    // Start is called before the first frame update
     public Image blackScreen;
-    public float fadeDuration = 3f; // Set the duration of the fade in seconds
+    public float fadeDuration = 3f;
     public AudioSource MainAudioSource;
     public AudioClip StartGame;
     public Texture2D CustomCursor;

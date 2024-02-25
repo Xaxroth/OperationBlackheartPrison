@@ -29,6 +29,8 @@ public class AudioManager : MonoBehaviour
 
     public AudioClip TrapActivated;
 
+    public AudioClip InventoryToggle;
+
     public AudioClip RevealStinger;
     public AudioClip OpenDoor;
     public AudioClip CloseDoor;
@@ -67,6 +69,7 @@ public class AudioManager : MonoBehaviour
 
     public AudioClip SaveGame;
 
+    public AudioClip Pickup;
     public AudioClip KeepDistance;
     public AudioClip StayClose;
     public AudioClip HoldPosition;
@@ -75,6 +78,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip PullGrenadePin;
     public AudioClip[] FlashbangSounds;
     public AudioClip EarsRinging;
+    public AudioClip NoAmmo;
 
     public AudioClip NatiaSong;
 

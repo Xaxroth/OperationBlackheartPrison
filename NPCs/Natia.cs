@@ -354,6 +354,7 @@ public class Natia : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         if (ChestToOpen != null)
         {
+            ChestToOpen.gameObject.GetComponent<Animator>().SetBool("Opened", true);
             ChestToOpen.locked = false;
             ChestToOpen = null;
         }
@@ -420,8 +421,9 @@ public class Natia : MonoBehaviour
         UIManager.Instance.FadeInScreen();
         DialogueManagerScript.Instance.EndOfDialogue();
         DialogueManagerScript.Instance.CloseDialogue();
+        AudioManager.Instance.BGMAudioSource.Stop();
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(4);
 
         AudioManager.Instance.PlaySound(AudioManager.Instance.MissionFailed, 1.0f);
         UIManager.Instance.FadeOutScreen();
