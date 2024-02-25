@@ -110,6 +110,7 @@ public class PlayerControllerScript : MonoBehaviour
     public bool Dead = false;
     public bool dashingBackwards = false;
     public bool recovering = false;
+    public bool InWater;
 
     public bool paralyzed = false;
     public bool Incapacitated;
@@ -833,5 +834,38 @@ public class PlayerControllerScript : MonoBehaviour
             UIManager.Instance.FadeOutScreen();
             UIManager.Instance.ForceCall = true;
         }
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Water"))
+        {
+            PlayerAudioSource.PlayOneShot(AudioManager.Instance.BigWaterSplash, 0.5f);
+            InWater = true;
+        }
+
+    }
+
+    public void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Water"))
+        {
+            // splash splosh
+            InWater = true;
+        }
+    }
+
+    public void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Water"))
+        {
+            // splash splosh
+            InWater = false;
+        }
+    }
+
+    public bool IsInWater()
+    {
+        return InWater;
     }
 }

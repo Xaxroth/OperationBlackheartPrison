@@ -69,6 +69,7 @@ public class AudioManager : MonoBehaviour
 
     public AudioClip SaveGame;
 
+    public AudioClip BigWaterSplash;
     public AudioClip Pickup;
     public AudioClip KeepDistance;
     public AudioClip StayClose;
