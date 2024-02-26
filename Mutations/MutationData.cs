@@ -6,6 +6,7 @@ public class MutationData : ScriptableObject
 {
     public string MutationName;
     public string MutantDescription;
+    public string FlavorText;
     public Sprite MutationImage;
 
     [Header("Growth Rates")]
@@ -26,6 +27,13 @@ public class MutationData : ScriptableObject
     [Header("Cosmetics")]
 
     public Color MutationVialColor;
+
+    public Color TextColor;
+
+    public Color StableColor = Color.white;
+    public Color UnstableColor = Color.blue;
+    public Color VolatileColor = Color.yellow;
+    public Color DangerousColor = Color.green; 
 
     public enum Rarity
     {
