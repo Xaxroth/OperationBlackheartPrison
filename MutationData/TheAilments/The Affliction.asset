@@ -13,18 +13,25 @@ MonoBehaviour:
   m_Name: The Affliction
   m_EditorClassIdentifier: 
   MutationName: The Affliction
-  MutantDescription: A vial of hot, luminescent liquid that makes you uneasy just
-    looking at it. "Do not open."
+  MutantDescription: Increases physical prowess.
+  FlavorText: A vial of hot, luminescent liquid that makes you uneasy just looking
+    at it. "Do not open."
   MutationImage: {fileID: 21300000, guid: bc786f3784c9c5a48b9df041d5202618, type: 3}
   healAmount: 0
   staminaAmount: 0
-  jumpGain: 2
-  movementGain: 2
+  jumpGain: 0.3
+  movementGain: 0
   knifeAttackSpeedGain: 2
   healthGain: 100
   staminaGain: 0
   constitutionGain: 5
   MutationGainAmount: 33
   NatiaAffectionPenalty: 25
-  MutationVialColor: {r: 0.5840409, g: 1, b: 0, a: 1}
+  MutationVialColor: {r: 0, g: 0.43849897, b: 1, a: 1}
+  TextColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  StableColor: {r: 1, g: 1, b: 1, a: 1}
+  UnstableColor: {r: 0.6431373, g: 1, b: 0, a: 1}
+  VolatileColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  DangerousColor: {r: 1, g: 0.23137255, b: 0, a: 1}
+  TypeOfItem: 0
   MutationRarity: 2

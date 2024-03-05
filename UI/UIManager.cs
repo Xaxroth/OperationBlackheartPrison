@@ -153,6 +153,7 @@ public class UIManager : MonoBehaviour
             if (!toggleInventory)
             {
                 InventoryUIScreen.SetActive(true);
+                PlayerControllerScript.Instance.paralyzed = true;
                 toggleInventory = true;
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.Confined;
@@ -161,6 +162,7 @@ public class UIManager : MonoBehaviour
             else
             {
                 InventoryUIScreen.SetActive(false);
+                PlayerControllerScript.Instance.paralyzed = false;
                 toggleInventory = false;
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;

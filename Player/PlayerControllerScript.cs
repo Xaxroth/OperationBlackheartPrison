@@ -53,7 +53,7 @@ public class PlayerControllerScript : MonoBehaviour
 
     public int playerConstitution;
 
-    [Range(0, 100)] [SerializeField] public int MutationLevel;
+    [Range(0, 100)][SerializeField] public int MutationLevel;
 
     float TargetFoV = 90;
     float NormalFoV = 80;
@@ -90,8 +90,6 @@ public class PlayerControllerScript : MonoBehaviour
 
     [SerializeField] private float crouchHeight = 0.5f;
     [SerializeField] private float normalHeight = 3f;
-
-    //private Block PlayerBlock;
 
     KeyCode ButtonPressed;
     KeyCode previousInput = KeyCode.None;
@@ -307,18 +305,6 @@ public class PlayerControllerScript : MonoBehaviour
         {
             CurrentMovementState = PlayerMovementState.Carrying;
         }
-
-        //switch (CurrentWeaponState)
-        //{
-        //    case WeaponState.Melee:
-        //        walkSpeed = walkSpeed + 1;
-        //        runSpeed = runSpeed + 1;
-        //        break;
-        //    case WeaponState.Ranged:
-        //        walkSpeed = 7;
-        //        runSpeed = 13;
-        //        break;
-        //}
 
         switch (CurrentMovementState)
         {
@@ -705,7 +691,7 @@ public class PlayerControllerScript : MonoBehaviour
             }
         }
     }
-    
+
     private IEnumerator Recover()
     {
         recovering = true;
@@ -751,10 +737,20 @@ public class PlayerControllerScript : MonoBehaviour
     {
         if (!Dead)
         {
-            PlayerAudioSource.PlayOneShot(HitSounds[UnityEngine.Random.Range(0, HitSounds.Length)], 0.7f);
-            playerHealth -= damage;
-            playerHealthBar.SetHealth(playerHealth);
-            normalHit = false;
+            if (!Block.Instance.blocking)
+            {
+                PlayerAudioSource.PlayOneShot(HitSounds[UnityEngine.Random.Range(0, HitSounds.Length)], 0.7f);
+                playerHealth -= damage;
+                playerHealthBar.SetHealth(playerHealth);
+                normalHit = true;
+
+            }
+            else
+            {
+                playerHealth -= damage / 5;
+                playerHealthBar.SetHealth(playerHealth);
+                normalHit = false;
+            }
         }
         if (playerHealth <= 0)
         {

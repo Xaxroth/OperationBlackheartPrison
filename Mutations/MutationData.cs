@@ -33,7 +33,14 @@ public class MutationData : ScriptableObject
     public Color StableColor = Color.white;
     public Color UnstableColor = Color.blue;
     public Color VolatileColor = Color.yellow;
-    public Color DangerousColor = Color.green; 
+    public Color DangerousColor = Color.green;
+
+    public enum ItemType
+    {
+        Mutation
+    }
+
+    public ItemType TypeOfItem;
 
     public enum Rarity
     {

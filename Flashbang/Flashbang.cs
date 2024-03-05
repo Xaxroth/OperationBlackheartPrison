@@ -12,11 +12,15 @@ public class Flashbang : MonoBehaviour
     public int MaximumAmountOfFlashbangs = 10;
     private bool chargingFlashbang;
 
+    private void Start()
+    {
+        SetAmmo();
+    }
     void Update()
     {
         ShootPosition.transform.rotation = PlayerControllerScript.Instance.Orientation.transform.rotation;
 
-        if (AmountOfFlashbangs > 0)
+        if (SetAmmo() > 0)
         {
 
             if (Input.GetKeyDown(KeyCode.T))
@@ -39,12 +43,46 @@ public class Flashbang : MonoBehaviour
 
     }
 
+    public int SetAmmo()
+    {
+        int AmountOfFlashbangs = 0;
+
+        foreach (GameObject item in InventoryManager.Instance.Inventory)
+        {
+            if (item.CompareTag("FilledSlot"))
+            {
+                ItemData itemData = item.GetComponent<ItemData>();
+
+                if (itemData.ItemName.Equals("Flashbang"))
+                {
+                    AmountOfFlashbangs++;
+                }
+            }
+        }
+
+        return AmountOfFlashbangs;
+    }
+
+    public void RemoveItem()
+    {
+        for (int i = 0; i < InventoryManager.Instance.Inventory.Count; i++)
+        {
+            if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals("Flashbang"))
+            {
+                InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ClearItemSlot();
+                break;
+            }
+        }
+    }
+
     public void ThrowFlashbang()
     {
         GameObject FlashBangGO = Instantiate(flashbang, ShootPosition.position + new Vector3(0, 3, 0), ShootPosition.rotation);
 
         FlashBangGO.GetComponent<ProjectileScript>().force = flashbangForce;
-        AmountOfFlashbangs--;
+        RemoveItem();
+
+        SetAmmo();
         chargingFlashbang = false;
         flashbangForce = 0;
 

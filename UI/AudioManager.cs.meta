@@ -3,7 +3,64 @@ guid: 7cc2e22ef82a24242a1387748ef3ff4d
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - blackScreen: {instanceID: 0}
+  - FlashbangAudioSource: {instanceID: 0}
+  - SpawnPosition: {instanceID: 0}
+  - FallDeath: {instanceID: 0}
+  - TrapActivated: {instanceID: 0}
+  - InventoryToggle: {instanceID: 0}
+  - RevealStinger: {instanceID: 0}
+  - OpenDoor: {instanceID: 0}
+  - CloseDoor: {instanceID: 0}
+  - DoorLocked: {instanceID: 0}
+  - Dialogue1x1: {instanceID: 0}
+  - Dialogue1x2: {instanceID: 0}
+  - Dialogue1x3: {instanceID: 0}
+  - Dialogue1x4: {instanceID: 0}
+  - Dialogue1x5: {instanceID: 0}
+  - Dialogue1x6: {instanceID: 0}
+  - Dialogue1x7: {instanceID: 0}
+  - Dialogue1x8: {instanceID: 0}
+  - Dialogue2x1: {instanceID: 0}
+  - Dialogue2x2: {instanceID: 0}
+  - Dialogue2x3: {instanceID: 0}
+  - Dialogue4x1: {instanceID: 0}
+  - Dialogue4x2: {instanceID: 0}
+  - Dialogue5x1: {instanceID: 0}
+  - Dialogue5x2: {instanceID: 0}
+  - Dialogue5x3: {instanceID: 0}
+  - Lockpicking1: {instanceID: 0}
+  - Lockpicking2: {instanceID: 0}
+  - Lockpicking3: {instanceID: 0}
+  - Lockpicking4: {instanceID: 0}
+  - NatiaDeath: {instanceID: 0}
+  - HaliconDeath: {instanceID: 0}
+  - MissionFailed: {instanceID: 0}
+  - SaveGame: {instanceID: 0}
+  - MoveItem: {fileID: 8300000, guid: 0843c0c15639fcc47bd90201d7fdbadc, type: 3}
+  - DropItem: {fileID: 8300000, guid: c75c7253e093aab4f85a3e5fd8471fd4, type: 3}
+  - BigWaterSplash: {instanceID: 0}
+  - Pickup: {instanceID: 0}
+  - KeepDistance: {instanceID: 0}
+  - StayClose: {instanceID: 0}
+  - HoldPosition: {instanceID: 0}
+  - FollowMe: {instanceID: 0}
+  - SelectItem: {instanceID: 0}
+  - UseItem: {instanceID: 0}
+  - MutationApplied: {instanceID: 0}
+  - PullGrenadePin: {instanceID: 0}
+  - EarsRinging: {instanceID: 0}
+  - NoAmmo: {instanceID: 0}
+  - NatiaSong: {instanceID: 0}
+  - Question1: {instanceID: 0}
+  - PickLock: {instanceID: 0}
+  - ChargeEnergy: {instanceID: 0}
+  - ReleaseEnergy: {instanceID: 0}
+  - BGM1: {instanceID: 0}
+  - BGMAudioSource: {instanceID: 0}
+  - GlobalAudioSource: {instanceID: 0}
+  - PersistentAudioSource: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

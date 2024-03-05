@@ -13,18 +13,25 @@ MonoBehaviour:
   m_Name: Compound No. 23
   m_EditorClassIdentifier: 
   MutationName: Compound No. 23
-  MutantDescription: A glowing, orange liquid rests inside the syringe. "Until the
-    light dies, I will find it."
+  MutantDescription: Increases athletic peformance.
+  FlavorText: A glowing, orange liquid rests inside the syringe. "Until the light
+    dies, I will find it."
   MutationImage: {fileID: 21300000, guid: bc786f3784c9c5a48b9df041d5202618, type: 3}
   healAmount: 100
   staminaAmount: 200
   jumpGain: 0
-  movementGain: 2
+  movementGain: 0.8
   knifeAttackSpeedGain: 2
   healthGain: 0
   staminaGain: 75
   constitutionGain: 0
   MutationGainAmount: 15
   NatiaAffectionPenalty: 15
-  MutationVialColor: {r: 1, g: 0.6961732, b: 0.23113209, a: 1}
+  MutationVialColor: {r: 1, g: 0.5893744, b: 0, a: 1}
+  TextColor: {r: 0.6431373, g: 1, b: 0, a: 1}
+  StableColor: {r: 1, g: 1, b: 1, a: 1}
+  UnstableColor: {r: 0.6431373, g: 1, b: 0, a: 1}
+  VolatileColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  DangerousColor: {r: 1, g: 0.23137255, b: 0, a: 1}
+  TypeOfItem: 0
   MutationRarity: 1

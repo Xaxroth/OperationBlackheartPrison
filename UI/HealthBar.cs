@@ -14,7 +14,6 @@ public class HealthBar : MonoBehaviour
 
     void Start()
     {
-        healthSlider = GetComponent<Slider>();
         fillValue = HealthMaterial.GetFloat("_FillLevel");
 
         if (HealthMaterial != null)
@@ -50,7 +49,7 @@ public class HealthBar : MonoBehaviour
 
     public void SetHealth(int health)
     {
-        healthSlider.value = (float)health;
+        healthSlider.value = health;
 
         float fillPercentage = healthSlider.value / healthSlider.maxValue;
 

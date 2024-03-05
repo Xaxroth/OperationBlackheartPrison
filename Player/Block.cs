@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
+    public static Block Instance;
+
     [Header("Logistics")]
     [SerializeField] public KeyCode AttackButton;
     [SerializeField] private PlayerControllerScript _playerController;
@@ -29,6 +31,10 @@ public class Block : MonoBehaviour
 
     void Start()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
         TargetLightIntensity = LightSource.intensity;
         player = gameObject.GetComponent<PlayerControllerScript>();
         playerAudioSource = gameObject.GetComponent<AudioSource>();
@@ -78,14 +84,14 @@ public class Block : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !blocking)
+        if (Input.GetMouseButtonDown(1) && !blocking)
         {
             blocking = true;
-            StartCoroutine(FadeIn());
+            //StartCoroutine(FadeIn());
             playerAudioSource.PlayOneShot(blockedProjectile);
             player.playerStamina++;
             Collider[] cone = Physics.OverlapSphere(BlockTransform.position, coneRadius);
-            LightObject.SetActive(true);
+            //LightObject.SetActive(true);
 
 
             if (cone.Length != 0)
@@ -107,9 +113,9 @@ public class Block : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetMouseButtonUp(0) && blocking)
+        else if (Input.GetMouseButtonUp(1) && blocking)
         {
-            StartCoroutine(FadeOut());
+            //StartCoroutine(FadeOut());
             blocking = false;
         }
     }

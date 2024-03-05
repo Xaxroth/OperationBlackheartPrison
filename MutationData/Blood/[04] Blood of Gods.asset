@@ -10,27 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28e60e1b78b36a84e9b9138c0e0af215, type: 3}
-  m_Name: '[03] Blood of Royals'
+  m_Name: '[04] Blood of Gods'
   m_EditorClassIdentifier: 
-  MutationName: Blood of Royals
+  MutationName: Blood of the Demigod
   MutantDescription: A sanguine vial with a thick, clotted mixture within.
-  FlavorText: You feel uneasy staring into the mixture within. It almost glows with
-    a supernatural light.
+  FlavorText: 'Something is written with impeccable penmanship on the back: "Blood
+    is the key to the realm of immortality."'
   MutationImage: {fileID: 21300000, guid: bc786f3784c9c5a48b9df041d5202618, type: 3}
   healAmount: 200
   staminaAmount: 200
   jumpGain: 0
-  movementGain: 0
+  movementGain: 1
   knifeAttackSpeedGain: 0
-  healthGain: 100
+  healthGain: 200
   staminaGain: 0
-  constitutionGain: 0
-  MutationGainAmount: 10
-  NatiaAffectionPenalty: 5
-  MutationVialColor: {r: 0.8207547, g: 0.22841759, b: 0.58298576, a: 1}
-  TextColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  constitutionGain: 3
+  MutationGainAmount: 15
+  NatiaAffectionPenalty: 15
+  MutationVialColor: {r: 0.3764706, g: 0.050980393, b: 0.1764706, a: 1}
+  TextColor: {r: 1, g: 0.23266755, b: 0, a: 1}
   StableColor: {r: 1, g: 1, b: 1, a: 1}
-  UnstableColor: {r: 0, g: 0, b: 1, a: 1}
+  UnstableColor: {r: 0.64463615, g: 1, b: 0, a: 1}
   VolatileColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  DangerousColor: {r: 0, g: 1, b: 0, a: 1}
-  MutationRarity: 2
+  DangerousColor: {r: 1, g: 0.23266755, b: 0, a: 1}
+  TypeOfItem: 0
+  MutationRarity: 3

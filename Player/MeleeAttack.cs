@@ -65,6 +65,10 @@ public class MeleeAttack : MonoBehaviour
 
     void Update()
     {
+        if (PlayerControllerScript.Instance.paralyzed)
+        {
+            return;
+        }
         if (PlayerControllerScript.Instance != null && !PlayerControllerScript.Instance.Incapacitated)
         {
             if (Input.GetMouseButton(0) || Input.GetMouseButton(1))

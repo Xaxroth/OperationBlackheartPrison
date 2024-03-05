@@ -5,11 +5,13 @@ using UnityEngine;
 public class Pickup : MonoBehaviour
 {
     public MutationData MutationPickupData;
+    public ItemSOData ItemData;
     public enum PickupObject
     {
         Flashbang,
         Ammo,
-        Mutation
+        Mutation,
+        Item
     }
 
     public PickupObject ObjectType;
@@ -18,12 +20,28 @@ public class Pickup : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            MutationPickupData = GetComponent<Mutation>().mutationData;
+            DontDestroyOnLoad(gameObject);
+            switch (ObjectType)
+            {
+                case PickupObject.Item:
+                    ItemData = GetComponent<ItemDataHolder>().ItemData;
 
-            InventoryManager.Instance.AddPickupToInventory(gameObject);
+                    InventoryManager.Instance.AddPickupToInventory(gameObject);
 
-            AudioManager.Instance.PlaySound(AudioManager.Instance.Pickup, 1.0f);
-            //Destroy(gameObject);
+                    AudioManager.Instance.PlaySound(AudioManager.Instance.Pickup, 0.5f);
+                    break;
+                case PickupObject.Ammo:
+                    break;
+                case PickupObject.Mutation:
+                    MutationPickupData = GetComponent<Mutation>().mutationData;
+
+                    InventoryManager.Instance.AddPickupToInventory(gameObject);
+
+                    AudioManager.Instance.PlaySound(AudioManager.Instance.Pickup, 0.5f);
+                    break;
+            }
+
+            gameObject.SetActive(false);
         }
 
     }

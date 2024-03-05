@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private AudioClip DamageScream;
     [SerializeField] private AudioClip AttackSound;
     [SerializeField] private AudioClip Swing;
+    [SerializeField] private AudioClip DeathSound;
 
     [SerializeField] private GameObject playerCharacter;
     [SerializeField] private GameObject destinationGameObject;
@@ -82,6 +83,7 @@ public class Enemy : MonoBehaviour
         {
             EnemyNavMeshAgent.speed = 0;
             InRange = false;
+            EnemyNavMeshAgent.SetDestination(transform.position);
             StopCoroutine(AttackCoroutine());
             return;
         }
@@ -280,8 +282,10 @@ public class Enemy : MonoBehaviour
     private IEnumerator DeathCoroutine()
     {
         dead = true;
-        yield return new WaitForSeconds(1);
-        Destroy(gameObject);
+        EnemyAudioSource.PlayOneShot(DeathSound);
+        CurrentEnemyState = EnemyState.Stunned;
+        enemyAnimator.SetBool("Death", true);
+        yield return new WaitForSeconds(3);
     }
 
     public void Explode()

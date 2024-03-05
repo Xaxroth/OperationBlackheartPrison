@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e60e1b78b36a84e9b9138c0e0af215, type: 3}
+  m_Name: MutationData
+  m_EditorClassIdentifier: 
+  MutationName: 
+  MutantDescription: 
+  FlavorText: 
+  MutationImage: {fileID: 0}
+  healAmount: 33
+  staminaAmount: 91
+  jumpGain: 2.4
+  movementGain: 8.6
+  knifeAttackSpeedGain: 3.5
+  healthGain: 0
+  staminaGain: 0
+  constitutionGain: 0
+  MutationGainAmount: 0
+  NatiaAffectionPenalty: 0
+  MutationVialColor: {r: 1, g: 0, b: 0, a: 0}
+  TextColor: {r: 1, g: 0.4155856, b: 0.3443396, a: 0}
+  StableColor: {r: 1, g: 1, b: 1, a: 1}
+  UnstableColor: {r: 0, g: 0, b: 1, a: 1}
+  VolatileColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  DangerousColor: {r: 0, g: 1, b: 0, a: 1}
+  TypeOfItem: 0
+  MutationRarity: 0

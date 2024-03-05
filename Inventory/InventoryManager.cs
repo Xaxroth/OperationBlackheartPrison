@@ -32,24 +32,23 @@ public class InventoryManager : MonoBehaviour
             if (Inventory[i].CompareTag("EmptySlot"))
             {
                 ItemData newItemData = Inventory[i].GetComponent<ItemData>();
-                newItemData.ItemDataSO = ItemGameObject.GetComponent<Mutation>().mutationData;
-                // Update the image and string of the existing inventory slot (Inventory[i])
-                // Assuming you have components such as Image and Text in the inventory slot GameObject
-                //Image itemImage = Inventory[i].GetComponentInChildren<Image>();
-                //Text itemNameText = Inventory[i].GetComponentInChildren<Text>();
+                ItemDataHolder ItemDataContainer = ItemGameObject.GetComponent<ItemDataHolder>();
+                
 
-                //// Assuming ItemGameObject contains components with the image and string you want to update
-                //Sprite newItemImage = ItemGameObject.GetComponent<Mutation>().mutationData.MutationImage;
-                //string newItemName = ItemGameObject.GetComponent<Mutation>().mutationData.MutationName;
+                if (ItemDataContainer != null)
+                {
+                    newItemData.PickupItem = ItemGameObject;
+                    newItemData.ItemDataSO = ItemGameObject.GetComponent<ItemDataHolder>().ItemData;
+                }
+                else
+                {
+                    newItemData.ItemDataSO = null;
+                    newItemData.PickupItem = ItemGameObject;
+                    newItemData.MutationDataSO = ItemGameObject.GetComponent<Mutation>().mutationData;
+                }
 
-                //// Assign the image and string from ItemGameObject to the inventory slot
-                //itemImage.sprite = newItemImage;
-                //itemNameText.text = newItemName;
-
-                // Change the tag of the inventory slot to indicate it's filled
                 Inventory[i].tag = "FilledSlot";
 
-                // Exit the loop since an empty slot was found and filled
                 break;
             }
         }
@@ -77,33 +76,8 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    //public void ListItems()
-    //{
-
-    //    //foreach (var item in Mutations)
-    //    //{
-    //    //    GameObject InventorySlot = Instantiate(InventoryPrefab, ItemContent);
-
-    //    //    // Adjust the position with yOffset
-    //    //    Vector3 newPosition = InventorySlot.transform.position + new Vector3(0f, yOffset, 0f);
-    //    //    InventorySlot.transform.position = newPosition;
-
-    //    //    // Update yOffset for next iteration
-    //    //    yOffset -= yOffsetIncrement; // Adjust this value as needed
-
-    //    //    // Uncomment the lines below if you want to assign values to instantiated objects
-    //    //    //var ItemName = InventorySlot.transform.Find("Item/ItemName").GetComponentInChildren<Text>();
-    //    //    //var ItemDescription = InventorySlot.transform.Find("Item/ItemName").GetComponent<Text>();
-    //    //    //var ItemIcon = InventorySlot.transform.Find("Item/ItemName").GetComponent<Image>();
-
-    //    //    //ItemName.text = item.MutationName;
-    //    //    //ItemDescription.text = item.MutantDescription;
-    //    //    //ItemIcon.sprite = item.MutationSprite;
-    //    //}
-    //}
-
     void Update()
     {
-        
+
     }
 }

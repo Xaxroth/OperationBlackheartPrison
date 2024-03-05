@@ -69,12 +69,19 @@ public class AudioManager : MonoBehaviour
 
     public AudioClip SaveGame;
 
+    public AudioClip MoveItem;
+    public AudioClip DropItem;
+
     public AudioClip BigWaterSplash;
     public AudioClip Pickup;
     public AudioClip KeepDistance;
     public AudioClip StayClose;
     public AudioClip HoldPosition;
     public AudioClip FollowMe;
+
+    public AudioClip SelectItem;
+    public AudioClip UseItem;
+    public AudioClip MutationApplied;
 
     public AudioClip PullGrenadePin;
     public AudioClip[] FlashbangSounds;
