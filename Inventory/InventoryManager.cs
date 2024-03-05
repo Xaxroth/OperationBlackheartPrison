@@ -75,9 +75,4 @@ public class InventoryManager : MonoBehaviour
             }
         }
     }
-
-    void Update()
-    {
-
-    }
 }

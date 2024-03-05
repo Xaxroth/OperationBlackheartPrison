@@ -13,7 +13,7 @@ public class DynamicUIObject : MonoBehaviour
     {
         if (Input.GetMouseButton(0) && shouldRotate)
         {
-            float deltaX = lastMousePosition.x - Input.mousePosition.x; // Negating the deltaX
+            float deltaX = lastMousePosition.x - Input.mousePosition.x;
 
             float rotationAmount = deltaX * sensitivity * Time.deltaTime;
 

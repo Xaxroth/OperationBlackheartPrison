@@ -20,7 +20,6 @@ public class UIBoundary : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        AudioManager.Instance.PlaySound(AudioManager.Instance.DropItem, 1.0f);
         StartRotate();
     }
 
