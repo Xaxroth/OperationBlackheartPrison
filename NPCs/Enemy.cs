@@ -24,6 +24,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject GoreExplosion;
     [SerializeField] private GameObject enemyBody;
 
+    public Collider EnemyCollider;
 
     [SerializeField] private ParticleSystem BloodParticles;
 
@@ -33,7 +34,8 @@ public class Enemy : MonoBehaviour
         Waiting,
         Chasing,
         Attacking,
-        Stunned
+        Stunned,
+        Dead
     }
 
     private EnemyState CurrentEnemyState;
@@ -79,6 +81,13 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        if (CurrentEnemyState == EnemyState.Dead)
+        {
+            EnemyCollider.enabled = false;
+            StopAllCoroutines();
+            return;
+        }
+
         if (CurrentEnemyState == EnemyState.Stunned)
         {
             EnemyNavMeshAgent.speed = 0;
@@ -111,7 +120,11 @@ public class Enemy : MonoBehaviour
         else
         {
             InRange = false;
-            CurrentEnemyState = EnemyState.Chasing;
+
+            if (CurrentEnemyState != EnemyState.Stunned)
+            {
+                CurrentEnemyState = EnemyState.Chasing;
+            }
         }
 
         if (CurrentEnemyState == EnemyState.Chasing)
@@ -283,7 +296,7 @@ public class Enemy : MonoBehaviour
     {
         dead = true;
         EnemyAudioSource.PlayOneShot(DeathSound);
-        CurrentEnemyState = EnemyState.Stunned;
+        CurrentEnemyState = EnemyState.Dead;
         enemyAnimator.SetBool("Death", true);
         yield return new WaitForSeconds(3);
     }

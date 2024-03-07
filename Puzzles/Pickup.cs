@@ -31,6 +31,11 @@ public class Pickup : MonoBehaviour
                     AudioManager.Instance.PlaySound(AudioManager.Instance.Pickup, 0.5f);
                     break;
                 case PickupObject.Ammo:
+                    ItemData = GetComponent<ItemDataHolder>().ItemData;
+
+                    InventoryManager.Instance.AddPickupToInventory(gameObject);
+
+                    AudioManager.Instance.PlaySound(AudioManager.Instance.Pickup, 0.5f);
                     break;
                 case PickupObject.Mutation:
                     MutationPickupData = GetComponent<Mutation>().mutationData;

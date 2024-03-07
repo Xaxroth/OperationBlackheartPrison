@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class MeleeAttack : MonoBehaviour
@@ -100,6 +101,19 @@ public class MeleeAttack : MonoBehaviour
         {
             Collider[] cone = Physics.OverlapSphere(transform.position, coneRadius);
 
+            Ray ray = new Ray(PlayerControllerScript.Instance.Orientation.transform.position, PlayerControllerScript.Instance.Orientation.transform.forward);
+
+            RaycastHit hit;
+            float raycastDistance = 5f;
+
+            if (Physics.Raycast(ray, out hit, raycastDistance))
+            {
+                if (hit.collider.CompareTag("Environment"))
+                {
+                    AudioManager.Instance.PlaySound(AudioManager.Instance.ImpactSounds[Random.Range(0, AudioManager.Instance.ImpactSounds.Length)], 0.75f);
+                }
+            }
+
             if (cone.Length != 0)
             {
                 foreach (var hitCollider in cone)
@@ -138,8 +152,9 @@ public class MeleeAttack : MonoBehaviour
             StartCoroutine(CameraAnimation());
 
             attackAnimationNumber++;
-
             canSwing = false;
+
+            yield return new WaitForSeconds(0.2f);
 
             MeleeSwing();
 

@@ -29,12 +29,11 @@ public class InventoryManager : MonoBehaviour
     {
         for (int i = 0; i < Inventory.Count; i++)
         {
+            ItemData newItemData = Inventory[i].GetComponent<ItemData>();
+            ItemDataHolder ItemDataContainer = ItemGameObject.GetComponent<ItemDataHolder>();
+
             if (Inventory[i].CompareTag("EmptySlot"))
             {
-                ItemData newItemData = Inventory[i].GetComponent<ItemData>();
-                ItemDataHolder ItemDataContainer = ItemGameObject.GetComponent<ItemDataHolder>();
-                
-
                 if (ItemDataContainer != null)
                 {
                     newItemData.PickupItem = ItemGameObject;
@@ -50,6 +49,20 @@ public class InventoryManager : MonoBehaviour
                 Inventory[i].tag = "FilledSlot";
 
                 break;
+            }
+            else
+            {
+                if (newItemData.ItemDataSO != null && newItemData.ItemDataSO.Stackable == true)
+                {
+                    if (ItemDataContainer != null)
+                    {
+                        if (newItemData.ItemDataSO == ItemGameObject.GetComponent<ItemDataHolder>().ItemData)
+                        {
+                            newItemData.Quantity++;
+                            break;
+                        }
+                    }
+                }
             }
         }
     }

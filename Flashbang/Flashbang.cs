@@ -69,7 +69,12 @@ public class Flashbang : MonoBehaviour
         {
             if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals("Flashbang"))
             {
-                InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ClearItemSlot();
+                InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().Quantity--;
+
+                if (InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().Quantity <= 0)
+                {
+                    InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ClearItemSlot();
+                }
                 break;
             }
         }

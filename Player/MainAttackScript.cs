@@ -87,14 +87,13 @@ public class MainAttackScript : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && canFire)
         {
-            if (Ammo > 0)
+            if (SetAmmo() > 0)
             {
-
                 StartCoroutine(FireShotgun());
             }
             else
             {
-                AudioManager.Instance.PlaySound(AudioManager.Instance.NoAmmo, 1.0f);
+                AudioManager.Instance.PlaySound(AudioManager.Instance.NoAmmo, 0.25f);
             }
         }
     }
@@ -120,13 +119,11 @@ public class MainAttackScript : MonoBehaviour
 
     private IEnumerator FireShotgun()
     {
-        while (firing && playerAmmo > 0)
+        while (firing && SetAmmo() > 0)
         {
             canFire = false;
             StartCoroutine(ShotgunVFX());
             AudioManager.Instance.PlaySound(AudioManager.Instance.ReleaseEnergy, 1.0f);
-            Ammo--;
-            playerAmmo--;
 
             for (int i = 0; i < amountOfProjectilesPerShot; i++)
             {
@@ -140,6 +137,8 @@ public class MainAttackScript : MonoBehaviour
                 currentProjectile.GetComponent<MainAttackProjectile>().SetRayCast();
                 Physics.IgnoreCollision(currentProjectile.GetComponent<Collider>(), GetComponent<Collider>());
             }
+
+            RemoveItem();
 
             yield return new WaitForSeconds(rateOfFire);
             canFire = true;
@@ -200,6 +199,45 @@ public class MainAttackScript : MonoBehaviour
             StartCoroutine(ReloadWeapon());
             return;
         }
+    }
+
+    public int SetAmmo()
+    {
+        int AmountOfAmmo = 0;
+
+        foreach (GameObject item in InventoryManager.Instance.Inventory)
+        {
+            if (item.CompareTag("FilledSlot"))
+            {
+                ItemData itemData = item.GetComponent<ItemData>();
+
+                if (itemData.ItemName.Equals("Ammo"))
+                {
+                    AmountOfAmmo = itemData.Quantity;
+                }
+            }
+        }
+
+        return AmountOfAmmo;
+    }
+
+    public void RemoveItem()
+    {
+        for (int i = 0; i < InventoryManager.Instance.Inventory.Count; i++)
+        {
+            if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals("Ammo"))
+            {
+                InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().Quantity--;
+
+                if (InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().Quantity <= 0)
+                {
+                    InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ClearItemSlot();
+                }
+                break;
+            }
+        }
+
+        StartCoroutine(ReloadWeapon());
     }
 
     private IEnumerator ReloadWeapon()

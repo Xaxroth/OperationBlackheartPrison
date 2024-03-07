@@ -89,7 +89,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip NoAmmo;
 
     public AudioClip NatiaSong;
-
+    public AudioClip[] ImpactSounds;
     public AudioClip Question1;
 
     public AudioClip PickLock;

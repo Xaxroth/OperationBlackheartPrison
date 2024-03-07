@@ -10,6 +10,7 @@ public class ItemSOData : ScriptableObject
     public Sprite ItemImage;
 
     public bool CanBeUsed;
+    public bool Stackable;
 
     [Header("Growth Rates")]
 

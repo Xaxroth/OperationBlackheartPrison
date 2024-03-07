@@ -18,6 +18,8 @@ public class ItemData : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public GameObject PickupItem;
     public Text ItemNameText = null;
 
+    public int Quantity = 0;
+
     private Transform originalParent;
 
     public GameObject UseMenu;
