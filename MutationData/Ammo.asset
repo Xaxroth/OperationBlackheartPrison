@@ -19,6 +19,7 @@ MonoBehaviour:
   ItemImage: {fileID: 21300000, guid: 612ab1e13efe6dc4bbe2f49e53300b00, type: 3}
   CanBeUsed: 0
   Stackable: 1
+  CanBeDropped: 1
   GoldWorthPerUnit: 5
   MaxStackSize: 20
   ItemColor: {r: 1, g: 1, b: 1, a: 1}

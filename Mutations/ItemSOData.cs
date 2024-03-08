@@ -11,6 +11,7 @@ public class ItemSOData : ScriptableObject
 
     public bool CanBeUsed;
     public bool Stackable;
+    public bool CanBeDropped;
 
     [Header("Growth Rates")]
 

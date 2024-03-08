@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44b0b49bad106c74a8873f20a2f693a4, type: 3}
+  m_Name: Gold-Plated Blunderbus
+  m_EditorClassIdentifier: 
+  ItemName: Gold-Plated Blunderbus
+  ItemDescription: A short-range, large-spread ranged weapon. Uses ammunition.
+  FlavorText: A blunderbus of impeccable craftsmanship and detail. The barrel is
+    large enough to store makeshift scraps as ammunition.
+  ItemImage: {fileID: 21300000, guid: 3b51f74957b214343b4d66cfcc4378ec, type: 3}
+  CanBeUsed: 0
+  Stackable: 0
+  GoldWorthPerUnit: 0
+  MaxStackSize: 0
+  ItemColor: {r: 1, g: 0.5273675, b: 0, a: 1}
+  TextColor: {r: 1, g: 0.5414939, b: 0, a: 1}
+  StableColor: {r: 1, g: 1, b: 1, a: 1}
+  UnstableColor: {r: 0, g: 0, b: 1, a: 1}
+  VolatileColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  DangerousColor: {r: 1, g: 0.5414939, b: 0, a: 1}
+  TypeOfItem: 2
+  ItemRarity: 3

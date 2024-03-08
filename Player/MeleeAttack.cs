@@ -11,6 +11,7 @@ public class MeleeAttack : MonoBehaviour
     [SerializeField] private PlayerControllerScript player;
 
     private List<Enemy> hitEnemies = new List<Enemy>();
+    private List<Enemy> othersHit = new List<Enemy>();
 
     [Header("Animation")]
     public Animator meleeAnimator;
@@ -27,6 +28,8 @@ public class MeleeAttack : MonoBehaviour
     [SerializeField] private AudioClip hitSound;
     [SerializeField] private GameObject bloodBurst;
     [SerializeField] private Rigidbody playerRigidbody;
+
+    public GameObject ImpactEffect;
 
     [SerializeField] private ParticleSystem AdrenalineParticles;
     [SerializeField] private ParticleSystem enemyHitParticles;
@@ -101,17 +104,16 @@ public class MeleeAttack : MonoBehaviour
         {
             Collider[] cone = Physics.OverlapSphere(transform.position, coneRadius);
 
-            Ray ray = new Ray(PlayerControllerScript.Instance.Orientation.transform.position, PlayerControllerScript.Instance.Orientation.transform.forward);
+            Ray ray = new Ray(PlayerControllerScript.Instance.Orientation.transform.position + new Vector3(0, 2.5f, 0), PlayerControllerScript.Instance.Orientation.transform.forward);
 
             RaycastHit hit;
             float raycastDistance = 5f;
 
             if (Physics.Raycast(ray, out hit, raycastDistance))
             {
-                if (hit.collider.CompareTag("Environment"))
-                {
                     AudioManager.Instance.PlaySound(AudioManager.Instance.ImpactSounds[Random.Range(0, AudioManager.Instance.ImpactSounds.Length)], 0.75f);
-                }
+                    GameObject impactEffect = Instantiate(ImpactEffect, hit.point, Quaternion.identity);
+                    Destroy(impactEffect, 3f);
             }
 
             if (cone.Length != 0)
@@ -130,6 +132,16 @@ public class MeleeAttack : MonoBehaviour
 
                             Vector3 targetDirection = (enemy.transform.position - transform.position).normalized;
                             AudioManager.Instance.PlaySound(AudioManager.Instance.GoreHitSounds[Random.Range(0, AudioManager.Instance.GoreHitSounds.Length)], 0.3f);
+                        }
+                    }
+
+                    if (hitCollider.gameObject.CompareTag("Natia"))
+                    {
+                        Natia natia = hitCollider.GetComponent<Natia>();
+
+                        if (natia != null)
+                        {
+                            natia.TakeDamage(baseDamage);
                         }
                     }
                 }

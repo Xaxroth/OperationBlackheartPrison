@@ -267,6 +267,8 @@ public class ItemData : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void DropItem()
     {
+        if (ItemDataSO != null && !ItemDataSO.CanBeDropped) return;
+
         gameObject.tag = "EmptySlot";
         ItemDataSO = null;
         MutationDataSO = null;

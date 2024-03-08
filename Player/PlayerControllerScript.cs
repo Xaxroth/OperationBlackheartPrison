@@ -24,7 +24,8 @@ public class PlayerControllerScript : MonoBehaviour
     public enum WeaponState
     {
         Melee,
-        Ranged
+        Ranged,
+        Utility
     }
 
     public PlayerMovementState CurrentMovementState;
@@ -38,6 +39,7 @@ public class PlayerControllerScript : MonoBehaviour
 
     [SerializeField] private GameObject RangedWeapon;
     [SerializeField] private GameObject MeleeWeapon;
+    [SerializeField] private GameObject Utility;
 
     [SerializeField] public int playerHealth = 100;
     [SerializeField] public int playerMaxHealth = 100;
@@ -229,8 +231,10 @@ public class PlayerControllerScript : MonoBehaviour
                 CurrentWeaponState = WeaponState.Melee;
                 MeleeWeapon.SetActive(true);
                 RangedWeapon.SetActive(false);
+                Utility.SetActive(false);
                 GetComponent<MainAttackScript>().enabled = false;
                 GetComponent<MeleeAttack>().enabled = true;
+                GetComponent<Flashbang>().enabled = false;
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -238,8 +242,21 @@ public class PlayerControllerScript : MonoBehaviour
                 CurrentWeaponState = WeaponState.Ranged;
                 MeleeWeapon.SetActive(false);
                 RangedWeapon.SetActive(true);
+                Utility.SetActive(false);
                 GetComponent<MainAttackScript>().enabled = true;
                 GetComponent<MeleeAttack>().enabled = false;
+                GetComponent<Flashbang>().enabled = false;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                CurrentWeaponState = WeaponState.Utility;
+                MeleeWeapon.SetActive(false);
+                RangedWeapon.SetActive(false);
+                Utility.SetActive(true);
+                GetComponent<MainAttackScript>().enabled = false;
+                GetComponent<MeleeAttack>().enabled = false;
+                GetComponent<Flashbang>().enabled = true;
             }
         }
     }

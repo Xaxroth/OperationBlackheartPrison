@@ -23,18 +23,24 @@ public class Flashbang : MonoBehaviour
         if (SetAmmo() > 0)
         {
 
-            if (Input.GetKeyDown(KeyCode.T))
+            if (Input.GetMouseButtonDown(0) && !chargingFlashbang)
             {
                 AudioManager.Instance.PlaySound(AudioManager.Instance.PullGrenadePin, 0.1f);
             }
-
-            if (Input.GetKey(KeyCode.T))
+            else if (Input.GetMouseButtonDown(1))
             {
+                AudioManager.Instance.PlaySound(AudioManager.Instance.PullGrenadePin, 0.05f);
                 chargingFlashbang = true;
-                flashbangForce += flashbangChargeRate;
+                flashbangForce = 0.075f;
             }
 
-            if (Input.GetKeyUp(KeyCode.T) && chargingFlashbang)
+            if (Input.GetMouseButton(0))
+            {
+                chargingFlashbang = true;
+                flashbangForce = 0.15f;
+            }
+
+            if (Input.GetMouseButtonUp(0) && chargingFlashbang || Input.GetMouseButtonUp(1) && chargingFlashbang)
             {
                 ThrowFlashbang();
                 AudioManager.Instance.PlaySound(AudioManager.Instance.FlashbangSounds[Random.Range(0, AudioManager.Instance.FlashbangSounds.Length)], 1.0f);

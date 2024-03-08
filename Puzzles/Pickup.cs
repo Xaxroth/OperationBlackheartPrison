@@ -6,6 +6,8 @@ public class Pickup : MonoBehaviour
 {
     public MutationData MutationPickupData;
     public ItemSOData ItemData;
+
+    public bool InstantlyAddItemToInventory = false;
     public enum PickupObject
     {
         Flashbang,
@@ -15,6 +17,18 @@ public class Pickup : MonoBehaviour
     }
 
     public PickupObject ObjectType;
+
+    public void Update()
+    {
+        if (InstantlyAddItemToInventory)
+        {
+            ItemData = GetComponent<ItemDataHolder>().ItemData;
+
+            InventoryManager.Instance.AddPickupToInventory(gameObject);
+
+            gameObject.SetActive(false);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
