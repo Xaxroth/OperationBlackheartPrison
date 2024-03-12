@@ -59,7 +59,7 @@ public class Flashbang : MonoBehaviour
             {
                 ItemData itemData = item.GetComponent<ItemData>();
 
-                if (itemData.ItemName.Equals("Flashbang"))
+                if (itemData.ItemName.Equals("Soulstone"))
                 {
                     AmountOfFlashbangs++;
                 }
@@ -73,7 +73,7 @@ public class Flashbang : MonoBehaviour
     {
         for (int i = 0; i < InventoryManager.Instance.Inventory.Count; i++)
         {
-            if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals("Flashbang"))
+            if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals("Soulstone"))
             {
                 InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().Quantity--;
 

@@ -1474,5 +1474,56 @@ public class DialogueManagerScript : MonoBehaviour
         }
     }
 
+    public void Event8()
+    {
+        if (Natia.Instance.CurrentAffectionLevel == Natia.AffectionLevel.Lover) return;
+
+        if (Natia.Instance.CurrentEnemyState == Natia.NatiaState.Waiting)
+        {
+            return;
+        }
+
+        StartOfDialogue();
+
+        switch (currentDialogueNode)
+        {
+            case 0:
+                Invoke("Event8", 2.0f);
+                SetColor(NatiaLetterColor);
+                SetSprite(_sprite);
+                PlayDialogue("Halicon... You look pale.", 0, null, null, null, null);
+                break;
+            case 1:
+                PlayDialogue("Is there something you want to tell me?", 2, "Natia. I think I'm in love with you.", "Forget it. We have to get out of here.", null, null);
+                break;
+            case 2:
+                Invoke("Event8", 3.0f);
+                PlayDialogue("Oh... I... I don't know what to say.", 0, null, null, null, null);
+                break;
+            case 3:
+                Invoke("Event8", 3.0f);
+                PlayDialogue("I only just met you, Halicon... I like you. That's for sure.", 0, null, null, null, null);
+                break;
+            case 4:
+                Invoke("Event8", 3.0f);
+                PlayDialogue("But love is a strong word, don't you think?", 0, null, null, null, null);
+                break;
+            case 5:
+                Invoke("Event8", 5.0f);
+                PlayDialogue("I like you too, Halicon. Just not in -that- way. I'm sorry.", 0, null, null, null, null);
+                break;
+            case 6:
+                EndOfDialogue();
+                CloseDialogue();
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
+                break;
+        }
+
+        if (panel.activeInHierarchy)
+        {
+            currentDialogueNode++;
+        }
+    }
+
     #endregion
 }

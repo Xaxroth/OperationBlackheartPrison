@@ -6,6 +6,7 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    public UnitData unitData;
     [SerializeField] private Transform player;
     [SerializeField] private Animator enemyAnimator;
     [SerializeField] private NavMeshAgent EnemyNavMeshAgent;
@@ -59,6 +60,8 @@ public class Enemy : MonoBehaviour
 
     private bool canBeHarmed;
 
+    public float cooldown;
+
     private int EnemyDamage = 10;
     public float Health = 10f;
     private float stunDuration = 3f;
@@ -75,6 +78,11 @@ public class Enemy : MonoBehaviour
         EnemyNavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         EnemyAudioSource = gameObject.GetComponent<AudioSource>();
         enemyAnimator = gameObject.GetComponentInChildren<Animator>();
+
+        EnemyDamage = unitData.damage;
+        Health = unitData.health;
+        MovementSpeed = unitData.movementSpeed;
+        cooldown = unitData.attackCooldown;
 
         InvokeRepeating("CheckLoS", 1.0f, 1.0f);
     }
@@ -224,7 +232,7 @@ public class Enemy : MonoBehaviour
 
             hitObjects.Clear();
 
-            yield return new WaitForSeconds(0.7f);
+            yield return new WaitForSeconds(cooldown);
         }
 
         isAttacking = false;

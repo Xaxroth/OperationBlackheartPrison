@@ -111,9 +111,9 @@ public class MeleeAttack : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, raycastDistance))
             {
-                    AudioManager.Instance.PlaySound(AudioManager.Instance.ImpactSounds[Random.Range(0, AudioManager.Instance.ImpactSounds.Length)], 0.75f);
-                    GameObject impactEffect = Instantiate(ImpactEffect, hit.point, Quaternion.identity);
-                    Destroy(impactEffect, 3f);
+                AudioManager.Instance.PlaySound(AudioManager.Instance.ImpactSounds[Random.Range(0, AudioManager.Instance.ImpactSounds.Length)], 0.75f);
+                GameObject impactEffect = Instantiate(ImpactEffect, hit.point, Quaternion.identity);
+                Destroy(impactEffect, 3f);
             }
 
             if (cone.Length != 0)
@@ -131,7 +131,7 @@ public class MeleeAttack : MonoBehaviour
                             PlayerControllerScript.Instance.playerStamina += baseDamage;
 
                             Vector3 targetDirection = (enemy.transform.position - transform.position).normalized;
-                            AudioManager.Instance.PlaySound(AudioManager.Instance.GoreHitSounds[Random.Range(0, AudioManager.Instance.GoreHitSounds.Length)], 0.3f);
+                            //AudioManager.Instance.PlaySound(AudioManager.Instance.GoreHitSounds[Random.Range(0, AudioManager.Instance.GoreHitSounds.Length)], 0.3f);
                         }
                     }
 

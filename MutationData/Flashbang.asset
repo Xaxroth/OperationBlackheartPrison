@@ -12,18 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b0b49bad106c74a8873f20a2f693a4, type: 3}
   m_Name: Flashbang
   m_EditorClassIdentifier: 
-  ItemName: Flashbang
+  ItemName: Soulstone
   ItemDescription: Temporarily stuns and blinds enemies based on proximity. Use as
     a means of escape or for clearing areas.
-  FlavorText: 'A mysterious, lightweight and portable explosive that aims to disrupt
-    the senses. Their origins are unknown. '
+  FlavorText: A bright, glowing crystal that hums with power. Faint screaming and
+    banging can be heard from within. Is someone stuck inside?
   ItemImage: {fileID: 21300000, guid: fabdbfb46e03d0d4b9352184f7cb3726, type: 3}
   CanBeUsed: 0
   Stackable: 1
   CanBeDropped: 1
   GoldWorthPerUnit: 50
   MaxStackSize: 20
-  ItemColor: {r: 1, g: 1, b: 1, a: 1}
+  ItemColor: {r: 1, g: 0.5828073, b: 0, a: 1}
   TextColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   StableColor: {r: 1, g: 1, b: 1, a: 1}
   UnstableColor: {r: 0, g: 0, b: 1, a: 1}

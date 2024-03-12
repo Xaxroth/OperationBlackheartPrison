@@ -216,6 +216,7 @@ public class PlayerControllerScript : MonoBehaviour
         if (paralyzed)
         {
             StopAnimation();
+            playerRigidbody.AddForce(fallDirection * playerJumpHeight / 6f, ForceMode.Impulse);
             return;
         }
         PhysicsElements();

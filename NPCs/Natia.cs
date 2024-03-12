@@ -15,6 +15,9 @@ public class Natia : MonoBehaviour
     [Range(0, 100)]
     public int Sanity;
 
+    [Range(0, 200)]
+    public float Health = 200f;
+
     [Header("Logistics")]
 
     public Transform PlayerTransform;
@@ -70,7 +73,6 @@ public class Natia : MonoBehaviour
     public bool StartedLockpicking = false;
 
     float DistanceToPlayer = 0;
-    float Health = 10f;
     float refreshRate = 0.5f;
     float MovementSpeed = 9f;
 
