@@ -41,8 +41,9 @@ public class Pickup : MonoBehaviour
                     ItemData = GetComponent<ItemDataHolder>().ItemData;
 
                     InventoryManager.Instance.AddPickupToInventory(gameObject);
-
+                    UIManager.Instance.DisplayNotification(ItemData);
                     AudioManager.Instance.PlaySound(AudioManager.Instance.Pickup, 0.5f);
+                    Debug.Log("BOB SAGET 1990");
                     break;
                 case PickupObject.Ammo:
                     ItemData = GetComponent<ItemDataHolder>().ItemData;

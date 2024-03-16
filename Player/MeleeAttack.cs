@@ -92,66 +92,66 @@ public class MeleeAttack : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
             {
-                StopCoroutine(MeleeQuickSwing());
-                StopCoroutine(MeleePowerSwing());
+                //StopCoroutine(MeleeQuickSwing());
+                //StopCoroutine(MeleePowerSwing());
             }
         }
     }
 
     private void MeleeSwing()
     {
-        if (swinging)
+        Collider[] cone = Physics.OverlapSphere(transform.position, coneRadius);
+
+        Ray ray = new Ray(PlayerControllerScript.Instance.Orientation.transform.position + new Vector3(0, 2.5f, 0), PlayerControllerScript.Instance.Orientation.transform.forward);
+
+        RaycastHit hit;
+        float raycastDistance = 5f;
+
+        if (Physics.Raycast(ray, out hit, raycastDistance))
         {
-            Collider[] cone = Physics.OverlapSphere(transform.position, coneRadius);
+            AudioManager.Instance.PlaySound(AudioManager.Instance.ImpactSounds[Random.Range(0, AudioManager.Instance.ImpactSounds.Length)], 0.75f);
+            GameObject impactEffect = Instantiate(ImpactEffect, hit.point, Quaternion.identity);
+            Destroy(impactEffect, 3f);
+        }
 
-            Ray ray = new Ray(PlayerControllerScript.Instance.Orientation.transform.position + new Vector3(0, 2.5f, 0), PlayerControllerScript.Instance.Orientation.transform.forward);
-
-            RaycastHit hit;
-            float raycastDistance = 5f;
-
-            if (Physics.Raycast(ray, out hit, raycastDistance))
+        if (cone.Length != 0)
+        {
+            foreach (var hitCollider in cone)
             {
-                AudioManager.Instance.PlaySound(AudioManager.Instance.ImpactSounds[Random.Range(0, AudioManager.Instance.ImpactSounds.Length)], 0.75f);
-                GameObject impactEffect = Instantiate(ImpactEffect, hit.point, Quaternion.identity);
-                Destroy(impactEffect, 3f);
-            }
-
-            if (cone.Length != 0)
-            {
-                foreach (var hitCollider in cone)
+                if (hitCollider.gameObject.CompareTag("Enemy"))
                 {
-                    if (hitCollider.gameObject.CompareTag("Enemy"))
+                    Enemy enemy = hitCollider.GetComponent<Enemy>();
+                    if (!hitEnemies.Contains(enemy))
                     {
-                        Enemy enemy = hitCollider.GetComponent<Enemy>();
-                        if (!hitEnemies.Contains(enemy))
-                        {
-                            enemy.TakeDamage(baseDamage, false);
-                            hitEnemies.Add(enemy);
+                        enemy.TakeDamage(baseDamage, false);
+                        hitEnemies.Add(enemy);
 
-                            PlayerControllerScript.Instance.playerStamina += baseDamage;
+                        PlayerControllerScript.Instance.playerStamina += baseDamage;
 
-                            Vector3 targetDirection = (enemy.transform.position - transform.position).normalized;
-                            //AudioManager.Instance.PlaySound(AudioManager.Instance.GoreHitSounds[Random.Range(0, AudioManager.Instance.GoreHitSounds.Length)], 0.3f);
-                        }
+                        Vector3 targetDirection = (enemy.transform.position - transform.position).normalized;
+                        //AudioManager.Instance.PlaySound(AudioManager.Instance.GoreHitSounds[Random.Range(0, AudioManager.Instance.GoreHitSounds.Length)], 0.3f);
                     }
+                }
 
-                    if (hitCollider.gameObject.CompareTag("Natia"))
+                if (hitCollider.gameObject.CompareTag("Natia"))
+                {
+                    Natia natia = hitCollider.GetComponent<Natia>();
+
+                    if (natia != null)
                     {
-                        Natia natia = hitCollider.GetComponent<Natia>();
-
-                        if (natia != null)
-                        {
-                            natia.TakeDamage(baseDamage);
-                        }
+                        natia.TakeDamage(baseDamage);
                     }
                 }
             }
+
         }
     }
 
     IEnumerator MeleeQuickSwing()
     {
-        while (swinging)
+        bool attacking = true;
+
+        while (swinging || attacking)
         {
             if (attackAnimationNumber >= 2)
             {
@@ -173,6 +173,8 @@ public class MeleeAttack : MonoBehaviour
             yield return new WaitForSeconds(attackCooldown);
 
             hitEnemies.Clear();
+
+            attacking = false;
 
             canSwing = true;
         }

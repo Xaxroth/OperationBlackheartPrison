@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.AI;
 
 public class Natia : MonoBehaviour
@@ -13,10 +14,18 @@ public class Natia : MonoBehaviour
     [Range(0, 100)]
     public int Affection;
     [Range(0, 100)]
-    public int Sanity;
-
+    public int Intimidation;
     [Range(0, 200)]
-    public float Health = 200f;
+    public int Health = 200;
+
+    public int MaxHealth = 200;
+    public int MaxAffection = 100;
+    public int MaxIntimidation = 100;
+
+    [Header("UI Elements")]
+    public Slider HealthSlider;
+    public Slider AffectionSlider;
+    public Slider IntimidationSlider;
 
     [Header("Logistics")]
 
@@ -33,6 +42,9 @@ public class Natia : MonoBehaviour
     public GameObject Armor;
     public GameObject Underwear;
     public GameObject Boots;
+
+
+
 
     public enum NatiaState
     {
@@ -85,6 +97,8 @@ public class Natia : MonoBehaviour
         }
         NatiaNavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         EnemyAudioSource = gameObject.GetComponent<AudioSource>();
+
+        SetUIElements(MaxHealth, MaxAffection, MaxIntimidation);
     }
 
     void Update()
@@ -95,6 +109,7 @@ public class Natia : MonoBehaviour
         MoveToNewPosition();
         DistanceCheck();
         HeadTurn();
+        UpdateUIValues();
 
         if (CurrentEnemyState == NatiaState.Waiting)
         {
@@ -105,6 +120,24 @@ public class Natia : MonoBehaviour
         HandleMovement();
         Rotation();
 
+    }
+    public void SetUIElements(int maxHealth, int maxAffection, int maxIntimidation)
+    {
+        HealthSlider.maxValue = maxHealth;
+        HealthSlider.value = maxHealth;
+
+        AffectionSlider.maxValue = maxAffection;
+        AffectionSlider.value = maxAffection;
+
+        IntimidationSlider.maxValue = maxIntimidation;
+        IntimidationSlider.value = maxIntimidation;
+    }
+
+    public void UpdateUIValues()
+    {
+        HealthSlider.value = Health;
+        AffectionSlider.value = Affection;
+        IntimidationSlider.value = Intimidation;
     }
 
     void HandleNatiaState()

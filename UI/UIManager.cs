@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
     public float fadeDuration = 3f;
     public float popUpSpeed = 2.0f;
     public float popUpHeight = 100.0f;
+    private float TargetAlpha = 1.0f;
+    private float NotificationDisplayTime = 3;
     private Vector2 targetPosition;
 
     public Image blackScreen;
@@ -19,6 +21,11 @@ public class UIManager : MonoBehaviour
     public GameObject HintsPopUp;
     public GameObject GameOverScreenObject;
     public Texture2D CustomCursor;
+
+    public ItemData itemData;
+    public MutationData mutationData;
+    public TextMeshProUGUI NotificationText;
+    public Color NotificationLetterColor;
 
     public GameObject HintBox;
     public GameObject InventoryUIScreen;
@@ -31,6 +38,7 @@ public class UIManager : MonoBehaviour
     public bool menuActive = false;
     public bool ForceCall;
     public bool toggleInventory = false;
+    public bool ShowNotification = false;
 
     void Awake()
     {
@@ -57,6 +65,23 @@ public class UIManager : MonoBehaviour
         else
         {
             PopUpWindow.anchoredPosition = Vector2.Lerp(PopUpWindow.anchoredPosition, new Vector2(targetPosition.x, -popUpHeight), Time.deltaTime * popUpSpeed);
+        }
+
+        if (ShowNotification)
+        {
+            Debug.Log("Fading in notification");
+            float fadeSpeed = 3f; // Adjust the speed of the fade
+            float targetAlpha = 1.0f; // Assuming notification starts from invisible
+            NotificationLetterColor.a = Mathf.Lerp(NotificationLetterColor.a, targetAlpha, fadeSpeed * Time.deltaTime);
+            NotificationText.color = NotificationLetterColor;
+        }
+        else
+        {
+            Debug.Log("Fading Out Notification");
+            float fadeSpeed = 4f; // Adjust the speed of the fade
+            float targetAlpha = 0.0f; // Fading out to completely invisible
+            NotificationLetterColor.a = Mathf.Lerp(NotificationLetterColor.a, targetAlpha, fadeSpeed * Time.deltaTime);
+            NotificationText.color = NotificationLetterColor;
         }
 
         if (GameOverScreenObject.activeInHierarchy)
@@ -110,6 +135,19 @@ public class UIManager : MonoBehaviour
     {
         DisplayHint = !DisplayHint;
         targetPosition = DisplayHint ? new Vector2(0, popUpHeight) : new Vector2(0, -popUpHeight);
+    }
+
+    public void DisplayNotification(ItemSOData itemData)
+    {
+        NotificationText.text = "Picked up: " + itemData.ItemName;
+        ShowNotification = true;
+        StartCoroutine(NotificationTimer());
+    }
+
+    public IEnumerator NotificationTimer()
+    {
+        yield return new WaitForSeconds(NotificationDisplayTime);
+        ShowNotification = false;
     }
 
     public void LoadGame()
