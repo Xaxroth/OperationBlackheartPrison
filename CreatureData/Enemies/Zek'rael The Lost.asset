@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e984a0e5e8d44449257a93985e435e, type: 3}
+  m_Name: Zek'rael The Lost
+  m_EditorClassIdentifier: 
+  unitName: Zek'rael The Lost
+  unitDescription: Haunting the flooded sections of the catacombs, Zek'rael seeks
+    vengeance for his abandonment.
+  health: 1000
+  damage: 25
+  attackCooldown: 0.15
+  movementSpeed: 20
+  StoppingDistance: 4
+  AttackRadius: 2
+  AttackSound: {fileID: 8300000, guid: ba20bb66118b42644b05fa75804ba2d3, type: 3}
+  AttackType: 0
+  UnitMobilityType: 1

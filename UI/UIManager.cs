@@ -22,6 +22,8 @@ public class UIManager : MonoBehaviour
     public GameObject GameOverScreenObject;
     public Texture2D CustomCursor;
 
+    public GameObject JumpScareScreen;
+
     public ItemData itemData;
     public MutationData mutationData;
     public TextMeshProUGUI NotificationText;
@@ -101,6 +103,19 @@ public class UIManager : MonoBehaviour
             {
                 Natia.Instance.NatiaNavMeshAgent.enabled = false;
                 Natia.Instance.gameObject.transform.position = position.position;
+            }
+        }
+    }
+
+    public void PlayJumpScare()
+    {
+        if (!PlayerControllerScript.Instance.Dead)
+        {
+            if (!JumpScareScreen.activeInHierarchy)
+            {
+                PlayerControllerScript.Instance.TakeDamage(PlayerControllerScript.Instance.playerMaxHealth);
+                AudioManager.Instance.PlaySound(AudioManager.Instance.DemonJumpScare, 1.0f);
+                JumpScareScreen.SetActive(true);
             }
         }
     }
@@ -212,9 +227,11 @@ public class UIManager : MonoBehaviour
     public void GameOverSceen(string GameOverText)
     {
         GameOverScreenObject.SetActive(true);
+        JumpScareScreen.SetActive(false);
         GameOverScreenObject.GetComponentInChildren<TextMeshProUGUI>().text = GameOverText;
         PlayerControllerScript.Instance.paralyzed = true;
         menuActive = true;
+        Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
     }
 

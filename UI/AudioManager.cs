@@ -83,6 +83,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip UseItem;
     public AudioClip MutationApplied;
 
+    public AudioClip DemonJumpScare;
+
     public AudioClip PullGrenadePin;
     public AudioClip[] FlashbangSounds;
     public AudioClip EarsRinging;

@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private NavMeshAgent EnemyNavMeshAgent;
 
     [SerializeField] private AudioSource EnemyAudioSource;
+    [SerializeField] private AudioSource TerrorRadius;
     [SerializeField] private AudioClip Footsteps;
     [SerializeField] private AudioClip AlertScream;
     [SerializeField] private AudioClip DamageScream;
@@ -58,10 +59,10 @@ public class Enemy : MonoBehaviour
 
     private float MeleeRange = 5f;
 
-    private bool canBeHarmed;
+    public bool canBeHarmed;
 
     public float cooldown;
-
+    public float soundVolume = 0.5f;
     private int EnemyDamage = 10;
     public float Health = 10f;
     private float stunDuration = 3f;
@@ -69,8 +70,11 @@ public class Enemy : MonoBehaviour
     public float NormalMovementSpeed = 9f;
     private float MovementSpeed = 9f;
     private bool isAttacking = false;
+    public bool canExplode = false;
+    private bool shouldPlaySound = true;
 
     public bool Initialized { get; private set; }
+    public GameObject AlertObject;
 
     void Start()
     {
@@ -78,11 +82,13 @@ public class Enemy : MonoBehaviour
         EnemyNavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         EnemyAudioSource = gameObject.GetComponent<AudioSource>();
         enemyAnimator = gameObject.GetComponentInChildren<Animator>();
-
+        EnemyCollider = GetComponent<Collider>();
         EnemyDamage = unitData.damage;
         Health = unitData.health;
         MovementSpeed = unitData.movementSpeed;
         cooldown = unitData.attackCooldown;
+        NormalMovementSpeed = unitData.movementSpeed;
+        EnemyNavMeshAgent.speed = MovementSpeed;
 
         InvokeRepeating("CheckLoS", 1.0f, 1.0f);
     }
@@ -107,6 +113,13 @@ public class Enemy : MonoBehaviour
         else
         {
             EnemyNavMeshAgent.speed = NormalMovementSpeed;
+        }
+
+        if (_targetPosition != null)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(_targetPosition.position - transform.position);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 6 * Time.deltaTime);
+            transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, 0f);
         }
 
         if (Natia.Instance.Dead || PlayerControllerScript.Instance.Dead)
@@ -147,7 +160,7 @@ public class Enemy : MonoBehaviour
         {
             DetermineTarget();
             EnemyNavMeshAgent.destination = _targetPosition.transform.position;
-            EnemyNavMeshAgent.stoppingDistance = 2;
+            EnemyNavMeshAgent.stoppingDistance = unitData.StoppingDistance;
         }
     }
 
@@ -155,7 +168,21 @@ public class Enemy : MonoBehaviour
     {
         if (InRange && CurrentEnemyState != EnemyState.Attacking && !isAttacking && CanMove)
         {
-            StartCoroutine(AttackCoroutine());
+            switch (unitData.AttackType)
+            {
+                case UnitData.EnemyAttackType.Melee:
+                    StartCoroutine(AttackCoroutine());
+                    return;
+                case UnitData.EnemyAttackType.Ranged:
+                    break;
+                case UnitData.EnemyAttackType.InstantKill:
+                    if (!PlayerControllerScript.Instance.Dead)
+                    {
+                        TerrorRadius.Stop();
+                        UIManager.Instance.PlayJumpScare();
+                    }
+                    break;
+            }
         }
     }
 
@@ -202,7 +229,7 @@ public class Enemy : MonoBehaviour
 
             yield return new WaitForSeconds(0.5f);
 
-            RaycastHit[] hits = Physics.SphereCastAll(transform.position, coneRadius, coneDirection, coneLength);
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, unitData.AttackRadius, coneDirection, coneLength);
             List<GameObject> hitObjects = new List<GameObject>();
 
             foreach (RaycastHit hit in hits)
@@ -258,7 +285,14 @@ public class Enemy : MonoBehaviour
                     if (!Physics.Raycast(transform.position, targetDirection, distanceToTarget, blockedMask))
                     {
                         InLineOfSight = true;
-                        EnemyAudioSource.PlayOneShot(AlertScream, 0.5f);
+                        if (unitData.UnitMobilityType == UnitData.UnitType.Demon)
+                        {
+                            enemyAnimator.SetBool("Walking", true);
+                        }
+                        else
+                        {
+                            EnemyAudioSource.PlayOneShot(AlertScream, 0.5f);
+                        }
                         enemyAnimator.SetBool("Awaken", true);
 
                         StartCoroutine(AwakeCoroutine());
@@ -284,12 +318,27 @@ public class Enemy : MonoBehaviour
             {
                 StartCoroutine(DeathCoroutine());
 
-                if (ShouldExplode)
+                if (ShouldExplode && canExplode)
                 {
                     Explode();
                 }
             }
+            else
+            {
+                if (shouldPlaySound)
+                {
+                    EnemyAudioSource.PlayOneShot(DamageScream, soundVolume);
+                    StartCoroutine(SoundCooldown());
+                }
+            }
         }
+    }
+
+    private IEnumerator SoundCooldown()
+    {
+        shouldPlaySound = false;
+        yield return new WaitForSeconds(0.5f);
+        shouldPlaySound = true;
     }
 
     private IEnumerator AwakeCoroutine()
@@ -303,10 +352,12 @@ public class Enemy : MonoBehaviour
     private IEnumerator DeathCoroutine()
     {
         dead = true;
-        EnemyAudioSource.PlayOneShot(DeathSound);
+        EnemyAudioSource.PlayOneShot(DeathSound, soundVolume);
         CurrentEnemyState = EnemyState.Dead;
         enemyAnimator.SetBool("Death", true);
-        yield return new WaitForSeconds(3);
+        EnemyAudioSource.clip = null;
+        TerrorRadius.Stop();
+        yield return new WaitForSeconds(2);
     }
 
     public void Explode()

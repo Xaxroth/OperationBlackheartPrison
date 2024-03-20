@@ -13,6 +13,19 @@ public class UnitData : ScriptableObject
     public float attackCooldown;
     public float movementSpeed;
 
+    public int StoppingDistance = 2;
+    public float AttackRadius = 2;
+
+    public AudioClip AttackSound;
+
+    public enum EnemyAttackType
+    {
+        Melee,
+        Ranged,
+        InstantKill
+    }
+
+    public EnemyAttackType AttackType;
     public enum UnitType
     {
         Undead,
