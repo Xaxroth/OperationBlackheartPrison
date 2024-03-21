@@ -18,6 +18,11 @@ public class UnitData : ScriptableObject
 
     public AudioClip AttackSound;
 
+    public bool Stealthed;
+
+    public Material EnemyMaterial;
+    public Material ShimmerMaterial;
+
     public enum EnemyAttackType
     {
         Melee,

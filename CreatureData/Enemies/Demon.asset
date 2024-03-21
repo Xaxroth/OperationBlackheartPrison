@@ -21,5 +21,8 @@ MonoBehaviour:
   StoppingDistance: 4
   AttackRadius: 2
   AttackSound: {fileID: 0}
+  Stealthed: 1
+  EnemyMaterial: {fileID: 2100000, guid: 89b7177ed7db5b748a9bdae2f9a891fd, type: 2}
+  ShimmerMaterial: {fileID: 2100000, guid: e1af73b186f6b2941978d825fd5faf11, type: 2}
   AttackType: 0
   UnitMobilityType: 1

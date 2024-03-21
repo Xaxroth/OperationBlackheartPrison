@@ -26,6 +26,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject GoreExplosion;
     [SerializeField] private GameObject enemyBody;
 
+    private MeshRenderer meshRenderer;
+    public Material newMaterial;
+
     public Collider EnemyCollider;
 
     [SerializeField] private ParticleSystem BloodParticles;
@@ -51,6 +54,8 @@ public class Enemy : MonoBehaviour
     private LayerMask hitMask;
     private LayerMask blockedMask;
 
+    public List<SkinnedMeshRenderer> renderers = new List<SkinnedMeshRenderer>();
+
     private bool dead;
     private bool InRange = false;
     private bool InLineOfSight;
@@ -60,7 +65,7 @@ public class Enemy : MonoBehaviour
     private float MeleeRange = 5f;
 
     public bool canBeHarmed;
-
+    public bool stealthed;
     public float cooldown;
     public float soundVolume = 0.5f;
     private int EnemyDamage = 10;
@@ -83,12 +88,39 @@ public class Enemy : MonoBehaviour
         EnemyAudioSource = gameObject.GetComponent<AudioSource>();
         enemyAnimator = gameObject.GetComponentInChildren<Animator>();
         EnemyCollider = GetComponent<Collider>();
+        meshRenderer = GetComponent<MeshRenderer>();
+
         EnemyDamage = unitData.damage;
         Health = unitData.health;
         MovementSpeed = unitData.movementSpeed;
         cooldown = unitData.attackCooldown;
         NormalMovementSpeed = unitData.movementSpeed;
         EnemyNavMeshAgent.speed = MovementSpeed;
+        stealthed = unitData.Stealthed;
+
+        if (unitData != null)
+        {
+            if (stealthed)
+            {
+                newMaterial = unitData.ShimmerMaterial;
+
+                for (int i = 0; i < renderers.Count; i++)
+                {
+                    Debug.Log("Fuck you");
+                    renderers[i].material = newMaterial;
+                }
+            }
+            else
+            {
+                newMaterial = unitData.EnemyMaterial;
+
+                for (int i = 0; i < renderers.Count; i++)
+                {
+                    Debug.Log("FFAAAAAK you");
+                    renderers[i].material = newMaterial;
+                }
+            }
+        }
 
         InvokeRepeating("CheckLoS", 1.0f, 1.0f);
     }
@@ -194,6 +226,18 @@ public class Enemy : MonoBehaviour
     private IEnumerator StunnedCoroutine()
     {
         CurrentEnemyState = EnemyState.Stunned;
+
+        if (stealthed)
+        {
+            newMaterial = unitData.EnemyMaterial;
+
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                renderers[i].material = newMaterial;
+            }
+
+            stealthed = false;
+        }
         enemyAnimator.SetBool("Flashed", true);
         yield return new WaitForSeconds(stunDuration);
         enemyAnimator.SetBool("Flashed", false);
@@ -314,6 +358,18 @@ public class Enemy : MonoBehaviour
             Health -= (int)Damage;
             BloodParticles.Play();
 
+            if (stealthed)
+            {
+                newMaterial = unitData.EnemyMaterial;
+
+                for (int i = 0; i < renderers.Count; i++)
+                {
+                    renderers[i].material = newMaterial;
+                }
+
+                stealthed = false;
+            }
+
             if (Health <= 0 && !dead)
             {
                 StartCoroutine(DeathCoroutine());
@@ -356,7 +412,6 @@ public class Enemy : MonoBehaviour
         CurrentEnemyState = EnemyState.Dead;
         enemyAnimator.SetBool("Death", true);
         EnemyAudioSource.clip = null;
-        TerrorRadius.Stop();
         yield return new WaitForSeconds(2);
     }
 
