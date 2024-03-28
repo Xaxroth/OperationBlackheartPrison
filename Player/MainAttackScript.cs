@@ -38,12 +38,30 @@ public class MainAttackScript : MonoBehaviour
     [SerializeField] private int playerMaxAmmo = 12;
     [SerializeField] private int projectileForce = 25;
 
+    public Animator PlayerArms;
+
     void Start()
     {
         InitializeProjectilePool();
         ammoDisplay.text = playerAmmo.ToString();
         AudioSource = gameObject.GetComponent<AudioSource>();
         PlayerInstance = PlayerControllerScript.Instance;
+    }
+
+    public void OnEnable()
+    {
+        StartCoroutine(DrawAnimation());
+        AudioManager.Instance.PlaySound(AudioManager.Instance.MoveItem, 0.5f);
+        Debug.Log("RAAWRGH");
+    }
+
+    public IEnumerator DrawAnimation()
+    {
+        PlayerControllerScript.Instance.switchingWeapon = true;
+        PlayerArms.SetBool("PullOut", true);
+        yield return new WaitForSeconds(0.5f);
+        PlayerControllerScript.Instance.switchingWeapon = false;
+        PlayerArms.SetBool("PullOut", false);
     }
 
     void Update()

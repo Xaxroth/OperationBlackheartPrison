@@ -71,17 +71,15 @@ public class UIManager : MonoBehaviour
 
         if (ShowNotification)
         {
-            Debug.Log("Fading in notification");
-            float fadeSpeed = 3f; // Adjust the speed of the fade
-            float targetAlpha = 1.0f; // Assuming notification starts from invisible
+            float fadeSpeed = 3f;
+            float targetAlpha = 1.0f;
             NotificationLetterColor.a = Mathf.Lerp(NotificationLetterColor.a, targetAlpha, fadeSpeed * Time.deltaTime);
             NotificationText.color = NotificationLetterColor;
         }
         else
         {
-            Debug.Log("Fading Out Notification");
-            float fadeSpeed = 4f; // Adjust the speed of the fade
-            float targetAlpha = 0.0f; // Fading out to completely invisible
+            float fadeSpeed = 4f;
+            float targetAlpha = 0.0f;
             NotificationLetterColor.a = Mathf.Lerp(NotificationLetterColor.a, targetAlpha, fadeSpeed * Time.deltaTime);
             NotificationText.color = NotificationLetterColor;
         }

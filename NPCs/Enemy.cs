@@ -33,6 +33,8 @@ public class Enemy : MonoBehaviour
 
     [SerializeField] private ParticleSystem BloodParticles;
 
+    [SerializeField] private GameObject DeathGore;
+
     [SerializeField]
     private enum EnemyState
     {
@@ -106,7 +108,6 @@ public class Enemy : MonoBehaviour
 
                 for (int i = 0; i < renderers.Count; i++)
                 {
-                    Debug.Log("Fuck you");
                     renderers[i].material = newMaterial;
                 }
             }
@@ -116,7 +117,6 @@ public class Enemy : MonoBehaviour
 
                 for (int i = 0; i < renderers.Count; i++)
                 {
-                    Debug.Log("FFAAAAAK you");
                     renderers[i].material = newMaterial;
                 }
             }
@@ -147,7 +147,7 @@ public class Enemy : MonoBehaviour
             EnemyNavMeshAgent.speed = NormalMovementSpeed;
         }
 
-        if (_targetPosition != null)
+        if (_targetPosition != null && CanMove)
         {
             Quaternion targetRotation = Quaternion.LookRotation(_targetPosition.position - transform.position);
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 6 * Time.deltaTime);
@@ -356,7 +356,6 @@ public class Enemy : MonoBehaviour
         if (canBeHarmed)
         {
             Health -= (int)Damage;
-            BloodParticles.Play();
 
             if (stealthed)
             {
@@ -410,6 +409,11 @@ public class Enemy : MonoBehaviour
         dead = true;
         EnemyAudioSource.PlayOneShot(DeathSound, soundVolume);
         CurrentEnemyState = EnemyState.Dead;
+        if (DeathGore != null)
+        {
+            GameObject BloodExplosion = Instantiate(DeathGore, transform.position + new Vector3(0, 2, 0), transform.rotation);
+            Destroy(BloodExplosion, 2f);
+        }
         enemyAnimator.SetBool("Death", true);
         EnemyAudioSource.clip = null;
         yield return new WaitForSeconds(2);

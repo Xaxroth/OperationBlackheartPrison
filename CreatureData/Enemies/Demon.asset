@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: Undertaker
   unitDescription: A demon left behind in Blackheart Prison.
-  health: 200
+  health: 50
   damage: 25
   attackCooldown: 0.15
   movementSpeed: 20

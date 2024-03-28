@@ -112,6 +112,7 @@ public class PlayerControllerScript : MonoBehaviour
     public bool recovering = false;
     public bool InWater;
 
+    public bool switchingWeapon;
     public bool paralyzed = false;
     public bool Incapacitated;
     public bool sprinting;
@@ -173,11 +174,11 @@ public class PlayerControllerScript : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
 
-        CurrentWeaponState = WeaponState.Ranged;
-        MeleeWeapon.SetActive(false);
-        RangedWeapon.SetActive(true);
-        GetComponent<MainAttackScript>().enabled = true;
-        GetComponent<MeleeAttack>().enabled = false;
+        CurrentWeaponState = WeaponState.Melee;
+        MeleeWeapon.SetActive(true);
+        RangedWeapon.SetActive(false);
+        GetComponent<MainAttackScript>().enabled = false;
+        GetComponent<MeleeAttack>().enabled = true;
 
         PlayerAudioSource = gameObject.GetComponent<AudioSource>();
         playerRigidbody = GetComponentInChildren<Rigidbody>();
@@ -225,9 +226,10 @@ public class PlayerControllerScript : MonoBehaviour
 
     private void SwitchWeapons()
     {
-        if (!DialogueManagerScript.Instance.InProgress)
+        if (!switchingWeapon)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha3))
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 CurrentWeaponState = WeaponState.Melee;
                 MeleeWeapon.SetActive(true);
@@ -235,33 +237,30 @@ public class PlayerControllerScript : MonoBehaviour
                 Utility.SetActive(false);
                 GetComponent<MainAttackScript>().enabled = false;
                 GetComponent<MeleeAttack>().enabled = true;
-                GetComponent<Flashbang>().enabled = false;
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                CurrentWeaponState = WeaponState.Ranged;
-                MeleeWeapon.SetActive(false);
-                RangedWeapon.SetActive(true);
-                Utility.SetActive(false);
-                GetComponent<MainAttackScript>().enabled = true;
-                GetComponent<MeleeAttack>().enabled = false;
-                GetComponent<Flashbang>().enabled = false;
-            }
+            //if (Input.GetKeyDown(KeyCode.Alpha1))
+            //{
+            //    CurrentWeaponState = WeaponState.Ranged;
+            //    MeleeWeapon.SetActive(false);
+            //    RangedWeapon.SetActive(true);
+            //    Utility.SetActive(false);
+            //    GetComponent<MainAttackScript>().enabled = true;
+            //    GetComponent<MeleeAttack>().enabled = false;
+            //}
 
-            if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                CurrentWeaponState = WeaponState.Utility;
-                MeleeWeapon.SetActive(false);
-                RangedWeapon.SetActive(false);
-                Utility.SetActive(true);
-                GetComponent<MainAttackScript>().enabled = false;
-                GetComponent<MeleeAttack>().enabled = false;
-                GetComponent<Flashbang>().enabled = true;
-            }
+            //if (Input.GetKeyDown(KeyCode.Alpha3))
+            //{
+            //    CurrentWeaponState = WeaponState.Utility;
+            //    MeleeWeapon.SetActive(false);
+            //    RangedWeapon.SetActive(false);
+            //    Utility.SetActive(true);
+            //    GetComponent<MainAttackScript>().enabled = false;
+            //    GetComponent<MeleeAttack>().enabled = false;
+            //    GetComponent<Flashbang>().enabled = true;
+            //}
         }
     }
-
     private void Interact()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -755,20 +754,10 @@ public class PlayerControllerScript : MonoBehaviour
     {
         if (!Dead)
         {
-            if (!Block.Instance.blocking)
-            {
-                PlayerAudioSource.PlayOneShot(HitSounds[UnityEngine.Random.Range(0, HitSounds.Length)], 0.7f);
-                playerHealth -= damage;
-                playerHealthBar.SetHealth(playerHealth);
-                normalHit = true;
-
-            }
-            else
-            {
-                playerHealth -= damage / 5;
-                playerHealthBar.SetHealth(playerHealth);
-                normalHit = false;
-            }
+            PlayerAudioSource.PlayOneShot(HitSounds[UnityEngine.Random.Range(0, HitSounds.Length)], 0.7f);
+            playerHealth -= damage;
+            playerHealthBar.SetHealth(playerHealth);
+            normalHit = true;
         }
         if (playerHealth <= 0)
         {

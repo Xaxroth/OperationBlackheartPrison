@@ -12,6 +12,8 @@ public class Flashbang : MonoBehaviour
     public int MaximumAmountOfFlashbangs = 10;
     private bool chargingFlashbang;
 
+    public float flashbangMaxCharge = 200;
+
     private void Start()
     {
         SetAmmo();
@@ -23,24 +25,18 @@ public class Flashbang : MonoBehaviour
         if (SetAmmo() > 0)
         {
 
-            if (Input.GetMouseButtonDown(0) && !chargingFlashbang)
-            {
-                AudioManager.Instance.PlaySound(AudioManager.Instance.PullGrenadePin, 0.1f);
-            }
-            else if (Input.GetMouseButtonDown(1))
+            if (Input.GetKeyDown(KeyCode.T) && !chargingFlashbang)
             {
                 AudioManager.Instance.PlaySound(AudioManager.Instance.PullGrenadePin, 0.05f);
                 chargingFlashbang = true;
-                flashbangForce = 0.075f;
             }
 
-            if (Input.GetMouseButton(0))
+            if (Input.GetKey(KeyCode.T) && chargingFlashbang && flashbangForce < flashbangChargeRate)
             {
-                chargingFlashbang = true;
-                flashbangForce = 0.15f;
+                flashbangForce += 0.05f;
             }
 
-            if (Input.GetMouseButtonUp(0) && chargingFlashbang || Input.GetMouseButtonUp(1) && chargingFlashbang)
+            if (Input.GetKeyUp(KeyCode.T) && chargingFlashbang)
             {
                 ThrowFlashbang();
                 AudioManager.Instance.PlaySound(AudioManager.Instance.FlashbangSounds[Random.Range(0, AudioManager.Instance.FlashbangSounds.Length)], 1.0f);
