@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e984a0e5e8d44449257a93985e435e, type: 3}
+  m_Name: Blightskin
+  m_EditorClassIdentifier: 
+  unitName: Blightskin
+  unitDescription: A demon left behind in Blackheart Prison.
+  health: 100
+  damage: 100
+  attackCooldown: 1
+  movementSpeed: 5
+  StoppingDistance: 4
+  AttackRadius: 2
+  AttackSound: {fileID: 0}
+  Stealthed: 0
+  EnemyMaterial: {fileID: 2100000, guid: 2621c982d637fe345a13db2168e46bec, type: 2}
+  ShimmerMaterial: {fileID: 2100000, guid: e1af73b186f6b2941978d825fd5faf11, type: 2}
+  AttackType: 0
+  UnitMobilityType: 1
