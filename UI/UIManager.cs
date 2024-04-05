@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
     public float popUpHeight = 100.0f;
     private float TargetAlpha = 1.0f;
     private float NotificationDisplayTime = 3;
+    private float ZoneDisplayTime = 9;
     private Vector2 targetPosition;
 
     public Image blackScreen;
@@ -29,12 +30,16 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI NotificationText;
     public Color NotificationLetterColor;
 
+    public TextMeshProUGUI ZoneText;
+    public Color ZoneLetterColor;
+
     public GameObject HintBox;
     public GameObject InventoryUIScreen;
     public RectTransform PopUpWindow;
     public TextMeshProUGUI HintText;
 
     private bool soundPlayed = false;
+    public bool ShowZoneText = false;
     public bool changingScene = false;
     public bool DisplayHint;
     public bool menuActive = false;
@@ -53,6 +58,7 @@ public class UIManager : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
         Cursor.SetCursor(CustomCursor, Vector3.zero, CursorMode.ForceSoftware);
         Cursor.visible = false;
+        DisplayZone("Blackheart Prison");
 
     }
 
@@ -82,6 +88,21 @@ public class UIManager : MonoBehaviour
             float targetAlpha = 0.0f;
             NotificationLetterColor.a = Mathf.Lerp(NotificationLetterColor.a, targetAlpha, fadeSpeed * Time.deltaTime);
             NotificationText.color = NotificationLetterColor;
+        }
+
+        if (ShowZoneText)
+        {
+            float fadeSpeed = 1f;
+            float targetAlpha = 1.0f;
+            ZoneLetterColor.a = Mathf.Lerp(ZoneLetterColor.a, targetAlpha, fadeSpeed * Time.deltaTime);
+            ZoneText.color = ZoneLetterColor;
+        }
+        else
+        {
+            float fadeSpeed = 2f;
+            float targetAlpha = 0.0f;
+            ZoneLetterColor.a = Mathf.Lerp(ZoneLetterColor.a, targetAlpha, fadeSpeed * Time.deltaTime);
+            ZoneText.color = ZoneLetterColor;
         }
 
         if (GameOverScreenObject.activeInHierarchy)
@@ -155,6 +176,26 @@ public class UIManager : MonoBehaviour
         NotificationText.text = "Picked up: " + itemData.ItemName;
         ShowNotification = true;
         StartCoroutine(NotificationTimer());
+    }
+
+    public void DisplayWorldNotification(string text)
+    {
+        NotificationText.text = text;
+        ShowNotification = true;
+        StartCoroutine(NotificationTimer());
+    }
+
+    public void DisplayZone(string text)
+    {
+        ZoneText.text = text;
+        ShowZoneText = true;
+        StartCoroutine(ZoneTimer());
+    }
+
+    public IEnumerator ZoneTimer()
+    {
+        yield return new WaitForSeconds(ZoneDisplayTime);
+        ShowZoneText = false;
     }
 
     public IEnumerator NotificationTimer()

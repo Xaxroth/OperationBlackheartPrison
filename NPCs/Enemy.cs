@@ -11,6 +11,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Animator enemyAnimator;
     [SerializeField] private NavMeshAgent EnemyNavMeshAgent;
 
+    public GameObject[] ItemsDropped;
+
     [SerializeField] private AudioSource EnemyAudioSource;
     [SerializeField] private AudioSource TerrorRadius;
     [SerializeField] private AudioClip Footsteps;
@@ -413,6 +415,17 @@ public class Enemy : MonoBehaviour
         {
             GameObject BloodExplosion = Instantiate(DeathGore, transform.position + new Vector3(0, 2, 0), transform.rotation);
             Destroy(BloodExplosion, 2f);
+        }
+        if (ItemsDropped != null)
+        {
+            for (int i = 0; i < ItemsDropped.Length; i++)
+            {
+                if (ItemsDropped[i] != null)
+                {
+                    GameObject ItemDrop = Instantiate(ItemsDropped[i], transform.position + new Vector3(0, 5, 0), transform.rotation);
+                    ItemDrop.GetComponent<Rigidbody>().AddForce(transform.forward * 5, ForceMode.Impulse);
+                }
+            }
         }
         enemyAnimator.SetBool("Death", true);
         EnemyAudioSource.clip = null;

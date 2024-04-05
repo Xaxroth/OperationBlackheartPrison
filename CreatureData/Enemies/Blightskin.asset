@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: Blightskin
   unitDescription: A demon left behind in Blackheart Prison.
-  health: 100
-  damage: 100
+  health: 150
+  damage: 50
   attackCooldown: 1
-  movementSpeed: 5
+  movementSpeed: 12
   StoppingDistance: 4
   AttackRadius: 2
   AttackSound: {fileID: 0}
   Stealthed: 0
-  EnemyMaterial: {fileID: 2100000, guid: 2621c982d637fe345a13db2168e46bec, type: 2}
+  EnemyMaterial: {fileID: 2100000, guid: 2966bc80df8fc2d49a3b48641c1d825f, type: 2}
   ShimmerMaterial: {fileID: 2100000, guid: e1af73b186f6b2941978d825fd5faf11, type: 2}
   AttackType: 0
   UnitMobilityType: 1

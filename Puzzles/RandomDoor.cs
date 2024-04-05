@@ -5,18 +5,22 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Threading;
 
-public class Door : MonoBehaviour
+public class RandomDoor : MonoBehaviour
 {
     public Image blackScreen;
     public float fadeDuration = 3f;
 
     public Scene SceneToLoad;
-    public string SceneToLoadString;
+    public string[] PossibleScenes;
+    public string OverrideScene;
 
     public Transform SpawnPosition;
 
+    public bool PermanentlyLocked;
+
     public string SuccessMessage;
     public string FailureMessage;
+    public bool nextSceneOverride;
     public bool locked;
     public bool needsKey;
     public string RequiredKeyName;
@@ -52,28 +56,12 @@ public class Door : MonoBehaviour
         {
             AudioManager.Instance.PlaySound(AudioManager.Instance.DoorLocked, 1.0f);
 
-            if (needsKey)
+            if (Natia.Instance != null)
             {
-                for (int i = 0; i < InventoryManager.Instance.Inventory.Count; i++)
+                if (!Natia.Instance.Dead && !DialogueManagerScript.Instance.InProgress)
                 {
-                    if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals(RequiredKeyName))
-                    {
-                        needsKey = false;
-                        locked = false;
-                        UIManager.Instance.DisplayWorldNotification(SuccessMessage);
-                        InventoryManager.Instance.Inventory[i].GetComponent<ItemData>().ClearItemSlot();
-                    }
-                }
-            }
-            else
-            {
-                if (Natia.Instance != null)
-                {
-                    if (!Natia.Instance.Dead && !DialogueManagerScript.Instance.InProgress)
-                    {
-                        DialogueManagerScript.Instance.NatiaLockpicking();
-                        Natia.Instance.OpenDoor(gameObject);
-                    }
+                    DialogueManagerScript.Instance.NatiaLockpicking();
+                    Natia.Instance.OpenDoor(gameObject);
                 }
             }
         }
@@ -95,6 +83,14 @@ public class Door : MonoBehaviour
 
         blackScreen.color = targetColor;
         UIManager.Instance.SetTransform(SpawnPosition);
-        SceneManager.LoadScene(SceneToLoadString);
+
+        if (!nextSceneOverride)
+        {
+            SceneManager.LoadScene(PossibleScenes[Random.Range(0, PossibleScenes.Length)]);
+        }
+        else
+        {
+            SceneManager.LoadScene(OverrideScene);
+        }
     }
 }

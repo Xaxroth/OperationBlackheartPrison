@@ -103,6 +103,11 @@ public class Natia : MonoBehaviour
 
     void Update()
     {
+        if (!Event1Trigger.EventFinished)
+        {
+            return;
+        }
+
         HandleNatiaState();
         CheckNatiaAffection();
         IncreaseNatiaAffection();

@@ -293,9 +293,27 @@ public class PlayerControllerScript : MonoBehaviour
                         GameDataHandler.Instance.SaveEssentialsData();
                     }
 
+                    if (hit.collider.CompareTag("Lever"))
+                    {
+                        if (hit.collider.GetComponent<Levers>())
+                        {
+                            hit.collider.GetComponent<Levers>().PullLever();
+                        }
+                        else if (hit.collider.GetComponent<DisableTraps>())
+                        {
+                            hit.collider.GetComponent<DisableTraps>().PullLever();
+                        }
+
+                    }
+
                     if (hit.collider.CompareTag("Door"))
                     {
                         hit.collider.GetComponent<Door>().ChangeScene();
+                    }
+
+                    if (hit.collider.CompareTag("RandomDoor"))
+                    {
+                        hit.collider.GetComponent<RandomDoor>().ChangeScene();
                     }
 
                     if (hit.collider.CompareTag("Chest"))
@@ -355,7 +373,7 @@ public class PlayerControllerScript : MonoBehaviour
             case PlayerMovementState.Carrying:
                 playerCollider.height = normalHeight;
                 playerAirDrag = normalPlayerDrag;
-                playerSpeed = exhaustedSpeed * 1.25f;
+                playerSpeed = exhaustedSpeed * 2;
                 break;
 
         }

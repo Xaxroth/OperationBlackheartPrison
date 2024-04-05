@@ -99,6 +99,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip ChargeEnergy;
     public AudioClip ReleaseEnergy;
 
+    public AudioClip LeverSound;
+
     public AudioClip BGM1;
     public AudioSource BGMAudioSource;
 

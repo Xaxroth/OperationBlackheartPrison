@@ -407,6 +407,53 @@ public class DialogueManagerScript : MonoBehaviour
         }
     }
 
+    public void NatiaRefuseCommand()
+    {
+        StartOfDialogue();
+
+        switch (currentDialogueNode)
+        {
+            case 0:
+
+                SetColor(NatiaLetterColor);
+                SetSprite(_sprite);
+
+                int RandomNumber = Random.Range(1, 4);
+
+                switch (RandomNumber)
+                {
+                    case 1:
+                        PlayDialogue("I can't make sense of this lock mechanism.", 0, null, null, null, null);
+                        //AudioManager.Instance.PlaySound(AudioManager.Instance.Lockpicking1, 1.0f);
+                        break;
+                    case 2:
+                        PlayDialogue("It's not budging.", 0, null, null, null, null);
+                        //AudioManager.Instance.PlaySound(AudioManager.Instance.Lockpicking2, 1.0f);
+                        break;
+                    case 3:
+                        PlayDialogue("The keyhole is so different to the other doors. I can't get it open.", 0, null, null, null, null);
+                        //AudioManager.Instance.PlaySound(AudioManager.Instance.Lockpicking3, 1.0f);
+                        break;
+                    case 4:
+                        PlayDialogue("Ugh. No, it's no use.", 0, null, null, null, null);
+                        //AudioManager.Instance.PlaySound(AudioManager.Instance.Lockpicking4, 1.0f);
+                        break;
+                }
+                Invoke("NatiaRefuseCommand", 1.0f);
+
+                break;
+            case 1:
+                EndOfDialogue();
+                CloseDialogue();
+                break;
+        }
+
+        if (panel.activeInHierarchy)
+        {
+            currentDialogueNode++;
+        }
+    }
+
     public void PlayerTooFarAway()
     {
         StartOfDialogue();

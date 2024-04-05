@@ -17,7 +17,7 @@ MonoBehaviour:
   health: 50
   damage: 25
   attackCooldown: 0.15
-  movementSpeed: 20
+  movementSpeed: 10
   StoppingDistance: 4
   AttackRadius: 2
   AttackSound: {fileID: 0}

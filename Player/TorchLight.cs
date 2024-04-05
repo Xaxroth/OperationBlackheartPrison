@@ -23,11 +23,23 @@ public class TorchLight : MonoBehaviour
 
     IEnumerator StartAnimation()
     {
-        PlayerControllerScript.Instance.switchingWeapon = true;
-        PlayerArms.SetBool("PullOut", true);
+        if (PlayerControllerScript.Instance != null)
+        {
+            PlayerControllerScript.Instance.switchingWeapon = true;
+        }
+        if (PlayerArms != null)
+        {
+            PlayerArms.SetBool("PullOut", true);
+        }
         yield return new WaitForSeconds(0.7f);
-        PlayerControllerScript.Instance.switchingWeapon = false;
-        PlayerArms.SetBool("PullOut", false);
+        if (PlayerControllerScript.Instance != null)
+        {
+            PlayerControllerScript.Instance.switchingWeapon = false;
+        }
+        if (PlayerArms != null)
+        {
+            PlayerArms.SetBool("PullOut", false);
+        }
     }
 
     IEnumerator TorchLightUp()
