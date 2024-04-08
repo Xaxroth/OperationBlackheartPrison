@@ -1,25 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Policy;
 using UnityEngine;
 
 public class PrisonChestPuzzle : MonoBehaviour
 {
-    public Chest[] Chests;
+    public SpawnChests spawnChests;
+    public List<Chest> Chests = new List<Chest>();
     public GameObject PrisonKey;
-
+    public RandomDoor DoorToLock;
+    public GameObject AdditionalDanger;
     public Chest correctChest;
+
+    public int ChanceToAppear = 50;
 
     void Start()
     {
-        int ChestToContainKey = Random.Range(0, Chests.Length);
+        int DiceRoll = Random.Range(0, 100);
 
-        correctChest = Chests[ChestToContainKey];
+        if (DiceRoll < ChanceToAppear)
+        {
+            AdditionalDanger.SetActive(true);
+            // Now this is a locked room, with monsters of course
+            DoorToLock.locked = true;
 
+            int ChestToContainKey = Random.Range(0, spawnChests.ActiveChests.Count);
 
-        GameObject PrisonKeyGO = Instantiate(PrisonKey, Chests[ChestToContainKey].gameObject.transform.position + new Vector3(0, 2, 0), Quaternion.identity);
+            correctChest = spawnChests.ActiveChests[ChestToContainKey];
 
-        PrisonKeyGO.SetActive(false);
+            GameObject PrisonKeyGO = Instantiate(PrisonKey, spawnChests.ActiveChests[ChestToContainKey].gameObject.transform.position + new Vector3(0, 2, 0), Quaternion.identity);
 
-        Chests[ChestToContainKey].Payload.Add(PrisonKeyGO);
+            PrisonKeyGO.SetActive(false);
+
+            spawnChests.ActiveChests[ChestToContainKey].Payload.Add(PrisonKeyGO);
+        }
+
     }
 }

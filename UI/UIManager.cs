@@ -115,6 +115,7 @@ public class UIManager : MonoBehaviour
     public void SetTransform(Transform position)
     {
         PlayerControllerScript.Instance.transform.position = position.position;
+        CameraControllerScript.Instance.ResetCamera(position);
 
         if (Natia.Instance != null)
         {

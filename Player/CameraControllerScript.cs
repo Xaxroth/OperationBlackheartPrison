@@ -52,6 +52,14 @@ public class CameraControllerScript : MonoBehaviour
         }
     }
 
+    public void ResetCamera(Transform transform)
+    {
+        xRotation = 0;
+        yRotation = transform.rotation.y;
+        playerCamera.transform.localRotation = Quaternion.Euler(0, transform.rotation.y, 0);
+        Orientation.transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);
+    }
+
     private void MouseInputChecker()
     {
         mouseX = Input.GetAxisRaw("Mouse X");
