@@ -1,17 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UIManager;
 
 public class SaveStation : MonoBehaviour
 {
     public ParticleSystem SaveGameParticles;
-    // Start is called before the first frame update
+
+    public Shrine ShrineType;
+
     void Start()
     {
-        
+        int enumLength = System.Enum.GetValues(typeof(Shrine)).Length;
+        int randomIndex = Random.Range(0, enumLength);
+
+        ShrineType = (Shrine)randomIndex;
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -20,6 +25,12 @@ public class SaveStation : MonoBehaviour
     public void PlayParticles()
     {
         StartCoroutine(ParticlesCoroutine());
+        ActivateShrine();
+    }
+
+    public void ActivateShrine()
+    {
+        UIManager.Instance.DisplayShrineMessage(ShrineType);
     }
 
     private IEnumerator ParticlesCoroutine()

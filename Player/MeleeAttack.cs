@@ -142,6 +142,12 @@ public class MeleeAttack : MonoBehaviour
                         natia.TakeDamage(baseDamage);
                     }
                 }
+
+                if (hitCollider.gameObject.CompareTag("BreakableObject"))
+                {
+                    BreakableObject obj = hitCollider.GetComponent<BreakableObject>();
+                    obj.TakeDamage(baseDamage);
+                }
             }
 
         }

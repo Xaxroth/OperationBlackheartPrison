@@ -239,7 +239,7 @@ public class PlayerControllerScript : MonoBehaviour
                 GetComponent<MeleeAttack>().enabled = true;
             }
 
-            //if (Input.GetKeyDown(KeyCode.Alpha1))
+            //if (Input.GetKeyDown(KeyCode.Alpha2))
             //{
             //    CurrentWeaponState = WeaponState.Ranged;
             //    MeleeWeapon.SetActive(false);
@@ -289,7 +289,8 @@ public class PlayerControllerScript : MonoBehaviour
                     {
                         AudioManager.Instance.PlaySound(AudioManager.Instance.SaveGame, 1.0f);
                         hit.collider.gameObject.GetComponent<SaveStation>().PlayParticles();
-                        UIManager.Instance.ShowHint("Game saved successfully.");
+                        SaveStation saveStation = hit.collider.gameObject.GetComponent<SaveStation>();
+                        saveStation.ActivateShrine();
                         GameDataHandler.Instance.SaveEssentialsData();
                     }
 

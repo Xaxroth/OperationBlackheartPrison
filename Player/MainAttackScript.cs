@@ -52,7 +52,6 @@ public class MainAttackScript : MonoBehaviour
     {
         StartCoroutine(DrawAnimation());
         AudioManager.Instance.PlaySound(AudioManager.Instance.MoveItem, 0.5f);
-        Debug.Log("RAAWRGH");
     }
 
     public IEnumerator DrawAnimation()

@@ -38,6 +38,21 @@ public class UIManager : MonoBehaviour
     public RectTransform PopUpWindow;
     public TextMeshProUGUI HintText;
 
+    public enum Shrine
+    {
+        Holy,
+        Corrupted,
+        Fortunate,
+        Unfortunate,
+        Painful,
+        Challenging,
+        Destined,
+        Bloody,
+        Demonic,
+    }
+
+    public Shrine ShrineType;
+
     private bool soundPlayed = false;
     public bool ShowZoneText = false;
     public bool changingScene = false;
@@ -163,6 +178,40 @@ public class UIManager : MonoBehaviour
         if (blackScreen.color.a == 0.0)
         {
             StopAllCoroutines();
+        }
+    }
+
+    public void DisplayShrineMessage(Shrine shrineType)
+    {
+        switch (shrineType)
+        {
+            case Shrine.Holy:
+                DisplayWorldNotification("The path of the righteous is not often bathed in glory.");
+                break;
+            case Shrine.Corrupted:
+                DisplayWorldNotification("The nature of mortals is to live, destroy, and perish.");
+                break;
+            case Shrine.Fortunate:
+                DisplayWorldNotification("Renounce your doubts and trust in the process.");
+                break;
+            case Shrine.Unfortunate:
+                DisplayWorldNotification("The powers are against you, as they are against everyone else.");
+                break;
+            case Shrine.Painful:
+                DisplayWorldNotification("Sin can only be atoned for through pain.");
+                break;
+            case Shrine.Challenging:
+                DisplayWorldNotification("He who has the power to destroy something has true power over it.");
+                break;
+            case Shrine.Destined:
+                DisplayWorldNotification("Only courage will win a game of life and death.");
+                break;
+            case Shrine.Bloody:
+                DisplayWorldNotification("Some sins can never be forgiven.");
+                break;
+            case Shrine.Demonic:
+                DisplayWorldNotification("Your heritage is never solely a burden.");
+                break;
         }
     }
 
