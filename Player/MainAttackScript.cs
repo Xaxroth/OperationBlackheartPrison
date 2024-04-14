@@ -56,7 +56,7 @@ public class MainAttackScript : MonoBehaviour
 
     public IEnumerator DrawAnimation()
     {
-        PlayerControllerScript.Instance.switchingWeapon = true;
+        //PlayerControllerScript.Instance.switchingWeapon = true;
         PlayerArms.SetBool("PullOut", true);
         yield return new WaitForSeconds(0.5f);
         PlayerControllerScript.Instance.switchingWeapon = false;
