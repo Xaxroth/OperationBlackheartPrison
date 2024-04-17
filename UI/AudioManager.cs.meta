@@ -49,6 +49,7 @@ MonoImporter:
   - SelectItem: {instanceID: 0}
   - UseItem: {instanceID: 0}
   - MutationApplied: {instanceID: 0}
+  - DemonJumpScare: {instanceID: 0}
   - PullGrenadePin: {instanceID: 0}
   - EarsRinging: {instanceID: 0}
   - NoAmmo: {instanceID: 0}
@@ -57,6 +58,8 @@ MonoImporter:
   - PickLock: {instanceID: 0}
   - ChargeEnergy: {instanceID: 0}
   - ReleaseEnergy: {instanceID: 0}
+  - LeverSound: {instanceID: 0}
+  - HookThrow: {fileID: 8300000, guid: d61f80002090b7d429de6b6a009da939, type: 3}
   - BGM1: {instanceID: 0}
   - BGMAudioSource: {instanceID: 0}
   - GlobalAudioSource: {instanceID: 0}

@@ -16,6 +16,7 @@ public class HookScript : MonoBehaviour
 
     public static int amountOfChains = 0;
     public static int maxAmountOfChains = 3;
+    public int HookDamage = 30;
 
     public Transform caster;
     public Transform castPosition;
@@ -52,19 +53,23 @@ public class HookScript : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if (_canHook && other.CompareTag("Enemy"))
+        if (_canHook)
         {
-            StartCoroutine(HookCoroutine());
-            Collision(other.transform);
-        }
-        else if (_canHook && other.CompareTag("Environment"))
-        {
-            GameObject hitExplosion = Instantiate(_impactEffect, transform.position, transform.rotation);
-            stopRange = 2;
-            returnspeed = 60;
-            Destroy(hitExplosion, 2f);
-            _canHook = false;
-            _hookHit = true;
+            if (other.CompareTag("Enemy"))
+            {
+                other.gameObject.GetComponent<Enemy>().TakeDamage(HookDamage, false);
+                StartCoroutine(HookCoroutine());
+                Collision(other.transform);
+            }
+            else if (other.CompareTag("Environment"))
+            {
+                GameObject hitExplosion = Instantiate(_impactEffect, transform.position, transform.rotation);
+                stopRange = 2;
+                returnspeed = 120;
+                Destroy(hitExplosion, 2f);
+                _canHook = false;
+                _hookHit = true;
+            }
         }
     }
 
@@ -75,6 +80,7 @@ public class HookScript : MonoBehaviour
 
         if (hitTarget)
         {
+            gameObject.GetComponent<Rigidbody>().useGravity = false;
             transform.position = hitTarget.position + new Vector3(0, 3, 0);
             target = hitTarget;
             GameObject hitExplosion = Instantiate(_impactEffect, target.position + new Vector3(0, 3, 0), target.rotation);
@@ -166,7 +172,6 @@ public class HookScript : MonoBehaviour
     private void DestroyHook()
     {
         _reelingIn = false;
-        //_player.playerSpeed = _player.playerNormalSpeed;
         amountOfChains--;
         ThrowHook.Instance.HookWeapon.SetActive(true);
         Destroy(gameObject);

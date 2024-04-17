@@ -37,6 +37,7 @@ public class ThrowHook : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
+            AudioManager.Instance.PlaySound(AudioManager.Instance.HookThrow, 1.0f);
             StartCoroutine(PlayAnimation());
             GameObject hook = Instantiate(Hook, HookTransform.position, PlayerControllerScript.Instance.CinemachineCamera.transform.rotation);
             hook.GetComponent<HookScript>().caster = transform;

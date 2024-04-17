@@ -101,6 +101,8 @@ public class AudioManager : MonoBehaviour
 
     public AudioClip LeverSound;
 
+    public AudioClip HookThrow;
+
     public AudioClip BGM1;
     public AudioSource BGMAudioSource;
 

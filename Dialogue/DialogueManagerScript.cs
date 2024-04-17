@@ -1215,77 +1215,15 @@ public class DialogueManagerScript : MonoBehaviour
                 Invoke("Event1", 3.0f);
                 SetColor(NatiaLetterColor);
                 SetSprite(_sprite);
-                PlayDialogue("Halicon... I should have known that The Guild would send you of all people...", 0, null, null, null, null);
+                PlayDialogue("There you are, Halicon.", 0, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.RevealStinger, 1.0f);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue1x1, 1.0f);
                 break;
             case 1:
-                PlayDialogue("You will do as I say, and protect me with your life. Got it?", 3, "Who are you?", "What are we looking for?", "You're coming with me.", null);
-                UIManager.Instance.ShowHint("You can select the options shown on screen by pressing '1', '2', '3' or '4' respectively.");
+                Invoke("Event1", 3.0f);
+                PlayDialogue("Let us waste no more time. I will be right behind you.", 0, null, null, null, null);
                 break;
             case 2:
-                switch (selectedOption)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        PlayDialogue("My name... is Natia. I'm a warlock, if that tells you anything. I also happen to be the one paying you.", 0, null, null, null, null);
-                        currentDialogueNode = 5;
-                        Invoke("Event1", 5.0f);
-                        break;
-                    case 2:
-                        PlayDialogue("None of your business. All you need to think about is protecting me, and you'll get your pay.", 2, "That's what I do.", "I can tell we're gonna be good friends.", null, null);
-                        currentDialogueNode = 4;
-                        break;
-                    case 3:
-                        PlayDialogue("Your manners are as vile as they say. Gods... why did it have to be you?", 2, "I won't repeat myself.", "It's better if I go first. Don't you think?", null, null);
-                        break;
-                }
-
-                break;
-            case 3:
-
-                switch (selectedOption)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        PlayDialogue("Oh, is that how it's going to be? Lead the way then, you bastard. Don't expect any bonuses after we're done here.", 0, null, null, null, null);
-                        Invoke("Event1", 4.0f);
-                        break;
-                    case 2:
-                        PlayDialogue("I guess I can't argue with that... Let's go, Halicon.", 0, null, null, null, null);
-                        Invoke("Event1", 3.0f);
-                        break;
-                }
-                break;
-            case 4:
-                EndOfDialogue();
-                CloseDialogue();
-                UIManager.Instance.ShowHint("You can talk to Natia by pressing the interact key. ('E' by default)");
-                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Following;
-                break;
-            case 5:
-                switch (selectedOption)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        PlayDialogue("Ugh, you're the worst, Halicon. Let's just go already.", 0, null, null, null, null);
-                        currentDialogueNode = 3;
-                        Invoke("Event1", 3.0f);
-                        break;
-                    case 2:
-                        PlayDialogue("Listen, Halicon... Do you think I would let my guard down in the presence of a well-known, bloodthirsty war criminal?", 0, null, null, null, null);
-                        Invoke("Event1", 4.0f);
-                        break;
-                }
-                break;
-            case 6:
-                PlayDialogue("You're going to do as I say, or you'll get us both killed. Got it? You go on ahead, and I'll be right behind you.", 0, null, null, null, null);
-                Invoke("Event1", 3.0f);
-                break;
-            case 7:
                 EndOfDialogue();
                 CloseDialogue();
                 UIManager.Instance.ShowHint("You can talk to Natia by pressing the interact key. ('E' by default)");
@@ -1300,6 +1238,116 @@ public class DialogueManagerScript : MonoBehaviour
             currentDialogueNode++;
         }
     }
+
+    //public void Event1()
+    //{
+    //    StartOfDialogue();
+
+    //    Natia.Instance.CanMove = true;
+    //    Natia.Instance.InConversation = true;
+
+    //    if (!setEventFunction)
+    //    {
+    //        for (int i = 0; i < choiceBoxes.Length; i++)
+    //        {
+    //            choiceBoxes[i].gameObject.SetActive(true);
+    //            choiceBoxes[i].ButtonFunction.onClick.AddListener(Event1);
+    //        }
+
+    //        setEventFunction = true;
+    //    }
+
+    //    switch (currentDialogueNode)
+    //    {
+    //        case 0:
+    //            Invoke("Event1", 3.0f);
+    //            SetColor(NatiaLetterColor);
+    //            SetSprite(_sprite);
+    //            PlayDialogue("Halicon... I should have known that The Guild would send you of all people...", 0, null, null, null, null);
+    //            //AudioManager.Instance.PlaySound(AudioManager.Instance.RevealStinger, 1.0f);
+    //            //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue1x1, 1.0f);
+    //            break;
+    //        case 1:
+    //            PlayDialogue("You will do as I say, and protect me with your life. Got it?", 3, "Who are you?", "What are we looking for?", "You're coming with me.", null);
+    //            UIManager.Instance.ShowHint("You can select the options shown on screen by pressing '1', '2', '3' or '4' respectively.");
+    //            break;
+    //        case 2:
+    //            switch (selectedOption)
+    //            {
+    //                case 0:
+    //                    break;
+    //                case 1:
+    //                    PlayDialogue("My name... is Natia. I'm a warlock, if that tells you anything. I also happen to be the one paying you.", 0, null, null, null, null);
+    //                    currentDialogueNode = 5;
+    //                    Invoke("Event1", 5.0f);
+    //                    break;
+    //                case 2:
+    //                    PlayDialogue("None of your business. All you need to think about is protecting me, and you'll get your pay.", 2, "That's what I do.", "I can tell we're gonna be good friends.", null, null);
+    //                    currentDialogueNode = 4;
+    //                    break;
+    //                case 3:
+    //                    PlayDialogue("Your manners are as vile as they say. Gods... why did it have to be you?", 2, "I won't repeat myself.", "It's better if I go first. Don't you think?", null, null);
+    //                    break;
+    //            }
+
+    //            break;
+    //        case 3:
+
+    //            switch (selectedOption)
+    //            {
+    //                case 0:
+    //                    break;
+    //                case 1:
+    //                    PlayDialogue("Oh, is that how it's going to be? Lead the way then, you bastard. Don't expect any bonuses after we're done here.", 0, null, null, null, null);
+    //                    Invoke("Event1", 4.0f);
+    //                    break;
+    //                case 2:
+    //                    PlayDialogue("I guess I can't argue with that... Let's go, Halicon.", 0, null, null, null, null);
+    //                    Invoke("Event1", 3.0f);
+    //                    break;
+    //            }
+    //            break;
+    //        case 4:
+    //            EndOfDialogue();
+    //            CloseDialogue();
+    //            UIManager.Instance.ShowHint("You can talk to Natia by pressing the interact key. ('E' by default)");
+    //            Natia.Instance.CurrentEnemyState = Natia.NatiaState.Following;
+    //            break;
+    //        case 5:
+    //            switch (selectedOption)
+    //            {
+    //                case 0:
+    //                    break;
+    //                case 1:
+    //                    PlayDialogue("Ugh, you're the worst, Halicon. Let's just go already.", 0, null, null, null, null);
+    //                    currentDialogueNode = 3;
+    //                    Invoke("Event1", 3.0f);
+    //                    break;
+    //                case 2:
+    //                    PlayDialogue("Listen, Halicon... Do you think I would let my guard down in the presence of a well-known, bloodthirsty war criminal?", 0, null, null, null, null);
+    //                    Invoke("Event1", 4.0f);
+    //                    break;
+    //            }
+    //            break;
+    //        case 6:
+    //            PlayDialogue("You're going to do as I say, or you'll get us both killed. Got it? You go on ahead, and I'll be right behind you.", 0, null, null, null, null);
+    //            Invoke("Event1", 3.0f);
+    //            break;
+    //        case 7:
+    //            EndOfDialogue();
+    //            CloseDialogue();
+    //            UIManager.Instance.ShowHint("You can talk to Natia by pressing the interact key. ('E' by default)");
+    //            Natia.Instance.CurrentEnemyState = Natia.NatiaState.Following;
+    //            break;
+
+
+    //    }
+
+    //    if (panel.activeInHierarchy)
+    //    {
+    //        currentDialogueNode++;
+    //    }
+    //}
 
     public void Event2()
     {

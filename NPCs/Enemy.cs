@@ -358,6 +358,8 @@ public class Enemy : MonoBehaviour
         if (canBeHarmed)
         {
             Health -= (int)Damage;
+            GameObject Blood = Instantiate(BloodParticles.gameObject, transform.position + new Vector3(0, 2, 0), Quaternion.identity);
+            Destroy(Blood, 2f);
 
             if (stealthed)
             {

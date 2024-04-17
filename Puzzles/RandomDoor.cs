@@ -56,12 +56,28 @@ public class RandomDoor : MonoBehaviour
         {
             AudioManager.Instance.PlaySound(AudioManager.Instance.DoorLocked, 1.0f);
 
-            if (Natia.Instance != null)
+            if (needsKey)
             {
-                if (!Natia.Instance.Dead && !DialogueManagerScript.Instance.InProgress)
+                for (int i = 0; i < InventoryManager.Instance.Inventory.Count; i++)
                 {
-                    DialogueManagerScript.Instance.NatiaLockpicking();
-                    Natia.Instance.OpenDoor(gameObject);
+                    if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals(RequiredKeyName))
+                    {
+                        needsKey = false;
+                        locked = false;
+                        UIManager.Instance.DisplayWorldNotification(SuccessMessage);
+                        InventoryManager.Instance.Inventory[i].GetComponent<ItemData>().ClearItemSlot();
+                    }
+                }
+            }
+            else
+            {
+                if (Natia.Instance != null && !needsKey)
+                {
+                    if (!Natia.Instance.Dead && !DialogueManagerScript.Instance.InProgress)
+                    {
+                        DialogueManagerScript.Instance.NatiaLockpicking();
+                        Natia.Instance.OpenDoor(gameObject);
+                    }
                 }
             }
         }

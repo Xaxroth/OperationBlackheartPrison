@@ -129,7 +129,7 @@ public class MeleeAttack : MonoBehaviour
                         PlayerControllerScript.Instance.playerStamina += baseDamage;
 
                         Vector3 targetDirection = (enemy.transform.position - transform.position).normalized;
-                        //AudioManager.Instance.PlaySound(AudioManager.Instance.GoreHitSounds[Random.Range(0, AudioManager.Instance.GoreHitSounds.Length)], 0.3f);
+                        AudioManager.Instance.PlaySound(AudioManager.Instance.GoreHitSounds[Random.Range(0, AudioManager.Instance.GoreHitSounds.Length)], 0.3f);
                     }
                 }
 
