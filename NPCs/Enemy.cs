@@ -67,6 +67,7 @@ public class Enemy : MonoBehaviour
     private Transform _targetPosition;
 
     private float MeleeRange = 5f;
+    private float RangedRange = 5f;
 
     public bool canBeHarmed;
     public bool stealthed;
@@ -101,6 +102,7 @@ public class Enemy : MonoBehaviour
         NormalMovementSpeed = unitData.movementSpeed;
         EnemyNavMeshAgent.speed = MovementSpeed;
         stealthed = unitData.Stealthed;
+        RangedRange = unitData.Range;
 
         if (unitData != null)
         {
@@ -168,23 +170,47 @@ public class Enemy : MonoBehaviour
 
         float distanceToTarget = Vector3.Distance(EnemyNavMeshAgent.transform.position, _targetPosition.position);
 
-        if (distanceToTarget <= MeleeRange)
+        if (unitData.AttackType == UnitData.EnemyAttackType.Melee)
         {
-            InRange = true;
+            if (distanceToTarget <= MeleeRange)
+            {
+                InRange = true;
+            }
+            else
+            {
+                InRange = false;
+
+                if (CurrentEnemyState != EnemyState.Stunned)
+                {
+                    CurrentEnemyState = EnemyState.Chasing;
+                }
+            }
+
+            if (CurrentEnemyState == EnemyState.Chasing)
+            {
+                Attack();
+            }
         }
         else
         {
-            InRange = false;
-
-            if (CurrentEnemyState != EnemyState.Stunned)
+            if (distanceToTarget <= RangedRange)
             {
-                CurrentEnemyState = EnemyState.Chasing;
+                InRange = true;
             }
-        }
+            else
+            {
+                InRange = false;
 
-        if (CurrentEnemyState == EnemyState.Chasing)
-        {
-            Attack();
+                if (CurrentEnemyState != EnemyState.Stunned)
+                {
+                    CurrentEnemyState = EnemyState.Chasing;
+                }
+            }
+
+            if (CurrentEnemyState == EnemyState.Chasing)
+            {
+                Attack();
+            }
         }
     }
 
@@ -208,6 +234,7 @@ public class Enemy : MonoBehaviour
                     StartCoroutine(AttackCoroutine());
                     return;
                 case UnitData.EnemyAttackType.Ranged:
+                    StartCoroutine(ThrowProjectile());
                     break;
                 case UnitData.EnemyAttackType.InstantKill:
                     if (!PlayerControllerScript.Instance.Dead)
@@ -244,6 +271,30 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(stunDuration);
         enemyAnimator.SetBool("Flashed", false);
         CurrentEnemyState = EnemyState.Chasing;
+    }
+
+    public IEnumerator ThrowProjectile()
+    {
+        isAttacking = true;
+        CurrentEnemyState = EnemyState.Attacking;
+
+        while (InRange && InLineOfSight)
+        {
+            EnemyAudioSource.PlayOneShot(AttackSound, 0.7f);
+            enemyAnimator.SetBool("Attack", true);
+
+            yield return new WaitForSeconds(0.5f);
+
+            MovementSpeed = 0;
+            EnemyNavMeshAgent.speed = MovementSpeed;
+
+            GameObject Projectile = Instantiate(unitData.ThrownProjectile, transform.position + new Vector3(0, 2, 0), transform.rotation);
+            yield return new WaitForSeconds(unitData.attackCooldown);
+        }
+
+        MovementSpeed = NormalMovementSpeed;
+        EnemyNavMeshAgent.speed = MovementSpeed;
+        isAttacking = false;
     }
 
     public void DetermineTarget()
@@ -300,14 +351,14 @@ public class Enemy : MonoBehaviour
 
             enemyAnimator.SetBool("Attack", false);
 
-            MovementSpeed = NormalMovementSpeed;
-            EnemyNavMeshAgent.speed = MovementSpeed;
 
             hitObjects.Clear();
 
             yield return new WaitForSeconds(cooldown);
         }
 
+        MovementSpeed = NormalMovementSpeed;
+        EnemyNavMeshAgent.speed = MovementSpeed;
         isAttacking = false;
     }
 
@@ -333,7 +384,7 @@ public class Enemy : MonoBehaviour
                         InLineOfSight = true;
                         if (unitData.UnitMobilityType == UnitData.UnitType.Demon)
                         {
-                            enemyAnimator.SetBool("Walking", true);
+                            //enemyAnimator.SetBool("Walking", true);
                         }
                         else
                         {
@@ -405,6 +456,7 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(1);
         canBeHarmed = true;
         CanMove = true;
+        enemyAnimator.SetBool("Walking", true);
         CurrentEnemyState = EnemyState.Chasing;
     }
 

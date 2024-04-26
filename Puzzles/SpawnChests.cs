@@ -24,6 +24,11 @@ public class SpawnChests : MonoBehaviour
             }
         
         }
+
+        if (ActiveChests.Count == 0)
+        {
+            PossibleChests[0].SetActive(true);
+        }
     }
 
     void Shuffle(GameObject[] array)

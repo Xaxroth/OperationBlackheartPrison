@@ -12,11 +12,14 @@ public class UnitData : ScriptableObject
     public int damage;
     public float attackCooldown;
     public float movementSpeed;
+    public float Range = 25;
 
     public int StoppingDistance = 2;
     public float AttackRadius = 2;
 
     public AudioClip AttackSound;
+
+    public GameObject ThrownProjectile;
 
     public bool Stealthed;
 

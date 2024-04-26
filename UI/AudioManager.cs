@@ -62,6 +62,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip Lockpicking3;
     public AudioClip Lockpicking4;
 
+    public AudioClip ZekraelEntranceDialogue;
+
     public AudioClip NatiaDeath;
     public AudioClip HaliconDeath;
 

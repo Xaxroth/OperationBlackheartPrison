@@ -23,6 +23,7 @@ public class DialogueManagerScript : MonoBehaviour
     public LetterByLetter letterByLetterScript;
 
     public Color NatiaLetterColor;
+    public Color ZekraelLetterColor;
     public Color PlayerLetterColor;
     public Color WarningLetterColor;
 
@@ -1519,6 +1520,107 @@ public class DialogueManagerScript : MonoBehaviour
                 PlayDialogue("I guess the only way forward is... down. What are we waiting for?", 0, null, null, null, null);
                 break;
             case 3:
+                EndOfDialogue();
+                CloseDialogue();
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
+                break;
+        }
+
+        if (panel.activeInHierarchy)
+        {
+            currentDialogueNode++;
+        }
+    }
+
+    public void ZekraelEntrance()
+    {
+        StartOfDialogue();
+
+
+        switch (currentDialogueNode)
+        {
+            case 0:
+                Invoke("ZekraelEntrance", 8.0f);
+                SetColor(ZekraelLetterColor);
+                SetSprite(_sprite);
+                PlayDialogue("Interesting... You are not one of the individuals I expected to come to my rescue.", 0, null, null, null, null);
+                break;
+            case 1:
+                Invoke("ZekraelEntrance", 8.0f);
+                PlayDialogue("Do not be alarmed, young mercenary. I am not one of those corrupted monsters you have encountered earlier.", 0, null, null, null, null);
+                break;
+            case 2:
+                Invoke("ZekraelEntrance", 12.0f);
+                PlayDialogue("I am Zekrael, and I was imprisoned here long ago for my proficiency in magic. I used to have a less intimidating appearance, but time has taken its toll.", 0, null, null, null, null);
+                break;
+            case 3:
+                Invoke("ZekraelEntrance", 5.0f);
+                PlayDialogue("Get me out of these chains, and I will reward you.", 0, null, null, null, null);
+                break;
+            case 4:
+                EndOfDialogue();
+                CloseDialogue();
+                Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;
+                break;
+        }
+
+        if (panel.activeInHierarchy)
+        {
+            currentDialogueNode++;
+        }
+    }
+
+    public void ZekraelFirstDialogue()
+    {
+        StartOfDialogue();
+
+        if (!setEventFunction)
+        {
+            for (int i = 0; i < choiceBoxes.Length; i++)
+            {
+                choiceBoxes[i].gameObject.SetActive(true);
+                choiceBoxes[i].ButtonFunction.onClick.AddListener(ZekraelFirstDialogue);
+            }
+
+            setEventFunction = true;
+        }
+
+        switch (currentDialogueNode)
+        {
+            case 0:
+                Invoke("ZekraelFirstDialogue", 8.0f);
+                SetColor(ZekraelLetterColor);
+                SetSprite(_sprite);
+                PlayDialogue("Thank you. You must be Halicon, the mercenary leader. Yes, I have heard of you. Your past exploits are nothing to scoff at. I must say, I am surprised to see you back in action.", 0, null, null, null, null);
+                break;
+            case 1:
+                PlayDialogue("No matter what you are here for, you bring dangerous company.", 2, "What do you mean?", "She's just an adventurer.", null, null);
+                break;
+            case 2:
+                Invoke("ZekraelFirstDialogue", 7.0f);
+                switch (selectedOption)
+                {
+                    case 1:
+                        PlayDialogue("That tiefling girl is not only a warlock, but a dangerous one at that. I cannot elaborate any further - there is no time for that. We are still in mortal peril as long as we stay here.", 0, null, null, null, null);
+                        break;
+                    case 2:
+                        PlayDialogue("Ah, you are more naive than I thought. I can assure you that she is much more than 'just an adventurer'. I suggest you choose your alliances more carefully.", 0, null, null, null, null);
+                        break;
+                }
+                break;
+            case 3:
+                Invoke("ZekraelFirstDialogue", 5.0f);
+                if (DistanceToNatia > 10)
+                {
+                    PlayDialogue("I feel my strength returning, friend. I do not know what you are searching for in this prison, but I have a feeling we will meet again.", 0, null, null, null, null);
+                }
+                else
+                {
+                    SetColor(NatiaLetterColor);
+                    PlayDialogue("The nerve! Halicon, do not trust him - he's just like those other beasts!", 0, null, null, null, null);
+                }
+                break;
+            case 4:
                 EndOfDialogue();
                 CloseDialogue();
                 Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;

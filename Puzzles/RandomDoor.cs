@@ -46,10 +46,11 @@ public class RandomDoor : MonoBehaviour
 
     public void ChangeScene()
     {
-        if (!locked)
+        if (!locked && !needsKey)
         {
             changingScene = true;
             soundPlayed = false;
+            UIManager.Instance.DoorsPassed++;
             AudioManager.Instance.PlaySound(AudioManager.Instance.OpenDoor, 1.0f);
         }
         else
@@ -88,6 +89,12 @@ public class RandomDoor : MonoBehaviour
         Color targetColor = blackScreen.color;
         targetColor.a = 1f;
         float elapsedTime = 0f;
+
+        if (UIManager.Instance.DoorsPassed == UIManager.Instance.DoorsToEventOne)
+        {
+            OverrideScene = UIManager.Instance.EventOne;
+            nextSceneOverride = true;
+        }
 
         while (elapsedTime < fadeDuration)
         {

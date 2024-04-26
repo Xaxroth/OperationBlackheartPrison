@@ -307,6 +307,11 @@ public class PlayerControllerScript : MonoBehaviour
 
                     }
 
+                    if (hit.collider.CompareTag("Zekrael"))
+                    {
+                        DialogueManagerScript.Instance.ZekraelFirstDialogue();
+                    }
+
                     if (hit.collider.CompareTag("Door"))
                     {
                         hit.collider.GetComponent<Door>().ChangeScene();

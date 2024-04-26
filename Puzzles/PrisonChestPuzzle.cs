@@ -22,7 +22,7 @@ public class PrisonChestPuzzle : MonoBehaviour
         {
             AdditionalDanger.SetActive(true);
             // Now this is a locked room, with monsters of course
-            DoorToLock.locked = true;
+            DoorToLock.needsKey = true;
 
             int ChestToContainKey = Random.Range(0, spawnChests.ActiveChests.Count);
 

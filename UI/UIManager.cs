@@ -12,10 +12,23 @@ public class UIManager : MonoBehaviour
     public float fadeDuration = 3f;
     public float popUpSpeed = 2.0f;
     public float popUpHeight = 100.0f;
+    public float TimeElapsed = 0;
     private float TargetAlpha = 1.0f;
     private float NotificationDisplayTime = 3;
     private float ZoneDisplayTime = 9;
     private Vector2 targetPosition;
+
+    public int DoorsPassed = 0;
+
+    public int DoorsToEventOne = 5;
+    public int DoorsToEventTwo = 20;
+    public int DoorsToEventThree = 30;
+    public int DoorsToEventFour = 40;
+
+    public string EventOne;
+    public string EventTwo;
+    public string EventThree;
+    public string EventFour;
 
     public Image blackScreen;
     public GameObject PlayerUI;
@@ -79,6 +92,8 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
+        TimeCounter();
+
         PlayerMenu();
 
         if (DisplayHint)
@@ -125,6 +140,11 @@ public class UIManager : MonoBehaviour
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Confined;
         }
+    }
+
+    public void TimeCounter()
+    {
+        TimeElapsed += Time.deltaTime;
     }
 
     public void SetTransform(Transform position)
@@ -213,6 +233,12 @@ public class UIManager : MonoBehaviour
                 DisplayWorldNotification("Your heritage is never solely a burden.");
                 break;
         }
+    }
+
+
+    public void DoorsCount()
+    {
+        DoorsPassed++;
     }
 
     public void DisplayHints()
