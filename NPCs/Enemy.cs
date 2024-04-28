@@ -55,8 +55,8 @@ public class Enemy : MonoBehaviour
     public float coneRadius = 2.0f;
     public float coneLength = 5.0f;
 
-    private LayerMask hitMask;
-    private LayerMask blockedMask;
+    public LayerMask hitMask;
+    public LayerMask blockedMask;
 
     public List<SkinnedMeshRenderer> renderers = new List<SkinnedMeshRenderer>();
 
@@ -125,8 +125,6 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
-
-        InvokeRepeating("CheckLoS", 1.0f, 1.0f);
     }
 
     void Update()
@@ -136,6 +134,10 @@ public class Enemy : MonoBehaviour
             EnemyCollider.enabled = false;
             StopAllCoroutines();
             return;
+        }
+        else
+        {
+            CheckLoS();
         }
 
         if (CurrentEnemyState == EnemyState.Stunned)
@@ -364,7 +366,7 @@ public class Enemy : MonoBehaviour
 
     public void CheckLoS()
     {
-        Collider[] cone = Physics.OverlapSphere(transform.position, coneRadius);
+        Collider[] cone = Physics.OverlapSphere(transform.position, coneRadius, hitMask);
 
         if (cone.Length != 0 && !CanMove)
         {

@@ -11,6 +11,8 @@ public class Levers : MonoBehaviour
     public Animator LeverAnimator;
     public bool LeverState = false;
     public AudioSource LeverAudioSource;
+    public int SpawnRate = 0;
+    public int ThresholdToSpawn = 25;
     Animator ObjectAnimator;
 
     public void Start()
@@ -22,11 +24,18 @@ public class Levers : MonoBehaviour
     {
         if (!LeverState)
         {
+            SpawnRate = Random.Range(0, 100);
             ObjectToOpen.SetActive(false);
-            for (int i = 0; i < EnemyToActivate.Length; i++)
+
+            if (SpawnRate < ThresholdToSpawn)
             {
-                EnemyToActivate[i].SetActive(true);
+                for (int i = 0; i < EnemyToActivate.Length; i++)
+                {
+                    EnemyToActivate[i].SetActive(true);
+                }
+
             }
+            LeverAnimator.SetTrigger("Lever");
             LeverAudioSource.PlayOneShot(AudioManager.Instance.LeverSound, 1.0f);
             LeverState = true;
         }

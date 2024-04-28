@@ -22,11 +22,11 @@ MonoBehaviour:
   jumpGain: 0
   movementGain: 0
   knifeAttackSpeedGain: 0
-  healthGain: 50
+  healthGain: 100
   staminaGain: 50
   constitutionGain: 0
   MutationGainAmount: 8
-  NatiaAffectionPenalty: 8
+  NatiaAffectionPenalty: 15
   MutationVialColor: {r: 0.21399225, g: 0.5754717, b: 0.19272874, a: 1}
   TextColor: {r: 0.64463615, g: 1, b: 0, a: 1}
   StableColor: {r: 1, g: 1, b: 1, a: 1}

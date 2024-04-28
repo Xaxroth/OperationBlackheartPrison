@@ -8,12 +8,19 @@ public class Mutation : MonoBehaviour
     private UnitManager _gameManager;
     public MeshRenderer meshRenderer;
 
+    public bool OverrideMutation;
+
     [Header("Unit Properties")]
 
     public MutationData mutationData;
 
     void Start()
     {
+        if (!OverrideMutation)
+        {
+            mutationData = LootTable.Instance.Mutations[Random.Range(0, LootTable.Instance.Mutations.Length)];
+        }
+
         Material material = meshRenderer.material;
 
         if (material != null && material.HasProperty("_EmissionColor"))

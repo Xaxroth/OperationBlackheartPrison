@@ -13,11 +13,22 @@ public class Chest : MonoBehaviour
     public int maxNumberOfItems = 4;
 
     public GameObject PickupItem;
+    public GameObject MutationPickup;
+
+    public bool DropMutation;
+    public List<GameObject> MutationPickups = new List<GameObject>();
 
     public List<GameObject> Payload = new List<GameObject>();
 
     public void Start()
     {
+        if (DropMutation)
+        {
+            GameObject NewItem = Instantiate(MutationPickup, transform.position + new Vector3(0, 2, 0), Quaternion.identity);
+            NewItem.SetActive(false);
+            Payload.Add(NewItem);
+        }
+
         int Roll = Random.Range(0, 100);
 
         if (Roll <= 20)

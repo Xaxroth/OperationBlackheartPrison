@@ -13,6 +13,8 @@ public class LootTable : MonoBehaviour
 
     public ItemSOData[] UniqueItems;
 
+    public MutationData[] Mutations;
+
     public ItemSOData PrisonKey;
 
     void Awake()

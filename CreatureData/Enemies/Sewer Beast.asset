@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1e984a0e5e8d44449257a93985e435e, type: 3}
-  m_Name: RangedDemon
+  m_Name: Sewer Beast
   m_EditorClassIdentifier: 
-  unitName: Undertaker
+  unitName: Blightskin
   unitDescription: A demon left behind in Blackheart Prison.
-  health: 30
-  damage: 40
-  attackCooldown: 1
-  movementSpeed: 10
-  Range: 40
-  StoppingDistance: 40
-  AttackRadius: 5
-  AttackSound: {fileID: 0}
+  health: 300
+  damage: 10
+  attackCooldown: 0.5
+  movementSpeed: 20
+  Range: 5
+  StoppingDistance: 5
+  AttackRadius: 30
+  AttackSound: {fileID: 8300000, guid: c7ae19c8191e7d9478a334e28dbaf86b, type: 3}
   ThrownProjectile: {fileID: 6559150546342597476, guid: 298c2f80aba39684ead4d743041d75a8, type: 3}
-  Stealthed: 0
-  EnemyMaterial: {fileID: 2100000, guid: 34720e8b295f4d14abd6e6b044b9c5ff, type: 2}
+  Stealthed: 1
+  EnemyMaterial: {fileID: 2100000, guid: 17f3d9fea5d9be145bce1bff1ea29d96, type: 2}
   ShimmerMaterial: {fileID: 2100000, guid: e1af73b186f6b2941978d825fd5faf11, type: 2}
-  AttackType: 1
+  AttackType: 0
   UnitMobilityType: 1
