@@ -69,6 +69,7 @@ public class Enemy : MonoBehaviour
     private float MeleeRange = 5f;
     private float RangedRange = 5f;
 
+    private bool shouldAttack;
     public bool canBeHarmed;
     public bool stealthed;
     public float cooldown;
@@ -125,6 +126,11 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
+
+        if (unitData.UnitMobilityType != UnitData.UnitType.Neutral)
+        {
+            shouldAttack = true;
+        }
     }
 
     void Update()
@@ -177,10 +183,12 @@ public class Enemy : MonoBehaviour
             if (distanceToTarget <= MeleeRange)
             {
                 InRange = true;
+                enemyAnimator.SetBool("Walking", false);
             }
             else
             {
                 InRange = false;
+                enemyAnimator.SetBool("Walking", true);
 
                 if (CurrentEnemyState != EnemyState.Stunned)
                 {
@@ -198,10 +206,12 @@ public class Enemy : MonoBehaviour
             if (distanceToTarget <= RangedRange)
             {
                 InRange = true;
+                enemyAnimator.SetBool("Walking", false);
             }
             else
             {
                 InRange = false;
+                enemyAnimator.SetBool("Walking", true);
 
                 if (CurrentEnemyState != EnemyState.Stunned)
                 {
@@ -228,7 +238,7 @@ public class Enemy : MonoBehaviour
 
     public void Attack()
     {
-        if (InRange && CurrentEnemyState != EnemyState.Attacking && !isAttacking && CanMove)
+        if (InRange && CurrentEnemyState != EnemyState.Attacking && !isAttacking && CanMove && shouldAttack)
         {
             switch (unitData.AttackType)
             {
@@ -291,6 +301,7 @@ public class Enemy : MonoBehaviour
             EnemyNavMeshAgent.speed = MovementSpeed;
 
             GameObject Projectile = Instantiate(unitData.ThrownProjectile, transform.position + new Vector3(0, 2, 0), transform.rotation);
+            Projectile.GetComponent<SoulfireScript>().Damage = unitData.damage;
             yield return new WaitForSeconds(unitData.attackCooldown);
         }
 
@@ -410,6 +421,11 @@ public class Enemy : MonoBehaviour
     {
         if (canBeHarmed)
         {
+            if (unitData.UnitMobilityType == UnitData.UnitType.Neutral)
+            {
+                shouldAttack = true;
+            }
+
             Health -= (int)Damage;
             GameObject Blood = Instantiate(BloodParticles.gameObject, transform.position + new Vector3(0, 2, 0), Quaternion.identity);
             Destroy(Blood, 2f);
@@ -458,8 +474,15 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(1);
         canBeHarmed = true;
         CanMove = true;
-        enemyAnimator.SetBool("Walking", true);
+
         CurrentEnemyState = EnemyState.Chasing;
+
+        yield return new WaitForSeconds(3);
+
+        if (unitData.UnitMobilityType == UnitData.UnitType.Neutral)
+        {
+            CurrentEnemyState = EnemyState.Waiting;
+        }
     }
 
     private IEnumerator DeathCoroutine()

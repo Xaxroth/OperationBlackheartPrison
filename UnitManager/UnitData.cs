@@ -26,6 +26,12 @@ public class UnitData : ScriptableObject
     public Material EnemyMaterial;
     public Material ShimmerMaterial;
 
+    [Header("Cosmetics")]
+
+    public AudioClip[] MonsterIdleSounds;
+    public AudioClip[] MonsterDetectSounds;
+    public AudioClip[] MonsterAttackSounds;
+
     public enum EnemyAttackType
     {
         Melee,
@@ -39,7 +45,8 @@ public class UnitData : ScriptableObject
         Undead,
         Demon,
         Mechanical,
-        Organic
+        Organic,
+        Neutral
     }
 
     public UnitType UnitMobilityType;
