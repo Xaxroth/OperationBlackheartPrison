@@ -36,6 +36,9 @@ public class AudioManager : MonoBehaviour
     public AudioClip CloseDoor;
     public AudioClip DoorLocked;
 
+    public AudioClip RivalTalk1;
+    public AudioClip RivalFollow1;
+
     public AudioClip Dialogue1x1;
     public AudioClip Dialogue1x2;
     public AudioClip Dialogue1x3;

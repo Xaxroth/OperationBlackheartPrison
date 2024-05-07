@@ -51,14 +51,24 @@ public class RandomDoor : MonoBehaviour
             changingScene = true;
             soundPlayed = false;
             UIManager.Instance.DoorsPassed++;
-            AudioManager.Instance.PlaySound(AudioManager.Instance.OpenDoor, 1.0f);
+            if (enabled)
+            {
+
+                AudioManager.Instance.PlaySound(AudioManager.Instance.OpenDoor, 1.0f);
+            }
         }
         else
         {
-            AudioManager.Instance.PlaySound(AudioManager.Instance.DoorLocked, 1.0f);
+            if (enabled)
+            {
+
+                AudioManager.Instance.PlaySound(AudioManager.Instance.DoorLocked, 1.0f);
+            }
 
             if (needsKey)
             {
+
+                UIManager.Instance.DisplayWorldNotification(FailureMessage);
                 for (int i = 0; i < InventoryManager.Instance.Inventory.Count; i++)
                 {
                     if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals(RequiredKeyName))

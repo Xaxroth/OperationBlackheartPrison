@@ -130,9 +130,10 @@ public class DialogueManagerScript : MonoBehaviour
     public void EndOfDialogue()
     {
         InProgress = false;
+
         if (Natia.Instance != null)
         {
-            Natia.Instance.InConversation = true;
+            Natia.Instance.InConversation = false;
         }
 
         for (int i = 0; i < choiceBoxes.Length; i++)
@@ -808,8 +809,8 @@ public class DialogueManagerScript : MonoBehaviour
     public void AdaptabilityDialogue()
     {
         StartOfDialogue();
-
         ShowChoices();
+        Natia.Instance.StartDialogue();
 
         if (!setEventFunction)
         {
@@ -835,7 +836,8 @@ public class DialogueManagerScript : MonoBehaviour
                     case Natia.AffectionLevel.Rival:
                         SetColor(NatiaLetterColor);
                         SetSprite(_sprite);
-                        PlayDialogue("What do you want?", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
+                        Natia.Instance.PlayDialogueSound(AudioManager.Instance.RivalTalk1);
+                        PlayDialogue("What do you need?", 4, "I want to talk to you.", "Can you stick closer to me?", "Stay here.", "Let's go.");
                         break;
                     case Natia.AffectionLevel.Stranger:
                         SetColor(NatiaLetterColor);
@@ -942,7 +944,7 @@ public class DialogueManagerScript : MonoBehaviour
                         break;
                     case 4:
                         PlayDialogue("Lead the way.", 0, "[Leave]", null, null, null);
-                        //AudioManager.Instance.PlaySound(AudioManager.Instance.FollowMe, 1.0f);
+                        Natia.Instance.PlayDialogueSound(AudioManager.Instance.RivalFollow1);
                         Natia.Instance.CurrentEnemyState = Natia.NatiaState.Following;
                         for (int i = 0; i < choiceBoxes.Length; i++)
                         {
@@ -1621,6 +1623,7 @@ public class DialogueManagerScript : MonoBehaviour
                 }
                 break;
             case 4:
+                Zekrael.Instance.TeleportAway();
                 EndOfDialogue();
                 CloseDialogue();
                 Natia.Instance.CurrentEnemyState = Natia.NatiaState.Waiting;

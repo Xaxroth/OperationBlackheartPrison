@@ -116,7 +116,7 @@ public class Natia : MonoBehaviour
         HeadTurn();
         UpdateUIValues();
 
-        if (CurrentEnemyState == NatiaState.Waiting)
+        if (CurrentEnemyState == NatiaState.Waiting || InConversation)
         {
             StandStill();
             return;
@@ -126,6 +126,12 @@ public class Natia : MonoBehaviour
         Rotation();
 
     }
+
+    public void PlayDialogueSound(AudioClip clip)
+    {
+        EnemyAudioSource.PlayOneShot(clip);
+    }
+
     public void SetUIElements(int maxHealth, int maxAffection, int maxIntimidation)
     {
         HealthSlider.maxValue = maxHealth;
@@ -303,7 +309,8 @@ public class Natia : MonoBehaviour
     private IEnumerator TalkAnimation()
     {
         NatiaAnimator.SetBool("Talking", true);
-        yield return new WaitForSeconds(2f);
+        InConversation = true;
+        yield return new WaitForSeconds(1f);
         NatiaAnimator.SetBool("Talking", false);
     }
 

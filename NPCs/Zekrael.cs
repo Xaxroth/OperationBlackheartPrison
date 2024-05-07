@@ -7,9 +7,30 @@ public class Zekrael : MonoBehaviour
     public Transform headBone;
     private Quaternion initialRotation;
 
+    public static Zekrael Instance;
+    public GameObject TeleportationEffect;
+
+    public static bool Disappeared;
+
     void Start()
     {
-        // Capture the initial rotation of the headBone
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        if (Disappeared)
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            gameObject.SetActive(true);
+        }
         initialRotation = headBone.rotation;
     }
 
@@ -40,5 +61,20 @@ public class Zekrael : MonoBehaviour
 
             headBone.rotation = finalRotation;
         }
+    }
+
+    public void TeleportAway()
+    {
+        StartCoroutine(Teleport());
+    }
+
+    public IEnumerator Teleport()
+    {
+        Animator enemyAnimator = gameObject.GetComponent<Animator>();
+        enemyAnimator.SetBool("Attack", true);
+        yield return new WaitForSeconds(0.75f);
+        GameObject TeleportSpell = Instantiate(TeleportationEffect, transform.position, Quaternion.identity);
+        Disappeared = true;
+        gameObject.SetActive(false);
     }
 }

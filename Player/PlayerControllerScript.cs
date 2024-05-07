@@ -265,7 +265,7 @@ public class PlayerControllerScript : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (Natia.Instance.CurrentEnemyState != Natia.NatiaState.PickedUp && Natia.Instance != null && Natia.Instance.InConversation)
+            if (Natia.Instance.CurrentEnemyState != Natia.NatiaState.PickedUp && Natia.Instance != null)
             {
                 Ray ray = new Ray(Orientation.position, Orientation.forward);
                 float raycastDistance = 15;
@@ -315,6 +315,11 @@ public class PlayerControllerScript : MonoBehaviour
                     if (hit.collider.CompareTag("Door"))
                     {
                         hit.collider.GetComponent<Door>().ChangeScene();
+                    }
+
+                    if (hit.collider.CompareTag("Gate"))
+                    {
+                        hit.collider.GetComponent<BreakableObject>().OpenDoor();
                     }
 
                     if (hit.collider.CompareTag("RandomDoor"))
@@ -472,6 +477,8 @@ public class PlayerControllerScript : MonoBehaviour
         if (OnGround == true && playerFalling && !Dead)
         {
             landHeight = transform.position.y - fallHeight;
+
+            PlayerAudioSource.PlayOneShot(JumpSounds[UnityEngine.Random.Range(0, JumpSounds.Length)]);
 
             StartCoroutine(FallDamage());
 

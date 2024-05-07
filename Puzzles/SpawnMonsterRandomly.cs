@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class SpawnMonsterRandomly : MonoBehaviour
 {
@@ -20,14 +21,17 @@ public class SpawnMonsterRandomly : MonoBehaviour
 
     public void GenerateRandomNumber()
     {
-        if (EnemiesSpawned < MaxNumberOfEnemiesToSpawn)
+        if (UIManager.Instance.DoorsPassed > 5)
         {
-            int RandomNumber = Random.Range(0, 100);
-
-            if (RandomNumber < SpawnChance)
+            if (EnemiesSpawned < MaxNumberOfEnemiesToSpawn)
             {
-                EnemiesSpawned++;
-                GameObject NewEnemy = Instantiate(EnemyToSpawn, SpawnPositions[Random.Range(0, SpawnPositions.Length)].transform.position, Quaternion.identity);
+                int RandomNumber = Random.Range(0, 100);
+
+                if (RandomNumber < SpawnChance)
+                {
+                    EnemiesSpawned++;
+                    GameObject NewEnemy = Instantiate(EnemyToSpawn, SpawnPositions[Random.Range(0, SpawnPositions.Length)].transform.position, Quaternion.identity);
+                }
             }
         }
     }
