@@ -12,6 +12,7 @@ public class HookScript : MonoBehaviour
 
     private bool _hookHit;
     private bool _canHook;
+    private bool _draggingSpear;
     private bool _reelingIn;
 
     public static int amountOfChains = 0;
@@ -47,13 +48,14 @@ public class HookScript : MonoBehaviour
 
         StartThrowHook();
 
-        if (_reelingIn && Input.GetMouseButtonDown(1))
+        if (_hookHit && Input.GetMouseButtonDown(1))
         {
             speed = 80;
             returnspeed = 160;
             Debug.Log("Maybe a bullet tomorrow will find me");
             Rigidbody rb = PlayerControllerScript.Instance.GetComponent<Rigidbody>();
-
+            _draggingSpear = true;
+            _reelingIn = true;
             Vector3 direction = (SpearObject.transform.position - PlayerControllerScript.Instance.PlayerBody.transform.position).normalized;
 
             // Apply force in the direction
@@ -78,7 +80,6 @@ public class HookScript : MonoBehaviour
                 returnspeed = 0;
                 speed = 0;
                 Destroy(hitExplosion, 2f);
-                _reelingIn = true;
                 _canHook = false;
                 _hookHit = true;
             }
@@ -122,7 +123,10 @@ public class HookScript : MonoBehaviour
 
             if (_hookHit)
             {
-                transform.LookAt(ThrowHook.Instance.HookTransform.position);
+                if (_reelingIn)
+                {
+                    transform.LookAt(ThrowHook.Instance.HookTransform.position);
+                }
 
                 var dist = Vector3.Distance(transform.position, ThrowHook.Instance.HookTransform.position);
 
@@ -137,7 +141,10 @@ public class HookScript : MonoBehaviour
 
                 if (dist > range)
                 {
+                    transform.LookAt(ThrowHook.Instance.HookTransform.position);
                     _canHook = false;
+                    speed = 80;
+                    returnspeed = 160;
                     Collision(null);
                 }
                 else
