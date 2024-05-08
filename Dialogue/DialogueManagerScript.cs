@@ -134,6 +134,7 @@ public class DialogueManagerScript : MonoBehaviour
         if (Natia.Instance != null)
         {
             Natia.Instance.InConversation = false;
+            Natia.Instance.NatiaAnimator.SetBool("Talking", false);
         }
 
         for (int i = 0; i < choiceBoxes.Length; i++)
@@ -952,7 +953,7 @@ public class DialogueManagerScript : MonoBehaviour
                             choiceBoxes[i].ButtonFunction.onClick.RemoveAllListeners();
                         }
 
-                        Invoke("AdaptabilityDialogue", 3.0f);
+                        Invoke("AdaptabilityDialogue", 2.0f);
                         break;
                 }
 

@@ -126,7 +126,9 @@ public class PlayerControllerScript : MonoBehaviour
     public bool AdaptabilityDialogue;
 
     [SerializeField] private Rigidbody playerRigidbody;
-    [SerializeField] private CapsuleCollider playerCollider;
+    [SerializeField] public CapsuleCollider playerCollider;
+
+    public GameObject PlayerBody;
 
     public GameObject _cameraFollowObject;
     public GameObject _crouchFollowObject;

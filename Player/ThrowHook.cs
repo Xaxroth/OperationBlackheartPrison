@@ -13,6 +13,8 @@ public class ThrowHook : MonoBehaviour
     public Animator PlayerAnimator;
 
     public Transform HookTransform;
+
+    public bool canThrow = true;
     void Start()
     {
         if (Instance == null)
@@ -35,9 +37,10 @@ public class ThrowHook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && canThrow)
         {
             AudioManager.Instance.PlaySound(AudioManager.Instance.HookThrow, 1.0f);
+            canThrow = false;
             StartCoroutine(PlayAnimation());
             GameObject hook = Instantiate(Hook, HookTransform.position, PlayerControllerScript.Instance.CinemachineCamera.transform.rotation);
             hook.GetComponent<HookScript>().caster = transform;

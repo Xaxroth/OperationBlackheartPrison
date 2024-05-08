@@ -26,6 +26,8 @@ public class HookScript : MonoBehaviour
 
     [SerializeField] private Vector3 _targetPosition;
 
+    public GameObject SpearObject;
+
     //[SerializeField] private CharacterControllerScript _player;
     //[SerializeField] private CinemachineShakeExtension _cinemachineShake;
 
@@ -45,9 +47,17 @@ public class HookScript : MonoBehaviour
 
         StartThrowHook();
 
-        if (_reelingIn)
+        if (_reelingIn && Input.GetMouseButtonDown(1))
         {
-            //PlayerCon.playerSpeed = 6f;
+            speed = 80;
+            returnspeed = 160;
+            Debug.Log("Maybe a bullet tomorrow will find me");
+            Rigidbody rb = PlayerControllerScript.Instance.GetComponent<Rigidbody>();
+
+            Vector3 direction = (SpearObject.transform.position - PlayerControllerScript.Instance.PlayerBody.transform.position).normalized;
+
+            // Apply force in the direction
+            rb.AddForce(direction * 25, ForceMode.Impulse);
         }
     }
 
@@ -65,8 +75,10 @@ public class HookScript : MonoBehaviour
             {
                 GameObject hitExplosion = Instantiate(_impactEffect, transform.position, transform.rotation);
                 stopRange = 2;
-                returnspeed = 120;
+                returnspeed = 0;
+                speed = 0;
                 Destroy(hitExplosion, 2f);
+                _reelingIn = true;
                 _canHook = false;
                 _hookHit = true;
             }
@@ -97,10 +109,10 @@ public class HookScript : MonoBehaviour
 
         if (_reelingIn)
         {
-            if (Input.GetMouseButtonDown(1))
-            {
-                DestroyHook();
-            }
+            //if (Input.GetMouseButtonDown(1))
+            //{
+            //    DestroyHook();
+            //}
         }
 
         if (caster)
@@ -159,12 +171,7 @@ public class HookScript : MonoBehaviour
         speed = 0;
         //_player.playerSpeed = 6f;
 
-        yield return new WaitForSeconds(1);
-
-        speed = 80;
-        returnspeed = 160;
-
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(5);
 
         DestroyHook();
     }
@@ -174,6 +181,7 @@ public class HookScript : MonoBehaviour
         _reelingIn = false;
         amountOfChains--;
         ThrowHook.Instance.HookWeapon.SetActive(true);
+        ThrowHook.Instance.canThrow = true;
         Destroy(gameObject);
     }
 

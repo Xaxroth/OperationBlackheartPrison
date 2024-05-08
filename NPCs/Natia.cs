@@ -308,9 +308,10 @@ public class Natia : MonoBehaviour
 
     private IEnumerator TalkAnimation()
     {
+        NatiaAnimator.SetBool("Walking", false);
         NatiaAnimator.SetBool("Talking", true);
         InConversation = true;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         NatiaAnimator.SetBool("Talking", false);
     }
 
