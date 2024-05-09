@@ -132,11 +132,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hookableObjects: []
   speed: 125
-  returnspeed: 500
-  range: 60
+  returnspeed: 120
+  range: 100
   stopRange: 5
   _impactEffect: {fileID: 5013878782555061258, guid: 2dc23e7dee2a3204bbbc4ce5105fce80, type: 3}
   HookDamage: 30
+  spearPower: 0
   caster: {fileID: 0}
   castPosition: {fileID: 0}
   target: {fileID: 0}

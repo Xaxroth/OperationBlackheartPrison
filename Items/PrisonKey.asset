@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: PrisonKey
   m_EditorClassIdentifier: 
   ItemName: Prison Key
-  ItemDescription: Opens locked prison doors.
-  FlavorText: A rusted, blood-painted key in poor condition with the exception of
-    its head. It is noticeably large.
+  ItemDescription: Opens the door to the next section.
+  FlavorText: A rusted, blood-painted key in poor condition.
   ItemImage: {fileID: 21300000, guid: 81e10cefce147a949b5629115f530e96, type: 3}
   CanBeUsed: 0
   Stackable: 0

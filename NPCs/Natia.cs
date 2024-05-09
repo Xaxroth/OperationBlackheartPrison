@@ -84,7 +84,7 @@ public class Natia : MonoBehaviour
     public bool MessagePlayed;
     public bool StartedLockpicking = false;
 
-    float DistanceToPlayer = 0;
+    public float DistanceToPlayer = 0;
     float refreshRate = 0.5f;
     float MovementSpeed = 9f;
 

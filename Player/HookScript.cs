@@ -18,6 +18,7 @@ public class HookScript : MonoBehaviour
     public static int amountOfChains = 0;
     public static int maxAmountOfChains = 3;
     public int HookDamage = 30;
+    public float spearPower;
 
     public Transform caster;
     public Transform castPosition;
@@ -29,14 +30,13 @@ public class HookScript : MonoBehaviour
 
     public GameObject SpearObject;
 
-    //[SerializeField] private CharacterControllerScript _player;
-    //[SerializeField] private CinemachineShakeExtension _cinemachineShake;
-
     void Start()
     {
         _hookLine = gameObject.GetComponentInChildren<LineRenderer>();
         amountOfChains++;
-        returnspeed = 80;
+        speed = speed * spearPower;
+        range = range * spearPower;
+        returnspeed = returnspeed * spearPower;
         ThrowHook.Instance.HookWeapon.SetActive(false);
     }
 
@@ -51,14 +51,12 @@ public class HookScript : MonoBehaviour
         if (_hookHit && Input.GetMouseButtonDown(1))
         {
             speed = 80;
-            returnspeed = 160;
-            Debug.Log("Maybe a bullet tomorrow will find me");
+
             Rigidbody rb = PlayerControllerScript.Instance.GetComponent<Rigidbody>();
             _draggingSpear = true;
             _reelingIn = true;
             Vector3 direction = (SpearObject.transform.position - PlayerControllerScript.Instance.PlayerBody.transform.position).normalized;
 
-            // Apply force in the direction
             rb.AddForce(direction * 25, ForceMode.Impulse);
         }
     }
@@ -108,14 +106,6 @@ public class HookScript : MonoBehaviour
             amountOfChains = maxAmountOfChains;
         }
 
-        if (_reelingIn)
-        {
-            //if (Input.GetMouseButtonDown(1))
-            //{
-            //    DestroyHook();
-            //}
-        }
-
         if (caster)
         {
             _hookLine.SetPosition(0, ThrowHook.Instance.HookTransform.position);
@@ -143,8 +133,6 @@ public class HookScript : MonoBehaviour
                 {
                     transform.LookAt(ThrowHook.Instance.HookTransform.position);
                     _canHook = false;
-                    speed = 80;
-                    returnspeed = 160;
                     Collision(null);
                 }
                 else
@@ -176,7 +164,6 @@ public class HookScript : MonoBehaviour
         stopRange = 7;
         returnspeed = 0;
         speed = 0;
-        //_player.playerSpeed = 6f;
 
         yield return new WaitForSeconds(5);
 
