@@ -26,6 +26,7 @@ public class RandomDoor : MonoBehaviour
     public string RequiredKeyName;
     private bool changingScene = false;
     private bool soundPlayed = false;
+    public string TooFarAwayMessage = "Natia is too far away!";
 
     void Start()
     {
@@ -46,7 +47,7 @@ public class RandomDoor : MonoBehaviour
 
     public void ChangeScene()
     {
-        if (!locked && !needsKey)
+        if (!locked && !needsKey && Natia.Instance.DistanceToPlayer <= 15)
         {
             changingScene = true;
             soundPlayed = false;
@@ -59,10 +60,13 @@ public class RandomDoor : MonoBehaviour
         }
         else
         {
-            if (enabled)
+            if (enabled && Natia.Instance.DistanceToPlayer <= 15)
             {
-
                 AudioManager.Instance.PlaySound(AudioManager.Instance.DoorLocked, 1.0f);
+            }
+            else
+            {
+                UIManager.Instance.DisplayWorldNotification(TooFarAwayMessage);
             }
 
             if (needsKey)

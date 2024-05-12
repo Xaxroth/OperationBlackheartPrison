@@ -131,8 +131,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hookableObjects: []
-  speed: 125
-  returnspeed: 120
+  speed: 200
+  returnspeed: 160
   range: 100
   stopRange: 5
   _impactEffect: {fileID: 5013878782555061258, guid: 2dc23e7dee2a3204bbbc4ce5105fce80, type: 3}

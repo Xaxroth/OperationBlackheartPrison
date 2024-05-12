@@ -72,6 +72,7 @@ public class Enemy : MonoBehaviour
     private bool shouldAttack;
     public bool canBeHarmed;
     public bool stealthed;
+    public bool ThrowingFlashbang;
     public float cooldown;
     public float soundVolume = 0.5f;
     private int EnemyDamage = 10;
@@ -301,7 +302,18 @@ public class Enemy : MonoBehaviour
             EnemyNavMeshAgent.speed = MovementSpeed;
 
             GameObject Projectile = Instantiate(unitData.ThrownProjectile, transform.position + new Vector3(0, 2, 0), transform.rotation);
-            Projectile.GetComponent<SoulfireScript>().Damage = unitData.damage;
+
+
+            if (!ThrowingFlashbang)
+            {
+                Projectile.GetComponent<SoulfireScript>().Damage = unitData.damage;
+            }
+            else
+            {
+                Projectile.GetComponent<ProjectileScript>().force = 0.5f;
+            }
+
+
             yield return new WaitForSeconds(unitData.attackCooldown);
         }
 
@@ -488,6 +500,10 @@ public class Enemy : MonoBehaviour
     private IEnumerator DeathCoroutine()
     {
         dead = true;
+        if (unitData.UnitMobilityType != UnitData.UnitType.Neutral)
+        {
+            RandomEventManager.Instance.FriendlyDemonsKilled++;
+        }
         EnemyAudioSource.PlayOneShot(DeathSound, soundVolume);
         CurrentEnemyState = EnemyState.Dead;
         if (DeathGore != null)

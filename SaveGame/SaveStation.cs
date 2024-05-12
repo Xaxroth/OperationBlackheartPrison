@@ -31,6 +31,7 @@ public class SaveStation : MonoBehaviour
     public void ActivateShrine()
     {
         UIManager.Instance.DisplayShrineMessage(ShrineType);
+        PlayerControllerScript.Instance.playerHealth = PlayerControllerScript.Instance.playerMaxHealth;
     }
 
     private IEnumerator ParticlesCoroutine()

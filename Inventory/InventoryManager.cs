@@ -12,6 +12,8 @@ public class InventoryManager : MonoBehaviour
     public List<GameObject> Inventory = new List<GameObject>();
     public List<MutationData> Mutations = new List<MutationData>();
 
+    public ItemSOData FlashbangItem;
+
     public void Awake()
     {
         if (Instance == null)
