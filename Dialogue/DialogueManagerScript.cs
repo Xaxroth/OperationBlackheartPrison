@@ -1219,13 +1219,13 @@ public class DialogueManagerScript : MonoBehaviour
                 Invoke("Event1", 3.0f);
                 SetColor(NatiaLetterColor);
                 SetSprite(_sprite);
-                PlayDialogue("There you are, Halicon.", 0, null, null, null, null);
+                PlayDialogue("Here we are... Just like you wanted.", 0, null, null, null, null);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.RevealStinger, 1.0f);
                 //AudioManager.Instance.PlaySound(AudioManager.Instance.Dialogue1x1, 1.0f);
                 break;
             case 1:
                 Invoke("Event1", 3.0f);
-                PlayDialogue("Let us waste no more time. I will be right behind you.", 0, null, null, null, null);
+                PlayDialogue("I hope you know what you're getting us into.", 0, null, null, null, null);
                 break;
             case 2:
                 EndOfDialogue();

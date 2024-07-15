@@ -122,14 +122,14 @@ public class MainAttackProjectile : MonoBehaviour
 
         Debug.DrawRay(ray.origin, spreadDirection.normalized * (hit.distance > 10f ? hit.distance : 80), Color.red, 2f);
 
-        GameObject explosion = PlayerControllerScript.Instance.GetComponent<MainAttackScript>().GetPooledExplosion();
+        //GameObject explosion = PlayerControllerScript.Instance.GetComponent<MainAttackScript>().GetPooledExplosion();
 
-        if (explosion != null)
-        {
-            explosion.SetActive(true);
-            explosion.GetComponentInChildren<ParticleSystem>().Play();
-            explosion.transform.position = spreadHit.point;
-        }
+        //if (explosion != null)
+        //{
+        //    explosion.SetActive(true);
+        //    explosion.GetComponentInChildren<ParticleSystem>().Play();
+        //    explosion.transform.position = spreadHit.point;
+        //}
 
         ProjectileRigidbody.AddForce(spreadDirection * projectileSpeed * power, ForceMode.Impulse);
     }

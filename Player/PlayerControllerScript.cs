@@ -176,11 +176,11 @@ public class PlayerControllerScript : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
 
-        CurrentWeaponState = WeaponState.Melee;
-        MeleeWeapon.SetActive(true);
-        RangedWeapon.SetActive(false);
-        GetComponent<MainAttackScript>().enabled = false;
-        GetComponent<MeleeAttack>().enabled = true;
+        //CurrentWeaponState = WeaponState.Melee;
+        //MeleeWeapon.SetActive(true);
+        //RangedWeapon.SetActive(false);
+        //GetComponent<MainAttackScript>().enabled = false;
+        //GetComponent<MeleeAttack>().enabled = true;
 
         PlayerAudioSource = gameObject.GetComponent<AudioSource>();
         playerRigidbody = GetComponentInChildren<Rigidbody>();

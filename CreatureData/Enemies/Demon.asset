@@ -15,14 +15,19 @@ MonoBehaviour:
   unitName: Undertaker
   unitDescription: A demon left behind in Blackheart Prison.
   health: 50
-  damage: 25
+  damage: 200
   attackCooldown: 0.15
   movementSpeed: 10
+  Range: 25
   StoppingDistance: 4
   AttackRadius: 2
   AttackSound: {fileID: 0}
+  ThrownProjectile: {fileID: 0}
   Stealthed: 1
   EnemyMaterial: {fileID: 2100000, guid: 89b7177ed7db5b748a9bdae2f9a891fd, type: 2}
   ShimmerMaterial: {fileID: 2100000, guid: e1af73b186f6b2941978d825fd5faf11, type: 2}
+  MonsterIdleSounds: []
+  MonsterDetectSounds: []
+  MonsterAttackSounds: []
   AttackType: 0
   UnitMobilityType: 1

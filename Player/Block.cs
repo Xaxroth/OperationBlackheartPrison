@@ -84,13 +84,14 @@ public class Block : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1) && !blocking)
+        if (Input.GetKeyDown(KeyCode.F) && !blocking)
         {
             blocking = true;
             //StartCoroutine(FadeIn());
             playerAudioSource.PlayOneShot(blockedProjectile);
             player.playerStamina++;
             Collider[] cone = Physics.OverlapSphere(BlockTransform.position, coneRadius);
+            StartCoroutine(FadeIn());
             //LightObject.SetActive(true);
 
 
@@ -113,9 +114,9 @@ public class Block : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetMouseButtonUp(1) && blocking)
+        else if (Input.GetKeyDown(KeyCode.F) && blocking)
         {
-            //StartCoroutine(FadeOut());
+            StartCoroutine(FadeOut());
             blocking = false;
         }
     }

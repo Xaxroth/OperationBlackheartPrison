@@ -15,6 +15,7 @@ public class MainAttackScript : MonoBehaviour
     [SerializeField] private AudioSource AudioSource;
     [SerializeField] private AudioClip Reload;
     [SerializeField] private GameObject ProjectilePrefab;
+    [SerializeField] private GameObject BulletPrefab;
     [SerializeField] private GameObject ExplosionPrefab;
     [SerializeField] private GameObject ShootEffect;
     [SerializeField] private Transform ShootPosition;
@@ -22,14 +23,17 @@ public class MainAttackScript : MonoBehaviour
     [SerializeField] private Text ammoDisplay;
     [SerializeField] private Transform Orientation;
     [SerializeField] private TextMeshProUGUI AmmoText;
+    [SerializeField] private LayerMask layerMask;
     public float Ammo = 10;
     public float MaxAmmo = 20;
     public ParticleSystem MuzzleFlash;
+    public Transform Drum;
 
     private bool reloading = false;
     private bool canFire = true;
 
     [SerializeField] private bool firing = false;
+    [SerializeField] private float Damage = 50f;
     [SerializeField] private int amountOfProjectilesPerShot = 10;
     [SerializeField] private int numberOfBulletsPerShot = 1;
     [SerializeField] private float rateOfFire = 0.6f;
@@ -38,11 +42,14 @@ public class MainAttackScript : MonoBehaviour
     [SerializeField] private int playerMaxAmmo = 12;
     [SerializeField] private int projectileForce = 25;
 
+    private int currentClipAmmo = 6;
+    private int clipSize = 6;
+
     public Animator PlayerArms;
+    public Animator pistolAnimator;
 
     void Start()
     {
-        InitializeProjectilePool();
         ammoDisplay.text = playerAmmo.ToString();
         AudioSource = gameObject.GetComponent<AudioSource>();
         PlayerInstance = PlayerControllerScript.Instance;
@@ -56,7 +63,6 @@ public class MainAttackScript : MonoBehaviour
 
     public IEnumerator DrawAnimation()
     {
-        //PlayerControllerScript.Instance.switchingWeapon = true;
         PlayerArms.SetBool("PullOut", true);
         yield return new WaitForSeconds(0.5f);
         PlayerControllerScript.Instance.switchingWeapon = false;
@@ -65,48 +71,25 @@ public class MainAttackScript : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0) && !reloading)
         {
-            firing = true;
-        }
-        else
-        {
-            firing = false;
+            PrimaryFire();
         }
 
         ShootPosition.transform.rotation = Orientation.transform.rotation;
-
-        PrimaryFire();
-
+        Debug.Log(currentClipAmmo + "clipammo");
+        Debug.Log(clipSize + "clipsize");
         CheckReload();
-    }
-
-    private void InitializeProjectilePool()
-    {
-        for (int i = 0; i < numberOfBulletsPerShot * 30; i++)
-        {
-            GameObject projectile = Instantiate(ProjectilePrefab, gameObject.transform.position, gameObject.transform.rotation);
-            DontDestroyOnLoad(projectile);
-            projectile.SetActive(false);
-            projectilePool.Add(projectile);
-        }
-
-        for (int i = 0; i < numberOfBulletsPerShot * 30; i++)
-        {
-            GameObject projectile = Instantiate(ExplosionPrefab, gameObject.transform.position, gameObject.transform.rotation);
-            DontDestroyOnLoad(projectile);
-            projectile.SetActive(false);
-            explosivePool.Add(projectile);
-        }
     }
 
     private void PrimaryFire()
     {
-        if (Input.GetMouseButtonDown(0) && canFire)
+        if (canFire)
         {
-            if (SetAmmo() > 0)
+            if (currentClipAmmo > 0)
             {
                 StartCoroutine(FireShotgun());
+                currentClipAmmo--;
             }
             else
             {
@@ -123,11 +106,8 @@ public class MainAttackScript : MonoBehaviour
         while (elapsedTime < 0.35f)
         {
             float currentIntensity = Mathf.Lerp(startIntensity, 0f, elapsedTime / 0.35f);
-
             ProjectilePointLight.intensity = currentIntensity;
-
             elapsedTime += Time.deltaTime;
-
             yield return null;
         }
 
@@ -136,30 +116,23 @@ public class MainAttackScript : MonoBehaviour
 
     private IEnumerator FireShotgun()
     {
-        while (firing && SetAmmo() > 0)
+        canFire = false; // Prevents continuous firing
+        GameObject bullet = Instantiate(BulletPrefab, Drum.position, Drum.rotation);
+        bullet.GetComponent<Rigidbody>().AddForce(transform.up * 2, ForceMode.Impulse);
+        bullet.GetComponent<Rigidbody>().AddForce(transform.right * 8, ForceMode.Impulse);
+        StartCoroutine(ShotgunVFX());
+        AudioManager.Instance.PlaySound(AudioManager.Instance.ReleaseEnergy, 1.0f);
+
+        for (int i = 0; i < amountOfProjectilesPerShot; i++)
         {
-            canFire = false;
-            StartCoroutine(ShotgunVFX());
-            AudioManager.Instance.PlaySound(AudioManager.Instance.ReleaseEnergy, 1.0f);
-
-            for (int i = 0; i < amountOfProjectilesPerShot; i++)
-            {
-                GameObject currentProjectile = GetPooledProjectile();
-
-                currentProjectile.GetComponent<MainAttackProjectile>().Activate();
-                currentProjectile.transform.position = ShootPosition.transform.position + new Vector3(0, 3f, 0);
-                currentProjectile.transform.rotation = ShootPosition.transform.rotation;
-
-                currentProjectile.GetComponent<MainAttackProjectile>().power = projectileForce;
-                currentProjectile.GetComponent<MainAttackProjectile>().SetRayCast();
-                Physics.IgnoreCollision(currentProjectile.GetComponent<Collider>(), GetComponent<Collider>());
-            }
-
-            RemoveItem();
-
-            yield return new WaitForSeconds(rateOfFire);
-            canFire = true;
+            FireRaycast();
         }
+
+        RemoveItem();
+        playerAmmo = SetAmmo();
+
+        yield return new WaitForSeconds(rateOfFire);
+        canFire = true;
     }
 
     private IEnumerator ShotgunVFX()
@@ -169,53 +142,72 @@ public class MainAttackScript : MonoBehaviour
         StartCoroutine(FadeOut());
         PlayerControllerScript.Instance.playerAnimator.SetBool("Fire", true);
         PlayerControllerScript.Instance.CameraAnimator.SetBool("ShotgunRecoil", true);
-        yield return new WaitForSeconds(0.2f);
+        pistolAnimator.SetBool("Shoot", true);
+        yield return new WaitForSeconds(0.05f);
         MuzzleFlash.Stop();
         PlayerControllerScript.Instance.playerAnimator.SetBool("Fire", false);
         PlayerControllerScript.Instance.CameraAnimator.SetBool("ShotgunRecoil", false);
+        pistolAnimator.SetBool("Shoot", false);
         ShootEffect.SetActive(false);
     }
 
-    private GameObject GetPooledProjectile()
+    private void FireRaycast()
     {
-        for (int i = 0; i < projectilePool.Count; i++)
+        RaycastHit hit;
+        Vector3 direction = Camera.main.transform.forward;
+
+        int layerMask = LayerMask.GetMask("Default"); // Update with your layer mask if needed
+
+        if (Physics.Raycast(Camera.main.transform.position, direction, out hit, Mathf.Infinity, layerMask))
         {
-            if (!projectilePool[i].activeInHierarchy)
+            Debug.Log("hit " + hit);
+
+            GameObject impact = Instantiate(ExplosionPrefab, hit.point, Quaternion.LookRotation(hit.normal));
+            if (hit.collider.gameObject.CompareTag("Enemy"))
             {
-                return projectilePool[i];
+                Enemy damageableEnemy = hit.collider.gameObject.GetComponent<Enemy>();
+
+                if (damageableEnemy != null)
+                {
+                    damageableEnemy.TakeDamage(Damage, true);
+                }
+            }
+
+            if (hit.collider.gameObject.CompareTag("Natia"))
+            {
+                Natia natia = hit.collider.gameObject.GetComponent<Natia>();
+
+                if (natia != null)
+                {
+                    natia.TakeDamage(Damage);
+                }
             }
         }
 
-        GameObject newProjectile = Instantiate(ProjectilePrefab);
-        newProjectile.SetActive(false);
-        projectilePool.Add(newProjectile);
-
-        return newProjectile;
-    }
-
-    public GameObject GetPooledExplosion()
-    {
-        for (int i = 0; i < explosivePool.Count; i++)
-        {
-            if (!explosivePool[i].activeInHierarchy)
-            {
-                return explosivePool[i];
-            }
-        }
-
-        GameObject newProjectile = Instantiate(ProjectilePrefab);
-        explosivePool.Add(newProjectile);
-
-        return newProjectile;
+        //Debug.DrawRay(ShootPosition.position, direction * (hit.distance > 10f ? hit.distance : 80), Color.red, 2f);
     }
 
     private void CheckReload()
     {
-        if (playerAmmo <= 0 && reloading == false || Input.GetKeyDown(KeyCode.R) && reloading == false && playerAmmo < playerMaxAmmo)
+        if ((currentClipAmmo <= 0 && !reloading || Input.GetKeyDown(KeyCode.R)) && !reloading && playerAmmo > 0)
         {
             StartCoroutine(ReloadWeapon());
-            return;
         }
+    }
+
+    private IEnumerator ReloadWeapon()
+    {
+        reloading = true;
+        AudioSource.PlayOneShot(Reload, 0.6f);
+        yield return new WaitForSeconds(reloadSpeed);
+
+        int ammoNeeded = clipSize - currentClipAmmo;
+        int ammoToReload = Mathf.Min(ammoNeeded, playerAmmo);
+        currentClipAmmo += ammoToReload;
+        playerAmmo -= ammoToReload;
+
+        ammoDisplay.text = currentClipAmmo.ToString(); // Update ammo display
+        reloading = false;
     }
 
     public int SetAmmo()
@@ -245,6 +237,7 @@ public class MainAttackScript : MonoBehaviour
             if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals("Ammo"))
             {
                 InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().Quantity--;
+                
 
                 if (InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().Quantity <= 0)
                 {
@@ -253,20 +246,5 @@ public class MainAttackScript : MonoBehaviour
                 break;
             }
         }
-
-        StartCoroutine(ReloadWeapon());
-    }
-
-    private IEnumerator ReloadWeapon()
-    {
-        AudioSource.PlayOneShot(Reload, 0.6f);
-        canFire = false;
-        reloading = true;
-        firing = false;
-        yield return new WaitForSeconds(reloadSpeed);
-        playerAmmo = playerMaxAmmo;
-        ammoDisplay.text = Ammo.ToString();
-        canFire = true;
-        reloading = false;
     }
 }

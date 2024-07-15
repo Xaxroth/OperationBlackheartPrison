@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44b0b49bad106c74a8873f20a2f693a4, type: 3}
+  m_Name: Ornate Ring
+  m_EditorClassIdentifier: 
+  ItemName: Ornate Ring
+  ItemDescription: A valuable treasure item.
+  FlavorText: The edges are still smoldering, and it falls apart in your hands. Someone,
+    or something, was just here.
+  ItemImage: {fileID: 21300000, guid: 2a56636ba97c15942bf4d16bd049f7cd, type: 3}
+  CanBeUsed: 0
+  Stackable: 0
+  CanBeDropped: 1
+  GoldWorthPerUnit: 100
+  MaxStackSize: 20
+  ItemColor: {r: 0.8396226, g: 0.5265752, b: 0.22574759, a: 1}
+  TextColor: {r: 1, g: 0.8475, b: 0.5424528, a: 1}
+  StableColor: {r: 1, g: 1, b: 1, a: 1}
+  UnstableColor: {r: 0, g: 0, b: 1, a: 1}
+  VolatileColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  DangerousColor: {r: 0, g: 1, b: 0, a: 1}
+  TypeOfItem: 2
+  ItemRarity: 1

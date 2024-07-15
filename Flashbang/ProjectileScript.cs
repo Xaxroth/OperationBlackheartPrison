@@ -17,6 +17,8 @@ public class ProjectileScript : MonoBehaviour
     [SerializeField] private Image WhiteScreen;
     [SerializeField] public Light FlashbangLight;
 
+    public ParticleSystem Particles;
+
     [SerializeField] public float force;
     [SerializeField] public float baseSpeed = 15f;
     [SerializeField] private float fuseTimer = 1.5f;
@@ -24,6 +26,17 @@ public class ProjectileScript : MonoBehaviour
     public float flashbangPassiveRotationSpeed = 480.0f;
     public float flashbangExtraFallSpeed = 0.1f;
     public float blastRadius = 40;
+    public bool ExplodeOnCollision;
+    public float damage;
+
+    public enum TypeOfProjectile
+    {
+        Flashbang,
+        Shadowflame,
+        Shadowbomb,
+    }
+
+    public TypeOfProjectile type;
 
     public bool Detonation = false;
     private bool hasCollided = false;
@@ -42,41 +55,80 @@ public class ProjectileScript : MonoBehaviour
 
         Physics.IgnoreLayerCollision(playerLayer, flashbangLayer);
         SetRayCast();
-        StartCoroutine(Fuse());
+        if (!ExplodeOnCollision)
+        {
+            StartCoroutine(Fuse());
+        }
         StartCoroutine(DetonateTriggerEvent());
     }
 
     public void Update()
     {
-        flashbangRigidbody.AddForce(Vector3.down * flashbangExtraFallSpeed, ForceMode.Impulse);
-
-        if (!hasCollided)
+        if (flashbangRigidbody.useGravity)
         {
-            transform.Rotate(Vector3.up, flashbangPassiveRotationSpeed * Time.deltaTime);
-            transform.Rotate(Vector3.left, flashbangPassiveRotationSpeed * Time.deltaTime);
+
+            flashbangRigidbody.AddForce(Vector3.down * flashbangExtraFallSpeed, ForceMode.Impulse);
+
+            if (!hasCollided)
+            {
+                transform.Rotate(Vector3.up, flashbangPassiveRotationSpeed * Time.deltaTime);
+                transform.Rotate(Vector3.left, flashbangPassiveRotationSpeed * Time.deltaTime);
+            }
         }
+
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (FlashbangAudioSource != null)
+        if (ExplodeOnCollision)
         {
-            hasCollided = true;
-            FlashbangAudioSource.PlayOneShot(FlashbangCollision, 0.5f);
+            fuseTimer = 0;
+            StartCoroutine(Fuse());
+        }
+        else
+        {
+            if (FlashbangAudioSource != null)
+            {
+                hasCollided = true;
+                FlashbangAudioSource.PlayOneShot(FlashbangCollision, 0.5f);
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+
         }
     }
 
     public IEnumerator Fuse()
     {
+        if (Particles != null && ExplodeOnCollision)
+        {
+            Particles.Stop();
+        }
+
         yield return new WaitForSeconds(fuseTimer);
         Detonation = true;
 
         Collider[] hitColliders = Physics.OverlapSphere(gameObject.transform.position, blastRadius);
         foreach (Collider hitCollider in hitColliders)
         {
-            if (hitCollider.gameObject.CompareTag("Enemy"))
+            if (type == TypeOfProjectile.Flashbang)
             {
-                hitCollider.gameObject.GetComponent<Enemy>().StunEnemy();
+                if (hitCollider.gameObject.CompareTag("Enemy"))
+                {
+                    hitCollider.gameObject.GetComponent<Enemy>().StunEnemy();
+                }
+            }
+            else
+            {
+                if (hitCollider.gameObject.CompareTag("Enemy"))
+                {
+                    hitCollider.gameObject.GetComponent<Enemy>().TakeDamage(damage, false);
+                }
             }
         }
 
@@ -92,34 +144,38 @@ public class ProjectileScript : MonoBehaviour
 
         GameObject FlashEffect = Instantiate(Explosion, transform.position, transform.rotation);
 
-        Plane[] cameraPlanes = GeometryUtility.CalculateFrustumPlanes(PlayerControllerScript.Instance.CinemachineCamera);
-
-        if (GeometryUtility.TestPlanesAABB(cameraPlanes, FlashEffect.GetComponent<Renderer>().bounds))
+        if (type == TypeOfProjectile.Flashbang)
         {
-            Vector3 playerPosition = PlayerControllerScript.Instance.transform.position;
-            Vector3 explosionPosition = FlashEffect.transform.position;
 
-            float distanceToExplosion = Vector3.Distance(playerPosition, explosionPosition);
-            if (distanceToExplosion < 100.0f)
+            Plane[] cameraPlanes = GeometryUtility.CalculateFrustumPlanes(PlayerControllerScript.Instance.CinemachineCamera);
+
+            if (GeometryUtility.TestPlanesAABB(cameraPlanes, FlashEffect.GetComponent<Renderer>().bounds))
             {
-                Vector3 directionToExplosion = explosionPosition - playerPosition;
+                Vector3 playerPosition = PlayerControllerScript.Instance.transform.position;
+                Vector3 explosionPosition = FlashEffect.transform.position;
 
-                RaycastHit hitInfo;
-
-                if (Physics.Raycast(playerPosition, directionToExplosion.normalized, out hitInfo, distanceToExplosion))
+                float distanceToExplosion = Vector3.Distance(playerPosition, explosionPosition);
+                if (distanceToExplosion < 100.0f)
                 {
+                    Vector3 directionToExplosion = explosionPosition - playerPosition;
 
-                    if (hitInfo.collider.gameObject != FlashEffect && hitInfo.collider.gameObject != gameObject)
+                    RaycastHit hitInfo;
+
+                    if (Physics.Raycast(playerPosition, directionToExplosion.normalized, out hitInfo, distanceToExplosion))
                     {
-                        Debug.Log("Hit: " + hitInfo.collider.gameObject.name);
-                    }
-                    else
-                    {
-                        float fadeFactor = 1.0f - (distanceToExplosion / 100.0f);
 
-                        fadeFactor *= 2;
+                        if (hitInfo.collider.gameObject != FlashEffect && hitInfo.collider.gameObject != gameObject)
+                        {
+                            Debug.Log("Hit: " + hitInfo.collider.gameObject.name);
+                        }
+                        else
+                        {
+                            float fadeFactor = 1.0f - (distanceToExplosion / 100.0f);
 
-                        StartCoroutine(FadeIn(fadeFactor));
+                            fadeFactor *= 2;
+
+                            StartCoroutine(FadeIn(fadeFactor));
+                        }
                     }
                 }
             }
@@ -197,7 +253,7 @@ public class ProjectileScript : MonoBehaviour
             targetPoint = ray.GetPoint(40);
         }
 
-        direction = targetPoint - transform.position;
+        direction = (targetPoint - transform.position).normalized;
 
         flashbangRigidbody.AddForce(direction * baseSpeed * force, ForceMode.Impulse);
     }
