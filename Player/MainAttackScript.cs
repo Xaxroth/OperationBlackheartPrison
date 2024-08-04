@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -24,6 +25,13 @@ public class MainAttackScript : MonoBehaviour
     [SerializeField] private Transform Orientation;
     [SerializeField] private TextMeshProUGUI AmmoText;
     [SerializeField] private LayerMask layerMask;
+
+    public Camera playerCamera;
+
+    public float normalFoV = 80f;
+    public float aimingFoV = 30f;
+    public float aimSpeed = 10f;
+
     public float Ammo = 10;
     public float MaxAmmo = 20;
     public ParticleSystem MuzzleFlash;
@@ -31,6 +39,7 @@ public class MainAttackScript : MonoBehaviour
 
     private bool reloading = false;
     private bool canFire = true;
+    private bool aiming = false;
 
     [SerializeField] private bool firing = false;
     [SerializeField] private float Damage = 50f;
@@ -64,23 +73,36 @@ public class MainAttackScript : MonoBehaviour
     public IEnumerator DrawAnimation()
     {
         PlayerArms.SetBool("PullOut", true);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.25f);
         PlayerControllerScript.Instance.switchingWeapon = false;
         PlayerArms.SetBool("PullOut", false);
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !reloading)
+        if (Input.GetMouseButton(1) && !reloading)
+        {
+            aiming = true;
+            pistolAnimator.SetBool("Aiming", true);
+            PlayerControllerScript.Instance.CurrentMovementState = PlayerControllerScript.PlayerMovementState.Aiming;
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, aimingFoV, aimSpeed * Time.deltaTime);
+        }
+        else
+        {
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 80, aimSpeed * Time.deltaTime);
+            pistolAnimator.SetBool("Aiming", false);
+            aiming = false;
+        }
+
+        if (Input.GetMouseButtonDown(0) && !reloading && aiming)
         {
             PrimaryFire();
         }
 
         ShootPosition.transform.rotation = Orientation.transform.rotation;
-        Debug.Log(currentClipAmmo + "clipammo");
-        Debug.Log(clipSize + "clipsize");
         CheckReload();
     }
+
 
     private void PrimaryFire()
     {
@@ -116,7 +138,7 @@ public class MainAttackScript : MonoBehaviour
 
     private IEnumerator FireShotgun()
     {
-        canFire = false; // Prevents continuous firing
+        canFire = false;
         GameObject bullet = Instantiate(BulletPrefab, Drum.position, Drum.rotation);
         bullet.GetComponent<Rigidbody>().AddForce(transform.up * 2, ForceMode.Impulse);
         bullet.GetComponent<Rigidbody>().AddForce(transform.right * 8, ForceMode.Impulse);
@@ -143,7 +165,7 @@ public class MainAttackScript : MonoBehaviour
         PlayerControllerScript.Instance.playerAnimator.SetBool("Fire", true);
         PlayerControllerScript.Instance.CameraAnimator.SetBool("ShotgunRecoil", true);
         pistolAnimator.SetBool("Shoot", true);
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.1f);
         MuzzleFlash.Stop();
         PlayerControllerScript.Instance.playerAnimator.SetBool("Fire", false);
         PlayerControllerScript.Instance.CameraAnimator.SetBool("ShotgunRecoil", false);
@@ -206,7 +228,7 @@ public class MainAttackScript : MonoBehaviour
         currentClipAmmo += ammoToReload;
         playerAmmo -= ammoToReload;
 
-        ammoDisplay.text = currentClipAmmo.ToString(); // Update ammo display
+        ammoDisplay.text = currentClipAmmo.ToString();
         reloading = false;
     }
 
@@ -234,15 +256,17 @@ public class MainAttackScript : MonoBehaviour
     {
         for (int i = 0; i < InventoryManager.Instance.Inventory.Count; i++)
         {
-            if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals("Ammo"))
+            if (InventoryManager.Instance.Inventory[i].CompareTag("FilledSlot") && InventoryManager.Instance
+                    .Inventory[i].gameObject.GetComponent<ItemData>().ItemName.Equals("Ammo"))
             {
                 InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().Quantity--;
-                
+
 
                 if (InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().Quantity <= 0)
                 {
                     InventoryManager.Instance.Inventory[i].gameObject.GetComponent<ItemData>().ClearItemSlot();
                 }
+
                 break;
             }
         }

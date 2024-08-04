@@ -18,7 +18,8 @@ public class PlayerControllerScript : MonoBehaviour
         Exhausted,
         Blocking,
         Idle,
-        Carrying
+        Carrying,
+        Aiming
     }
 
     public enum WeaponState
@@ -544,16 +545,18 @@ public class PlayerControllerScript : MonoBehaviour
 
     public void QuickDashing()
     {
+        if (CurrentMovementState == PlayerMovementState.Aiming) return;
+        
         if (!dashingBackwards)
         {
             if (DashCooldown > 0 || CurrentMovementState == PlayerMovementState.Running)
             {
                 DashCooldown -= Time.deltaTime;
-                CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, NormalFoV, FoVIncreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
+                //CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, NormalFoV, FoVIncreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
             }
             else
             {
-                CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, TargetFoV, FoVDecreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
+                //CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, TargetFoV, FoVDecreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
             }
         }
         else
@@ -561,11 +564,11 @@ public class PlayerControllerScript : MonoBehaviour
             if (DashCooldown > 0)
             {
                 DashCooldown -= Time.deltaTime;
-                CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, TargetFoV, FoVIncreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
+                //CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, TargetFoV, FoVIncreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
             }
             else
             {
-                CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, NormalFoV, FoVDecreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
+                //CinemachineCamera.fieldOfView = Mathf.Clamp(Mathf.Lerp(CinemachineCamera.fieldOfView, NormalFoV, FoVDecreaseSpeed * Time.deltaTime), NormalFoV, TargetFoV);
             }
         }
 

@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 public class RoomManager : MonoBehaviour
 {
     public static RoomManager Instance;
@@ -34,10 +38,15 @@ public class RoomManager : MonoBehaviour
 
     public void HandleRooms()
     {
-        if (RoomsActive.Count > Index + 2)
+        if (RoomsActive.Count > 3)
         {
-            Rooms[Index].SetActive(false);
-            Index++;
+            RoomsActive[0].SetActive(false);
+            RoomsActive.RemoveAt(0);
         }
+    }
+
+    public void AddRoomToActive(GameObject room)
+    {
+        RoomsActive.Add(room);
     }
 }
